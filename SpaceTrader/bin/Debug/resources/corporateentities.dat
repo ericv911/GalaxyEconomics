@@ -1,0 +1,9 @@
+// a file used to generate the entities that control trade, orbital bodies, ships, stellar system, stellar lanes.
+// these entities range from commercial enterprises, political governing bodies, independent entities, the player character etc etc.
+// for now, each entity has only a few properties. It's Name, and an associated color for the stuff it controls.
+// order of information = name, color red green blue
+// each stellarsystem is owned by one of these identities. Find a way to represent this accurately on the map.  Perhaps a colored smudge behind the star.
+{  Player, 50, 50 ,250 }
+{  Independent contractors, 150,150,150}
+{  Weyland Corporation , 250, 50, 50}
+{  United Stellar Systems, 50,250,50}

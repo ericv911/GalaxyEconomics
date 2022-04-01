@@ -1,0 +1,17 @@
+﻿<Window x:Class="SpaceTrader.MessageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpaceTrader"
+        mc:Ignorable="d"
+        Title="MessageWindow" Height="550" Width="300" FontSize="10" VerticalAlignment="Center" Background="LightGoldenrodYellow">
+    <DockPanel>
+        <ScrollViewer HorizontalAlignment="Center"> 
+            <StackPanel Orientation="Vertical">
+            <TextBlock Background="Beige" Text="" />
+            <TextBlock Background="Beige" HorizontalAlignment="Center" Text="{Binding MessageString}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

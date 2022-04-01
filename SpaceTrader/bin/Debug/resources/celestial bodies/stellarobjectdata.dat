@@ -1,0 +1,28 @@
+// Generic startype info 
+// Order :   Name, relative occurence, min mass, max mass, min age, max age, color  (3 x int), min temp, max temp, absolute magnitude max, absolute magnitude min, min diameter, max diameter, phase
+// Masses are in solar masses
+// Relative occurence :  All relative occurences of all types are added together. the chance of a certain type of star occuring is it's relative occurence divided by the total relative occurence
+// Min age :
+// Max age :  A star's age is determined between min age and max age number {in millions of years.}   Max age of 10000 means 10 billion years.
+// Color is in RGB 
+// Min Temperature  in 1000's of degrees Celsius
+// Max Temperature in 1000's of degrees Celsius
+// Max Absolute Magnitude: //stars with 5.0 and brighter absolute brightness are always drawn. 
+// Min Absolute Magnitude :  
+// Min Max diameter in km ;
+// Phase : Is the star for it's type a dwarf, a giant, supergiant or a stellar remnant   //hab zone is not calculated for remnants. max outer 
+// reaches are set to 30 AU.
+// sample { "test", 1, 2 ,5 ,0, 100, 1,1,1, 10, 40, 5, 10, "dwarf"}
+
+{Black Hole, 6, 3, 200, 0, 13000, 0,0,0, 50000, 100000, 30, 35, 10, 500,  remnant}
+{Neutron Star, 6, 1.1, 2.16, 0, 13000, 50,100,255, 42, 1000, 5 ,10, 10, 14, remnant}
+{White Dwarf, 15, 0.5, 1.4, 0, 12000, 255,255,255, 4, 250, 11, 15, 7000, 5800,  remnant}
+{Red Dwarf, 200, 0.08, 0.58, 0, 13000, 255,100,100, 2, 3.5, 8.7, 14.4, 69600, 403000,  dwarf}
+{Orange Dwarf, 150, 0.58, 0.9, 0, 13000, 255,200,170, 3.5, 5.2, 6.0, 8.7, 403000, 560000, dwarf}
+{Yellow Dwarf, 100, 0.9, 1.06, 0, 10000, 255,255, 160, 5.3, 5.9, 4.7, 6.0, 560000, 765000, dwarf}
+{F-Type Main Sequence, 65, 1.06, 1.6, 0, 4000, 255,255,200, 6, 7.3, 3.0, 4.7, 765000, 1204000, dwarf}
+{A-Type Main Sequence, 45, 1.6, 2.1, 0, 1000, 255,255,255, 7.4, 9.7, 1.5, 3.0, 1204000,1502000, dwarf}
+{B-Type Main Sequence, 25, 2.1, 15, 0, 100, 195,215,255, 10, 31.4, -3.3, 1.5, 1502000,4986000, dwarf}
+{O-Type Main Sequence, 3, 15, 150, 0, 3, 140,175,255, 32, 45, -4.5, -3.3, 4986000, 10445000, dwarf}
+
+

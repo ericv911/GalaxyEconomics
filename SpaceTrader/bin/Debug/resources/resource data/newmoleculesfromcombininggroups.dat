@@ -1,0 +1,15 @@
+// new molecules can be made from combining existing resources.  It all depends on the oxidation state. 
+// somehow all of the oxidation state of the elements have to be read from file to collection in memory. 
+// should be resource specific. Make section in resource file that starts with total number of possible oxidation states, followed by the actual // possible oxidation states.  
+// should look like this : .... 4, -2, -1 ,3, 4, ...
+
+//indicating 4 oxidation states with values -2, -1, +3 and +4. 
+
+
+
+
+
+
+
+
+

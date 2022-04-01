@@ -1,0 +1,27 @@
+// Building types
+//
+// each orbital body can have a collection of buildings built on it.
+// each building type is an abstraction for many buildings and people living there
+// 1 farm built represents 100's of real life farms
+// each building built on an orbital body can have a an associated tech level modifier, population change modifier, food change modifier and/or other as of yet to determine modifiers.
+
+// Other properties are following, such as building upkeep per level. population needed to run // the building.  etc etc.
+// Each type has bools   can it affect population, can it affect food,plus 2 associated modifiers
+// Modifiers will be multiplied together. So a modifiers need to be higher than 0. A modifier > 1 will increase the result, a modifier < 1 will decrease it. 
+// order of data is : Name (string), needsHabitabilitytoBuild(bool), hasTechLevel (bool), canResize(bool), canbeBuilt(bool), canModifyFood (bool), canModifyPopulation (bool), 
+// FoodModifier(double), Populationmodifier(double), PopulationHousing(int), FoodStorage(int) % Chance of occuring at the beginning on a body (double) 
+/
+
+{ Farm        ,1, 1, 1, 1, 1, 0, 1.15, 0, 10, 8, 100}
+{ Housing     ,1, 1, 1, 1, 0, 0, 0, 0, 100, 4, 100}
+{ Hospital    ,1, 1, 1, 1, 0, 1, 0, 1.2, 0, 0, 0}
+{ Alien Ruins ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 70}
+{ Fish Farm   ,1, 1, 1, 1, 1, 0, 1.26, 0, 5, 4, 10}
+{ Warehouse   ,1, 1, 1, 1, 0, 0, 0, 0, 0, 50, 0}
+
+
+
+// Farm modifies food production, can house people and needs people to operate. some farms are present at the beginning
+// Housing only houses a certain number of people. some housing is present at the beginning
+// Hopsital increases birth rates and decreases death rates. (more people born, less people die)
+// Alien Ruins don't do anything. They are meant for technology discoveries and alien supply caches. They are distributed at the beginning

@@ -1,0 +1,41 @@
+//resourcegroups are used to determine extraction modifiers per group of resources. Each resource can be part of many groups.
+//orbital bodies can have many resourcegroups.
+//order = Name, group extractionmodifier, set of numbers indicating the resourceindex that can be found in resources.dat. Hydrogen = 0. Periodic table goes
+// up until 93, which is plutonium
+// In the list of resources part of the group, resources can be listed individually or in groups
+// ',' means separator, 
+// '-' means from - to. including both the beginpoint and the endpoint  57-71 means from element 57 to element 71 including 57 and 71. 
+// indices are 1 less than the atomic number of the element
+// Tetrels are the Carbon Group
+// Triels are the Boron Group
+
+{ H/He, 100, 1,2}
+{ Platinum group, 25, 44-46,76-78, 108-110}
+{ Lanthanides , 15, 57 - 71}
+{ Actinides , 15, 89-103}
+{ Halogens, 15, 9, 17, 35, 53, 85, 117}
+{ Alkali metals, 15, 3, 11, 19, 37, 55, 87}
+{ Alkaline earth metals, 15, 4, 12, 20, 38 ,56 ,88}
+{ Pnictogens, 15, 7, 15, 33, 51, 83, 115}
+{ Chalcogens, 15, 8 ,16, 34, 52, 84 ,116}
+{ Noble gases, 15, 2, 10, 18, 36, 54, 86, 118}
+{ Tetrels, 15, 6, 14, 32, 50, 82, 114}
+{ Triels, 15, 5, 13, 31, 49, 81, 113}
+{ Iron-Nickel-Cobalt, 35, 26, 27, 28}
+{ Coinage metals, 25, 29, 47, 79, 111}
+{ Olivines, 20, 8, 12, 14, 26}
+{ Pyroxenes, 25, 3, 11-14, 20-27, 30}
+{ Trace elements, 1, 104-118}
+{ Metalloids, 15, 5, 14, 32, 33, 51, 52}
+{ Non metals, 15, 6-9, 15-17, 34, 35, 53}
+{ Post transition metals, 15, 13, 31, 49, 50, 81-85, 113-117}
+{ Transition metals, 15, 21-30, 39-48, 72-80, 104-112}
+{ Noble metals, 15, 29, 44-47, 75-80}
+{ Precious metals, 15, 44-47, 75-79}
+
+
+
+
+
+
+

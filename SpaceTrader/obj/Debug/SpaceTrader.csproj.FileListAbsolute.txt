@@ -1,0 +1,284 @@
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\App.g.cs
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\MainWindow.baml
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\App.g.cs
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\MainWindow.baml
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Vosselmans\Desktop\c#\currentprojects\current\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Vosselmans\Desktop\c#\currentprojects\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\App.g.cs
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.baml
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\App.g.cs
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.baml
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\hobby\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\App.g.cs
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.baml
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\hobby\currentprog\c#\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\App.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MainWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Prism.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Prism.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Prism.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Prism.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Prism.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Prism.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\CommonServiceLocator.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Extras.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Platform.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\System.Windows.Interactivity.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Extras.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Extras.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Platform.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Platform.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\App.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\Microsoft.Expression.Interactions.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\en\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\es\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\fr\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\it\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\ja\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\ko\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\ru\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\zh-Hans\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\zh-Hant\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\en\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\es\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\fr\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\it\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\ja\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\ko\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\ru\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\zh-Hans\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\bin\Debug\zh-Hant\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\CommonServiceLocator.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Extras.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Platform.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Microsoft.Expression.Interactions.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Prism.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Prism.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\System.Windows.Interactivity.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Extras.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Extras.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Platform.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\GalaSoft.MvvmLight.Platform.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Prism.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Prism.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Prism.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\Prism.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\en\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\es\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\fr\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\it\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\ja\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\ko\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\ru\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\zh-Hans\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\zh-Hant\Microsoft.Expression.Interactions.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\en\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\es\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\fr\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\it\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\ja\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\ko\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\ru\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\zh-Hans\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\bin\Debug\zh-Hant\System.Windows.Interactivity.resources.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\EditGeneratingSettings.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\App.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\App.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\EditGeneratingSettings.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\MainWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames - kopie\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MessageWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\MessageWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\GalaxyGenerationSettingsWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\GalaxyGenerationSettingsWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\CommonServiceLocator.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Prism.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Prism.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Prism.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Prism.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Prism.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\Prism.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\GalaxyGenerationSettingsWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\MessageWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\App.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\GalaxyGenerationSettingsWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\MainWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\MessageWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\GalaxyGenerationSettingsWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\MainWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\MessageWindow.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\App.g.cs
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader_MarkupCompile.lref
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\GalaxyGenerationSettingsWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\MainWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\MessageWindow.baml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\SpaceTrader.exe.config
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\SpaceTrader.exe
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\SpaceTrader.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\CommonServiceLocator.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Prism.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Prism.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Microsoft.Xaml.Behaviors.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Prism.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Prism.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Prism.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\Prism.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.g.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.Properties.Resources.resources
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.csproj.GenerateResource.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\SpaceGames actual - kopie\SpaceTrader\obj\Debug\SpaceTrader.csproj.CopyComplete

@@ -1,0 +1,115 @@
+﻿<Window x:Class="SpaceTrader.MainWindow"     
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:cmd="http://prismlibrary.com/"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:local="clr-namespace:SpaceTrader"
+        Focusable ="True"   Title="Equilibrium simulation version 0.0.3  pre-Alpha" Top="50" Left="50" Height="{Binding CommonSettings.ScreenSettings.ScreenHeight, Mode=TwoWay}" Width="{Binding CommonSettings.ScreenSettings.ScreenWidth, Mode=TwoWay}">
+    <DockPanel Background="Black" >
+           
+            <Menu DockPanel.Dock="Top" Background="Black">
+            <MenuItem Background="Black" Foreground="AntiqueWhite" Header="_Game">
+                <MenuItem Foreground="Black" Header="Set parameters for Galaxy creation" Command="{Binding IShowGalacticGenerationSettingsScreen}"/>
+                <MenuItem Foreground="Black" Header="_New Galaxy" Command="{Binding ISetNewGamedata}" />
+            </MenuItem>
+            <MenuItem Background="Black" Foreground="AntiqueWhite" Header="Display">
+                <CheckBox FontSize="11" VerticalContentAlignment="Center"  Content="Draw starlanes" IsChecked="{Binding CommonSettings.ScreenSettings.BDrawLines}" Command="{Binding IRedrawScreen}"></CheckBox>
+                <CheckBox FontSize="11" VerticalContentAlignment="Center"  Content="Display Ship Info" IsChecked="{Binding CommonSettings.ScreenSettings.DisplayShipInfoonScreen}"  ></CheckBox>
+                <Separator Background="DarkSlateGray"  />
+                <StackPanel Orientation="Horizontal" >
+                    <TextBlock FontSize="11" VerticalAlignment="Center" Foreground="Black"  Text=" Highlight -> " />
+                    <ListBox Margin="0"  FontSize="10" Width="140" Height="20" ItemsSource="{Binding Items}" SelectedItem="{Binding CurrentItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </MenuItem>
+            <MenuItem  Background="Black" Foreground="AntiqueWhite" Header="_Information screens">
+                <MenuItem  Foreground="Black" Header="_Celestial body" Command="{Binding IShowCelestialBodyInfoonScreen}"/>
+                <Separator Background="DarkSlateGray"  />
+                <MenuItem  Foreground="Black" Header="_Initialisation results" Command="{Binding IShowGameInitialisationResultsonScreen}"/>
+
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" ShowsPreview="True" Width="5"/>
+            <Grid Grid.Column="0" Background="Black" Width="15">
+            </Grid>
+            <Grid  Grid.Column="2" Background="Black" Width="Auto">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewKeyDown">
+                        <cmd:InvokeCommandAction Command="{Binding IKeyPressedDown}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewKeyUp">
+                        <cmd:InvokeCommandAction Command="{Binding IKeyPressedUp}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button FontSize="9" Width ="30" BorderThickness="0" Background="Black" Foreground="White" Content="  ||  " Command="{Binding IPauseShips}" />
+                        <Button FontSize="9" Width ="30" BorderThickness="0" Background="Black" Foreground="White" Content="  |>  " Command="{Binding IUnpauseShips}" />
+                        <Button FontSize="9" Width ="100" BorderThickness="0" Background="Black" Foreground="White" Content=" set path " Command="{Binding ISetShipPath}" />
+                        <TextBlock Text="  -  "/>
+                        <TextBlock Background="Black" Foreground="Bisque" Text="{Binding StarDate}"/>
+                    </StackPanel>
+                    <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                        <Grid Name="GrdMain" Width="Auto" Height="Auto" HorizontalAlignment="Left"  >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="1550"/>
+                                    <ColumnDefinition Width="600"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding TestImage}" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" Name="image1" Width="4000" Height="4000" />
+
+                            <Canvas Grid.Column="2" Grid.ColumnSpan="5" Background="Transparent">
+                                <Button  FontSize="8" BorderThickness="0" Foreground ="CornflowerBlue" Content="{Binding SelectedShipSystemText}" Visibility="{Binding CommonSettings.ScreenSettings.VisibilityShipInfoonScreen}" Background="Transparent" Canvas.Left="{Binding Ships.ShipSelectedonScreen.ScreenCoordinates.X}" Canvas.Top="{Binding Ships.ShipSelectedonScreen.ScreenCoordinates.Y}" />
+                            </Canvas>
+                            <Canvas Grid.Column="1" Grid.ColumnSpan="5" Background="Transparent" >
+                                <Button FontSize="9" BorderThickness="0" Foreground="White" Content=" ship->stellarobject " Visibility="{Binding CommonSettings.ScreenSettings.VisibilityButtonCalculateShiptoStellarObject}" Command="{Binding ICalculatePathFromShiptoDestinationStar}" Background="Transparent" Canvas.Left="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition.X}" Canvas.Top="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition.Z}"/>
+                                <Button FontSize="9" BorderThickness="0" Background="Transparent" Foreground="White" Content=" set path " Visibility="{Binding CommonSettings.ScreenSettings.VisibilityButtonCalculateShiptoStellarObject}" Command="{Binding ISetShipPath}" Canvas.Left="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition.X}" Canvas.Top="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition2ndBtn.Z}"/>
+                            </Canvas>
+                            <StackPanel Orientation="Vertical" Grid.ColumnSpan="3">
+                                <ScrollViewer Height="600" Width="250" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+                                    <TextBlock Text="{Binding StellarobjectSystemText}" Grid.Column="0" Grid.ColumnSpan="3" Height="2000" FontSize="8"  HorizontalAlignment="left" VerticalAlignment="Top" Background="Transparent" Foreground="CornflowerBlue"/>
+                                </ScrollViewer>
+                                <TextBlock Text="-----"  Height="20" Background="Transparent" Foreground="CornflowerBlue" />
+                                <ScrollViewer Height="300" Width="250" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+                                    <TextBlock Text="{Binding OverviewText}" Grid.Column="0" Grid.ColumnSpan="3" Height="2000" FontSize="8"  HorizontalAlignment="left" VerticalAlignment="Top" Background="Transparent" Foreground="CornflowerBlue"/>
+                                </ScrollViewer>
+                            </StackPanel>
+                            <!--<Canvas Grid.Column="1" Grid.ColumnSpan="5" Background="Transparent" Width="50" Height="15">
+                                <Button FontSize="9" BorderThickness="0" Background="Transparent" Foreground="White" Content=" set path " Visibility="{Binding CommonSettings.ScreenSettings.VisibilityButtonCalculateShiptoStellarObject}" Command="{Binding ISetShipPath}" Canvas.Left="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition.X}" Canvas.Top="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition2ndBtn.Z}"/>
+                            </Canvas>-->
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseMove">
+                                    <cmd:InvokeCommandAction Command="{Binding IMouseMove}" />
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseDown">
+                                    <cmd:InvokeCommandAction Command="{Binding IMouseClick}" />
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseWheel">
+                                    <cmd:InvokeCommandAction Command="{Binding IMouseWheelCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Grid>
+                    </ScrollViewer>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Window>

@@ -1,0 +1,16 @@
+// starname generator data.
+// each starname is built up in multiple steps
+// order : vowels, consonants for every place,  consonants at start (incl every), consonants at end (incl every),
+
+//{ a,e,i,o,u, y, uoy, aa, ae, ai, au, ay, ea, ee, ei, eo, eu, ey,  ia, ie, io,  oa, oe, oi, oo,  ou, oy, ue, ui, uy, ye, ya, yo,yu,yi, aye, aya, aye, ayo, ayu, eya, eye, eyo, oya, oyo}
+{ b,c,d,f,g,h,j,k,l,m,n,p,q,r,s,t,v,w,x, z, ng, ch, dj, dr, st, ph, ps, sh, sp, dh, gh, ct ,th, ts, sz, sch, ks, sm, zh}
+{ bh, bl, br, bw , bz, cl, cr , cw,  dw, gw, gl, gr, fr, fl, fw, kl, kh, kr, kz, kw, mn, pl, pr, pw, sc, scr, scl, sf, sl, sn, spr, spl, str, sw, tr, vl, vr,  wr, zw }
+{ ck, cks, cts,  cs, bt, bs, ds, fs, ft, gs, hr, hm, ld, lg, lf, lk, lks, lds, lp, lps, ls, lst, lt ,lts, ms, mst, mt, mp, mps, mb, mbs, nd, nds, ngs, nk, nks, ns, nt, nts, ps, pt, pts, rs, rst, rt, rd, rds, rb, rbs, rf, rfs, rg, rgs, rk, rks, rp, rps, rq, rts, rz, sk, wk, wd, wt, xt, xl }
+
+
+
+
+
+
+
+

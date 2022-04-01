@@ -11,3 +11,5 @@ Spontaneously, new molecules can be created. This mechanism will also create add
 of providing happiness.
 New molecules will also create new technologies. The creation of that particular new molecule will be a new technology. Orbital bodies will need that technology,
 to be able to create that particular molecule themselves.
+
+There is a controllable faction and controllable fleets that are player owned. Not much can be done with them at the moment though.

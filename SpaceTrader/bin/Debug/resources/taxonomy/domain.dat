@@ -1,0 +1,11 @@
+//Domain
+// In this file, all the domains of life are given with appropriate modifiers
+// for different properties that life can have
+// In the case of biologically incompatible AI Lifeforms, new Domains of life 
+// can also be created, in addition to the 3 current known ones.
+// For Now, the data consist of the Name of the Domain.  the id for use by Kingdoms and Phylums
+// start with 0
+
+{ Archaea}
+{ Bacteria}
+{ Eukarya}

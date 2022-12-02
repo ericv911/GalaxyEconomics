@@ -15,7 +15,7 @@ namespace SpaceTrader
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool _isEdible;
+        protected bool _isedible;
         protected bool _isprecious;
         protected bool _isillegal;
         protected bool _isradioactive;

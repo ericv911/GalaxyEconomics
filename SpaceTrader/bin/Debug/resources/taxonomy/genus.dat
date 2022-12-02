@@ -1,0 +1,9 @@
+// In this file geni of life are given. Only ones that actually lead to an in-game existing species
+// will be added.  The id of the Geni for use by 
+// Species start with 1. 
+// For Now, the data consist of the Name of the Genus and the id of the Family it belongs to.  0 is reserved for 
+// potential family-less geni
+
+{ Homo, 1}
+{ Architeuthis, 2}
+{ Osphranter, 3}

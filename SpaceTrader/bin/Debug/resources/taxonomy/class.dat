@@ -1,0 +1,12 @@
+// In this file classes of life are given. Only ones that actually lead to an in-game existing species
+// will be added.  The id of the Classes for use by 
+// Orders and lower start with 1. 
+// For Now, the data consist of the Name of the Class and the id of the subphylum it belongs to.  0 is reserved for 
+// potential subphylum-less classes
+
+{ Amphibia, 1}
+{ Reptilia, 1}
+{ Mammalia, 1}
+{ Cephalopoda, 3}
+{ Arachnida, 5}
+{ Insecta, 6}

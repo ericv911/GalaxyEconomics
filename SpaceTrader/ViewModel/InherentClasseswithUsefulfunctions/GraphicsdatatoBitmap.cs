@@ -11,7 +11,7 @@ namespace SpaceTrader
     //class for writing data to bitmap. Only Interfaces used. No data can be written to anything other than the bitmap.
     public class DisplayFunctions
     {
-        internal static ImageSource SetImageFromStarArray(int width, int height, byte[,,] Pixels, byte[] Pixels1d, IEnumerable<IStellarObject> stellarobjects, IEnumerable<IShip> ships, WriteableBitmap GrdBmp, Int32Rect Rect, Image Image, bool bdrawlines, IStellarObject selectedstellarobject,  IReadOnlyList<IStellarObject> stararray, IShip selectedship, double scalefactor) 
+        internal static ImageSource SetImageFromStarArray(int width, int height, byte[,,] Pixels, byte[] Pixels1d, IEnumerable<IStellarObject> stellarobjects, IEnumerable<IShip> ships, WriteableBitmap GrdBmp, Int32Rect Rect,  bool bdrawlines, IStellarObject selectedstellarobject,  IReadOnlyList<IStellarObject> stararray, IShip selectedship, double scalefactor) 
         {
             ConvertPointArrayto1DPixelArray(width, height, Pixels, Pixels1d, stellarobjects, ships, scalefactor);
             GrdBmp.WritePixels(Rect, Pixels1d, 4 * width, 0);
@@ -20,6 +20,7 @@ namespace SpaceTrader
                 DrawStarlanestoBitmap(GrdBmp, stellarobjects, width, height);
             }
             DrawPathfromSourcetoDestinationstar(GrdBmp, stararray);
+            // draw circles around selected objects 
             if (selectedstellarobject != null)
             {
                 DrawcircleAroundActiveStar(GrdBmp, selectedstellarobject.FinalPosition, Color.FromRgb(200, 100, 100));
@@ -28,6 +29,7 @@ namespace SpaceTrader
             {
                 DrawcircleAroundActiveShip(GrdBmp, selectedship.FinalPosition, Color.FromRgb(255, 0, 255));
             }
+            //draw circles around selected stellar types
             foreach (IStellarObject stellarobject in stellarobjects)
             {
                 if (stellarobject.BHighlightonScreen == true)
@@ -36,7 +38,6 @@ namespace SpaceTrader
                 }
             }
             ImageSource timage = GrdBmp;
-            Image.Source = GrdBmp;
             return timage;
         }
         internal static void ConvertPointArrayto1DPixelArray(int width, int height, byte[,,] pixels, byte[] pixels1d, IEnumerable<IStellarObject> stellarobjects, IEnumerable<IShip> ships, double scalefactor)
@@ -46,7 +47,10 @@ namespace SpaceTrader
             {
                 for (int col = 0; col < width; col++)
                 {
-                    for (int i = 0; i < 3; i++) pixels[row, col, i] = 0;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        pixels[row, col, i] = 0;
+                    }
                     pixels[row, col, 3] = 255;
                 }
             }
@@ -55,59 +59,21 @@ namespace SpaceTrader
             int trand;
             foreach (IStellarObject stellarobject in stellarobjects)
             {
-                if (scalefactor > 3 || (scalefactor > 1.5 && stellarobject.AbsoluteMagnitude < 6.5) || (scalefactor < 1.5 && stellarobject.AbsoluteMagnitude < 4.8))
+                if (scalefactor > 3 || (scalefactor > 1.5 && stellarobject.AbsoluteMagnitude < 5.5) || (scalefactor < 1.5 && stellarobject.AbsoluteMagnitude < 2.8))
                 {
                     z = (int)stellarobject.FinalPosition.Z;
                     x = (int)stellarobject.FinalPosition.X;
                     if (x > 2 && z > 2 && x < (width - 5)  && z < (height - 5))
                     {
+                        clr = stellarobject.StarColor;
                         trand = rand.Next(1, 100);
-                        if (trand < 90)
-                        {
-                            clr = stellarobject.StarColor;
-                            pixels[z - 1, x, 0] = clr.B;
-                            pixels[z - 1, x, 1] = clr.R;
-                            pixels[z - 1, x, 2] = clr.G;
-                            pixels[z, x + 1, 0] = clr.B;
-                            pixels[z, x + 1, 1] = clr.R;
-                            pixels[z, x + 1, 2] = clr.G;
-                            pixels[z, x, 0] = clr.B;
-                            pixels[z, x, 1] = clr.R;
-                            pixels[z, x, 2] = clr.G;
-                            pixels[z, x - 1, 0] = clr.B;
-                            pixels[z, x - 1, 1] = clr.R;
-                            pixels[z, x - 1, 2] = clr.G;
-                            pixels[z + 1, x, 0] = clr.B;
-                            pixels[z + 1, x, 1] = clr.R;
-                            pixels[z + 1, x, 2] = clr.G;
-                        }
-                        else if (trand < 97)
+                        if (trand < 8)
                         {
                             clr = stellarobject.StarColorDimmed;
-                            pixels[z - 1, x, 0] = clr.B;
-                            pixels[z - 1, x, 1] = clr.R;
-                            pixels[z - 1, x, 2] = clr.G;
-                            pixels[z, x + 1, 0] = clr.B;
-                            pixels[z, x + 1, 1] = clr.R;
-                            pixels[z, x + 1, 2] = clr.G;
-                            pixels[z, x, 0] = clr.B;
-                            pixels[z, x, 1] = clr.R;
-                            pixels[z, x, 2] = clr.G;
-                            pixels[z, x - 1, 0] = clr.B;
-                            pixels[z, x - 1, 1] = clr.R;
-                            pixels[z, x - 1, 2] = clr.G;
-                            pixels[z + 1, x, 0] = clr.B;
-                            pixels[z + 1, x, 1] = clr.R;
-                            pixels[z + 1, x, 2] = clr.G;
-
                         }
-                        else
-                        {
-                            clr = stellarobject.StarColor;
-                            pixels[z, x, 0] = clr.B;
-                            pixels[z, x, 1] = clr.R;
-                            pixels[z, x, 2] = clr.G;
-                        }
+                        pixels[z, x, 0] = clr.B;
+                        pixels[z, x, 1] = clr.R;
+                        pixels[z, x, 2] = clr.G;
                     }
                 }
             }
@@ -209,11 +175,11 @@ namespace SpaceTrader
                         if (starlane.To.FinalPosition.X > 2 && starlane.To.FinalPosition.X < width && starlane.To.FinalPosition.Z > 2 && starlane.To.FinalPosition.Z < height)
                         {
                             tpnt2 = new Point(starlane.To.FinalPosition.X, starlane.To.FinalPosition.Z);
-                            Grdbmp.DrawLine((int)tpnt.X, (int)tpnt.Y, (int)tpnt2.X, (int)tpnt2.Y, starlane.Color);
+                           // Grdbmp.DrawLineDotted((int)tpnt.X, (int)tpnt.Y, (int)tpnt2.X, (int)tpnt2.Y, 10, 3, starlane.Color);
+                            Grdbmp.DrawLineWu((int)tpnt.X, (int)tpnt.Y, (int)tpnt2.X, (int)tpnt2.Y, 2, starlane.Color.R, starlane.Color.G, starlane.Color.B);
                         }
                     }
-                }
-            }
+                }            }
         }
         public static void DrawPathfromSourcetoDestinationstar(WriteableBitmap Grdbmp, IReadOnlyList<IStellarObject> stellarobjectarray)
         {

@@ -17,7 +17,6 @@ namespace SpaceTrader
     {
         double Food { get; }
         double ProducedFoodthisTurn { get; }
-        double Population { get; }
         double DeathsthisTurn { get; }
         double SpoiledFoodthisTurn { get; }
         double NewcomersthisTurn { get; }
@@ -25,7 +24,8 @@ namespace SpaceTrader
         bool IsHabitable { get; }
         ObservableCollection<OrbitalBody> NaturalSatellites { get; }
         FullyObservableCollection<ResourceInStorageperBody> ResourcesinStorage { get; }
-
+        FullyObservableCollection<SpeciesperOrbitalBody> SpeciesonOrbitalBody { get; }
+        //void GrowFoodandPopulationEx(FastRandom rand);
         void GrowFoodandPopulation(FastRandom rand);
         void ConstructBuildings(IReadOnlyList<IBuildingType> buildingtypes, FastRandom rand);
         void MineResources(FastRandom rand);
@@ -44,6 +44,7 @@ namespace SpaceTrader
 
         #region fields
         //this turn info
+
         protected double _solarpowerperm2;
         protected double _newcomersthisturn;
         protected double _deathsthisturn;
@@ -68,7 +69,6 @@ namespace SpaceTrader
         protected double _populationhousing;
         protected double _foodstorage;
         protected double _food;
-        protected double _population;
 
         //bools
         protected bool _isinhabitablezone;
@@ -79,6 +79,7 @@ namespace SpaceTrader
         protected BaseTypes.OrbitalBodyType _orbitalbodytype;
 
         //collections belonging to the orbital body
+        protected FullyObservableCollection<SpeciesperOrbitalBody> _speciesonorbitalbody;
         protected FullyObservableCollection<Building> _buildings;
         protected ObservableCollection<OrbitalBody> _naturalsatellites;
         protected ObservableCollection<ResourceGroup> _resourcegroups;
@@ -145,12 +146,7 @@ namespace SpaceTrader
             get { return _food; }
             set { _food = value; }
         }
-        public double Population
-        {
-            get { return _population; }
-            set { _population = value;
-            }         
-        }
+//
 
         public double BaseNaturalHabitationModifier
         {
@@ -219,7 +215,11 @@ namespace SpaceTrader
             get { return _isnaturalsatellite; }
             set { _isnaturalsatellite = value; }
         }
-
+        public FullyObservableCollection<SpeciesperOrbitalBody> SpeciesonOrbitalBody
+        {
+            get { return _speciesonorbitalbody; }
+            set { _speciesonorbitalbody = value; }
+        }
         public FullyObservableCollection<ResourceInStorageperBody> ResourcesinStorage
         {
             get { return _resourcesinstorage;}
@@ -264,6 +264,11 @@ namespace SpaceTrader
         #region constructor
         public OrbitalBody(string name, Int64 age, Point3D position) : base(name, position)
         {
+            FastRandom fastRandom = new FastRandom();
+            SpeciesonOrbitalBody = new FullyObservableCollection<SpeciesperOrbitalBody>();
+            // make a new functionality to add different kinds of species of different size and reproduction rates to each orbital body.  Don't use Taxonomy.Species for the collection but a SpeciesperOrbitalBody type, that needs
+            // to be defined first, including the fields Taxonomy.Species,SizeoPopulation, custom randomized modifiers like reproduction rate etcc. 
+
             Buildings = new FullyObservableCollection<Building>();
             Buildings.CollectionChanged += (obj, e) => RecalculateModifiersandProperties();       
             Buildings.ItemPropertyChanged += (obj, e) => RecalculateModifiersandProperties();
@@ -460,60 +465,60 @@ namespace SpaceTrader
         }
         public void GrowFoodandPopulation(FastRandom rand) //method sets data of given parameter. its apparently byref
         {
-            double popfromfoodsurplus;
-            double tdeathsthisturn;
+            double additionalpopulationgrowthfromfoodsurplus;
+            double deathsthisturnfromhomelessness;
+
 
             //set deltafood
             SpoiledFoodthisTurn = 0;
-            ProducedFoodthisTurn = rand.NextDouble() * NaturalHabitationModifier;
+            ProducedFoodthisTurn = 100*rand.NextDouble() * NaturalHabitationModifier;
             //set deltapopulation
-            BirthsthisTurn = Population * NaturalBirthsperTurnPercentage;  // dependent on the current population  . multiplicative factor
-            NewcomersthisTurn = rand.NextDouble() * NaturalImmigrationperTurnLinear; //independent of the current population  . additive  factor
-            DeathsthisTurn = Population * NaturalDeathsperTurnPercentage;
-
-            //delta population deaths, births, (both %)  immigrants, emigrants (both addition)  from where immigrants are coming is not specified yet. Not from the exisiting galactic population
-            Population -= DeathsthisTurn;//deaths per turn
-            Population += BirthsthisTurn;
-            Population += NewcomersthisTurn; //newcomers, from where is not exactly clear yet.  
-
-            //delta food
-            Food -= Population / 10; // food eaten by people
-            Food += ProducedFoodthisTurn; //food generated this turn
-
-            //food spoilage calculation
-            if (Food - FoodStorage > 0)
+            foreach (SpeciesperOrbitalBody species in SpeciesonOrbitalBody)
             {
-                SpoiledFoodthisTurn = (Food - FoodStorage);// * (rand.NextDouble()) * (OrbitalBodyType.FoodSpoilageFactor);
-                Food -= SpoiledFoodthisTurn;
-            }
+                BirthsthisTurn = species.PopulationSize * NaturalBirthsperTurnPercentage;  // dependent on the current population  . multiplicative factor
+                NewcomersthisTurn = rand.NextDouble() * NaturalImmigrationperTurnLinear; //independent of the current population  . additive  factor
+                DeathsthisTurn = species.PopulationSize * NaturalDeathsperTurnPercentage;
 
-            //food shortage effects, or food abundance
-            if (Food < 0) // if negative food left => percentage dies from hunger and malnutrition, means people suffered from hunger;
-            {
-                Population -= DeathsthisTurn;
-                DeathsthisTurn *= 2;
-                Food = 0;
-            }
-            else if (Food > Population) // if there is more food left than people after eating, means food is plentiful and abundant => extra pop. growth
-            {
-                popfromfoodsurplus = rand.NextDouble() * NaturalImmigrationperTurnLinear;
-                Population += popfromfoodsurplus;
-                NewcomersthisTurn += popfromfoodsurplus;
-            }
+                //delta population deaths, births, (both %)  immigrants, emigrants (both addition)  from where immigrants are coming is not specified yet. Not from the exisiting galactic population and delta food.
+                species.PopulationSize += (BirthsthisTurn + NewcomersthisTurn - DeathsthisTurn);
+                Food += (ProducedFoodthisTurn - (species.PopulationSize / 10));
 
-            // people have not enough houses to live in
-            if (Population - PopulationHousing > 0)
-            {
-                tdeathsthisturn = (Population - PopulationHousing) * (rand.NextDouble()) * (OrbitalBodyType.HomelessDeathFactor);
-                Population -= tdeathsthisturn;
-                DeathsthisTurn += tdeathsthisturn;
-            }
+                //food spoilage calculation
+                if (Food - FoodStorage  > 0)
+                {
+                    SpoiledFoodthisTurn = (Food - FoodStorage );// * (rand.NextDouble()) * (OrbitalBodyType.FoodSpoilageFactor);
+                    Food -= SpoiledFoodthisTurn;
+                }
 
-            if (Population < 0) // if everyone dies and population ends up negative, reset to 0
-            {
-                Population = 0;
+                //food shortage effects, or food abundance
+                if (Food < 0) // if negative food left => percentage dies from hunger and malnutrition, means people suffered from hunger;
+                {
+                    species.PopulationSize -= DeathsthisTurn;
+                    DeathsthisTurn *= 2;
+                    Food = 0;
+                }
+                else if (Food > species.PopulationSize) // if there is more food left than people after eating, means food is plentiful and abundant => extra pop. growth
+                {
+                    additionalpopulationgrowthfromfoodsurplus = rand.NextDouble() * NaturalImmigrationperTurnLinear;
+                    species.PopulationSize += additionalpopulationgrowthfromfoodsurplus;
+                    BirthsthisTurn += additionalpopulationgrowthfromfoodsurplus;
+                }
+
+                // people have not enough houses to live in
+                if (species.PopulationSize - PopulationHousing * 10 > 0)
+                {
+                    deathsthisturnfromhomelessness = (species.PopulationSize - PopulationHousing) * (rand.NextDouble()) * (OrbitalBodyType.HomelessDeathFactor);
+                    species.PopulationSize -= deathsthisturnfromhomelessness;
+                    DeathsthisTurn += deathsthisturnfromhomelessness;
+                }
+
+                if (species.PopulationSize < 0) // if everyone dies and population ends up negative, reset to 0
+                {
+                    species.PopulationSize = 0;
+                }
             }
         }
+       
         public void ConstructBuildings(IReadOnlyList<IBuildingType> buildingtypes, FastRandom rand)
         {
             bool AlreadyBuilt;

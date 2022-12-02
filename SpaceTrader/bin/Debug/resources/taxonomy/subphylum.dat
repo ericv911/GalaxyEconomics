@@ -1,0 +1,14 @@
+// In this file subphyla of life are given. Only ones that actually lead to an in-game existing species
+// will be added.  The id of the subphyla for use by 
+// classes and lower start with 1. 
+// For Now, the data consist of the Name of the subphyla and the id of the Phylum it belongs to.  0 is reserved for 
+// potential phyla less classes
+
+{ Vertebrata, 8}
+{ Tunicata, 8}
+{ Conchifera, 20}
+{ Aculifera, 20}
+{ Chelicerata, 4}
+{ Hexapoda, 4}
+
+

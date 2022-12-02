@@ -1,0 +1,8 @@
+// In this file species of life are given.   The id of the species start with 1. 
+// For Now, the data consist of the Name of the Species, the id of the Genus it belongs to.  0 is reserved for 
+// potential genus-less species
+// additionally, the reproduction rate in % per species is given. 
+{ Homo Sapiens, 1, 1.4}
+{ Architeuthis Dux, 2, 1.9}
+{ Osphranter anitlopinus, 3, 2.5}
+

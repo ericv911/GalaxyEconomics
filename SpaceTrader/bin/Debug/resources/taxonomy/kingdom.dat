@@ -1,0 +1,18 @@
+// In this file, all the kingdoms of life are given with appropriate modifiers
+// for different properties that life can have
+// In the case of biologically incompatible AI Lifeforms, new Kingdoms of life 
+// can also be created, in addition to the 5 current known ones.  the 2 Domain level
+// types of life Bacteria and Archaea will have entries with similar id's as the domain ones. In that way Phyla belongin to either of these 2 groups are passed along the chain. 
+
+// New kingdoms can be created if necessary.
+
+// // For Now, the data consist of the Name of the Kingdom and the id of the Domain it belongs to. The id for use by Phylums and lower 
+// start with 1. 0 is reserved for Domain-less Kingdoms.
+
+{ Archaea, 1}
+{ Bacteria, 2}
+{ Protozoa, 3}
+{ Chromista, 3}
+{ Plantae, 3}
+{ Fungi, 3}
+{ Animalia, 3}

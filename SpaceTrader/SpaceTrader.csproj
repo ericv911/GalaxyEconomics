@@ -73,6 +73,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EventSystem\EventSystem.cs" />
+    <Compile Include="Functions  If possible move out of Program to different library\Random number generators\LoadfromFileFunctions.cs" />
     <Compile Include="GalaxyGenerationSettingsWindow.xaml.cs">
       <DependentUpon>GalaxyGenerationSettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -81,11 +82,21 @@
     </Compile>
     <Compile Include="Models and Generics\Generic collection and generic type collections\BaseConstants.cs" />
     <Compile Include="Models and Generics\Models\Helper and message models\DrawingClass.cs" />
-    <Compile Include="Models and Generics\Models\Resources Refined Resources and Goods models\Building.cs" />
+    <Compile Include="Models and Generics\Models\Building models\Building.cs" />
     <Compile Include="Models and Generics\Models\CelestialBody models\Starlane.cs" />
     <Compile Include="Models and Generics\Models\Economic and political entity models\EconomicEntity.cs" />
     <Compile Include="Models and Generics\Models\Helper and message models\GalaxyGenerationSettings.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Class.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Domain.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Kingdom.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Phylum.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Family.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Genus.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Order.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\SpeciesperOrbitalBody.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Subphylum.cs" />
     <Compile Include="Models and Generics\Models\Resources Refined Resources and Goods models\Resourcestorage.cs" />
+    <Compile Include="Models and Generics\Models\Organism models\Species.cs" />
     <Compile Include="Models and Generics\Models\Technology\Technology.cs" />
     <Compile Include="Models and Generics\NewObservableCollection.cs" />
     <Compile Include="ViewModel\CelestialbodyViewModel.cs" />
@@ -161,7 +172,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models and Generics\Models\Building models\" />
     <Folder Include="View\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

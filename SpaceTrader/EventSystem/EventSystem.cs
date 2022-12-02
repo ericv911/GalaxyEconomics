@@ -28,6 +28,7 @@ namespace SpaceTrader
         public string SpoiledFoodperTurn { get; set; }
         public string DeathsthisTurn { get; set; }
         public string BirthsperTurn { get; set; }
+        public string NewcomersperTurn { get; set; }
         public string ProducedFoodperTurn { get; set; }
         public string TotalFoodEndofTurn { get; set; }
         public string TotalPopulationEndofTurn { get; set; }

@@ -1,0 +1,11 @@
+// In this file orders of life are given. Only ones that actually lead to an in-game existing species
+// will be added.  The id of the Orders for use by 
+// Families and lower start with 1. 
+// For Now, the data consist of the Name of the Order and the id of the Class it belongs to.  0 is reserved for 
+// potential class-less orders
+
+{ Primates, 3}
+{ Proboscidea, 3}
+{ Carnivora, 3}
+{ Oegopsida, 4}
+{ Diprotodontia, 3}

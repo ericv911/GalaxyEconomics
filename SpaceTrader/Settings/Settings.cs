@@ -84,7 +84,7 @@ namespace SpaceTrader
         #region fields
         private int _bitmapwidth;
         private int _bitmapheight;
-        protected Image _image;
+        //protected Image _image;
         #endregion
 
         #region properties
@@ -112,13 +112,13 @@ namespace SpaceTrader
         public byte[] Pixels1d { get; set; }
         public WriteableBitmap GrdBmp;
         public Int32Rect Rect { get; set; }
-        public Image Image
-        {
-            get { return _image; }
-            set { _image = value;
-                OnPropertyChanged();
-            }
-        }
+        //public Image Image
+        //{
+        //    get { return _image; }
+        //    set { _image = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
       
 
         #endregion
@@ -144,7 +144,7 @@ namespace SpaceTrader
             Rect = new Int32Rect(0, 0, width, height);
             GrdBmp = new WriteableBitmap(4000, 4000, 96, 96, PixelFormats.Bgra32, null);
             bitmapadjustvector = new Vector3D((int)width / 2, (int)width / 2, (int)height / 2);
-            Image = new Image { Stretch = Stretch.None, Margin = new Thickness(0) };
+            //Image = new Image { Stretch = Stretch.None, Margin = new Thickness(0) };
             Pixels = new byte[height, width, 4];
             Pixels1d = new byte[height * width * 4];
         }
@@ -157,7 +157,7 @@ namespace SpaceTrader
             height = BitmapHeight;
             Rect = new Int32Rect(0, 0, width, height);
             bitmapadjustvector = new Vector3D((int)width / 2, (int)width / 2, (int)height / 2);
-            Image = new Image { Stretch = Stretch.None, Margin = new Thickness(0) };
+           // Image = new Image { Stretch = Stretch.None, Margin = new Thickness(0) };
             Pixels = new byte[height, width, 4];
             Pixels1d = new byte[height * width * 4];
         }

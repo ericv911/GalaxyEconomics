@@ -208,7 +208,7 @@ namespace SpaceTrader
         #region Class Methods
 
         #region public methods
-        public async Task SetCelestialBodyDatasAsync(int width, IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IResourceGroup> resourcegroups, IEnumerable<TechLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<Resource> resources, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
+        public async Task SetCelestialBodyDatasAsync(int width, IReadOnlyList<Taxonomy.ISpecies> species, IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IResourceGroup> resourcegroups, IEnumerable<TechLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<Resource> resources, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
         {
             #region clear exisiting data;
             StellarPathfromSourcetoDestination.Clear();
@@ -236,7 +236,7 @@ namespace SpaceTrader
             await Task.WhenAll(setstarlanes);
             #endregion
             #region non-async part of setting celestial object data and properties 
-            SetCelestialBodyProperties(orbitalbodytypes, stellarobjectypes, resourcegroups, techlevels, buildingtypes, resources, physicalconstants, solarconstants);
+            SetCelestialBodyProperties(species, orbitalbodytypes, stellarobjectypes, resourcegroups, techlevels, buildingtypes, resources, physicalconstants, solarconstants);
             #endregion  
             return;
         }
@@ -275,11 +275,11 @@ namespace SpaceTrader
 
         //    return 0;
         //}
-        private void SetCelestialBodyProperties(IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IResourceGroup> resourcegroups, IEnumerable<TechLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<IResource> resources, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
+        private void SetCelestialBodyProperties(IReadOnlyList<Taxonomy.ISpecies> species, IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IResourceGroup> resourcegroups, IEnumerable<TechLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<IResource> resources, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
         {
             StellarPathfromSourcetoDestination.Clear();
             SetStellarObjectProperties(stellarobjectypes, physicalconstants, solarconstants); //set properties of the stellar object population
-            SetOrbitalBodyProperties(orbitalbodytypes, physicalconstants); //set properties of the orbital bodies around stellar objects
+            SetOrbitalBodyProperties(species, orbitalbodytypes, physicalconstants); //set properties of the orbital bodies around stellar objects
             SetOrbitalBodyResourceGroups(resourcegroups); //set resourcegroups of each orbital body. Used for extraction modifiers etc.
             SetOrbitalBodyInitialBuildings(buildingtypes); //set initial buildings of each orbital body
             SetOrbitalBodyResourcesatStart(resources);
@@ -331,7 +331,7 @@ namespace SpaceTrader
             }
         }
 
-        private int SetOrbitalBodyProperties(IEnumerable<IOrbitalBodyType> OrbitalBodyTypes, IPhysicalConstants physicalconstants)
+        private int SetOrbitalBodyProperties(IReadOnlyList<Taxonomy.ISpecies> species, IEnumerable<IOrbitalBodyType> OrbitalBodyTypes, IPhysicalConstants physicalconstants)
         {
             int totalrelativeoccurence = 0;
             int randomnumber;
@@ -369,6 +369,12 @@ namespace SpaceTrader
                                 orbitalbody.BaseNaturalBirthsperTurnPercentage = (1 + rand.NextDouble() * 2) / 100;
                                 orbitalbody.BaseNaturalHabitationModifier = (rand.NextDouble()) * orbitalbodytype.NaturalHabitationModifier  ;
                                 orbitalbody.BaseNaturalDeathsperTurnPercentage = (5 + rand.NextDouble() * 10) / 100;
+                                orbitalbody.Food = 10000;
+                                Taxonomy.Species humans = new Taxonomy.Species();
+                                foreach (Taxonomy.Species tspecies in species)
+                                {
+                                    orbitalbody.SpeciesonOrbitalBody.Add(new SpeciesperOrbitalBody(tspecies, (int)(200 * rand.NextDouble()), tspecies.ReproductionRate * rand.NextDouble()));
+                                }
                             }
                             else
                             {
@@ -376,8 +382,7 @@ namespace SpaceTrader
                                 orbitalbody.BaseNaturalDeathsperTurnPercentage = 0;
                                 orbitalbody.BaseNaturalBirthsperTurnPercentage = 0;
                             }
-                            orbitalbody.Population = 10;
-                            orbitalbody.Food = 10;
+
                             break;
                         }
                         orbitalbodytypeindex += 1;
@@ -405,9 +410,14 @@ namespace SpaceTrader
                                             tmporbitalbody.Radius = Convert.ToInt32(Math.Pow(trand, 2) * (orbitalbodytype.Maximum_Radius - orbitalbodytype.Minimum_Radius) + orbitalbodytype.Minimum_Radius);
                                             if (tmporbitalbody.IsHabitable)
                                             {
-                                                tmporbitalbody.BaseNaturalBirthsperTurnPercentage = (1 + rand.NextDouble() * 2) / 100;
+                                                tmporbitalbody.BaseNaturalBirthsperTurnPercentage = (1 + rand.NextDouble() * 5) / 100;
                                                 tmporbitalbody.BaseNaturalDeathsperTurnPercentage = (5 + rand.NextDouble() * 10) / 100;
                                                 tmporbitalbody.BaseNaturalHabitationModifier = (rand.NextDouble()) * orbitalbodytype.NaturalHabitationModifier;
+                                                tmporbitalbody.Food = 100;
+                                                foreach (Taxonomy.Species tspecies in species)
+                                                {
+                                                    tmporbitalbody.SpeciesonOrbitalBody.Add(new SpeciesperOrbitalBody(tspecies, (int)(20 * rand.NextDouble()), tspecies.ReproductionRate * rand.NextDouble()));
+                                                }
                                             }
                                             else
                                             {
@@ -415,8 +425,8 @@ namespace SpaceTrader
                                                 tmporbitalbody.BaseNaturalHabitationModifier = 0;
                                                 tmporbitalbody.BaseNaturalBirthsperTurnPercentage = 0;
                                             }
-                                            tmporbitalbody.Population = 10;
-                                            tmporbitalbody.Food = 10;
+                                            //tmporbitalbody.Population = 10;
+
                                             orbitalbody.NaturalSatellites.Add(tmporbitalbody);
                                             break;
                                         }
@@ -1082,6 +1092,8 @@ namespace SpaceTrader
         {
             double foodproduced = 0; 
             double newpeoplecounter = 0;
+            double birthscounter = 0;
+            double newcomerscounter = 0;
             double deathscounter = 0;
             double spoiledfoodcounter = 0;
             double foodcounter = 0;
@@ -1097,7 +1109,12 @@ namespace SpaceTrader
                         orbitalbody.GrowFoodandPopulation(Rand); //method sets data of given parameter. its apparently byref
                         foodproduced += orbitalbody.ProducedFoodthisTurn;
                         foodcounter += orbitalbody.Food;
-                        populationcounter += orbitalbody.Population;
+                        foreach (SpeciesperOrbitalBody species in orbitalbody.SpeciesonOrbitalBody)
+                        {
+                            populationcounter += species.PopulationSize;
+                        }
+                        birthscounter += orbitalbody.BirthsthisTurn;
+                        newcomerscounter += orbitalbody.NewcomersthisTurn;
                         deathscounter += orbitalbody.DeathsthisTurn;
                         spoiledfoodcounter += orbitalbody.SpoiledFoodthisTurn;
                         newpeoplecounter += orbitalbody.NewcomersthisTurn;
@@ -1110,16 +1127,20 @@ namespace SpaceTrader
                             naturalsatellite.GrowFoodandPopulation(Rand); //method sets data of given parameter. its apparently byref
                             foodproduced += naturalsatellite.ProducedFoodthisTurn;
                             foodcounter += naturalsatellite.Food;
-                            populationcounter += naturalsatellite.Population;
+                            foreach (SpeciesperOrbitalBody species in naturalsatellite.SpeciesonOrbitalBody)
+                            {
+                                populationcounter += species.PopulationSize;
+                            }
+                            birthscounter += naturalsatellite.BirthsthisTurn;
+                            newcomerscounter += naturalsatellite.NewcomersthisTurn;
                             deathscounter += naturalsatellite.DeathsthisTurn;
                             spoiledfoodcounter += naturalsatellite.SpoiledFoodthisTurn;
                             newpeoplecounter += naturalsatellite.NewcomersthisTurn;
-                            newpeoplecounter += naturalsatellite.BirthsthisTurn;
                         }
                     }
                 }
             }
-            EventSystem.Publish(new TickerSymbolTotalAmountofFoodandPopulation { ProducedFoodperTurn =((int)foodproduced).ToString(), BirthsperTurn = ((int)newpeoplecounter).ToString(), SpoiledFoodperTurn = ((int)spoiledfoodcounter).ToString(), DeathsthisTurn = ((int)deathscounter).ToString(), TotalPopulationEndofTurn = ((int)(populationcounter)).ToString(), TotalFoodEndofTurn = ((int)(foodcounter)).ToString() });
+            EventSystem.Publish(new TickerSymbolTotalAmountofFoodandPopulation {  ProducedFoodperTurn =((int)foodproduced).ToString(), NewcomersperTurn = ((int)newcomerscounter).ToString(), BirthsperTurn = ((int)birthscounter).ToString(), SpoiledFoodperTurn = ((int)spoiledfoodcounter).ToString(), DeathsthisTurn = ((int)deathscounter).ToString(), TotalPopulationEndofTurn = ((int)(populationcounter)).ToString(), TotalFoodEndofTurn = ((int)(foodcounter)).ToString() });
         }
         #endregion
         #endregion

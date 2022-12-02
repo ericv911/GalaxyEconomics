@@ -1,0 +1,9 @@
+// In this file families of life are given. Only ones that actually lead to an in-game existing species
+// will be added.  The id of the Families for use by 
+// Geni and lower start with 1. 
+// For Now, the data consist of the Name of the Family and the id of the Order it belongs to.  0 is reserved for 
+// potential order-less families
+
+{ Hominidae, 1}
+{ Architeuthidae, 4}
+{ Macropodidae, 5}

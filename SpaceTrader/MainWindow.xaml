@@ -10,26 +10,51 @@
         Focusable ="True"   Title="Equilibrium simulation version 0.0.3  pre-Alpha" Top="50" Left="50" Height="{Binding CommonSettings.ScreenSettings.ScreenHeight, Mode=TwoWay}" Width="{Binding CommonSettings.ScreenSettings.ScreenWidth, Mode=TwoWay}">
     <DockPanel Background="Black" >
            
-            <Menu DockPanel.Dock="Top" Background="Black">
+            <Menu DockPanel.Dock="Top" Background="Black" >
             <MenuItem Background="Black" Foreground="AntiqueWhite" Header="_Game">
                 <MenuItem Foreground="Black" Header="Set parameters for Galaxy creation" Command="{Binding IShowGalacticGenerationSettingsScreen}"/>
                 <MenuItem Foreground="Black" Header="_New Galaxy" Command="{Binding ISetNewGamedata}" />
             </MenuItem>
             <MenuItem Background="Black" Foreground="AntiqueWhite" Header="Display">
-                <CheckBox FontSize="11" VerticalContentAlignment="Center"  Content="Draw starlanes" IsChecked="{Binding CommonSettings.ScreenSettings.BDrawLines}" Command="{Binding IRedrawScreen}"></CheckBox>
-                <CheckBox FontSize="11" VerticalContentAlignment="Center"  Content="Display Ship Info" IsChecked="{Binding CommonSettings.ScreenSettings.DisplayShipInfoonScreen}"  ></CheckBox>
-                <Separator Background="DarkSlateGray"  />
+                <TextBox FontSize="10" BorderThickness="0" VerticalContentAlignment="Center">General</TextBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Draw starlanes" IsChecked="{Binding CommonSettings.ScreenSettings.DrawStarlanes}" Command="{Binding IRedrawScreen}"></CheckBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Display element-symbols " IsChecked="{Binding CommonSettings.ScreenSettings.DisplayElementSymbol}"></CheckBox>
                 <StackPanel Orientation="Horizontal" >
-                    <TextBlock FontSize="11" VerticalAlignment="Center" Foreground="Black"  Text=" Highlight -> " />
-                    <ListBox Margin="0"  FontSize="10" Width="140" Height="20" ItemsSource="{Binding Items}" SelectedItem="{Binding CurrentItem}">
-                        <ListBox.ItemTemplate>
+                    <TextBlock FontSize="11" VerticalAlignment="Center" Foreground="Black"  Text=" Fontsize -> " />
+                    <ComboBox Margin="0"  FontSize="10" Width="45" Height="20" ItemsSource="{Binding CommonSettings.ScreenSettings.FontSizes}" SelectedItem="{Binding CommonSettings.ScreenSettings.CurrentFontSize}" >
+                        <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding}" />
                                 </StackPanel>
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <TextBox FontSize="10" BorderThickness="0" VerticalContentAlignment="Center">Ship</TextBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Draw Ships" IsChecked="{Binding CommonSettings.ScreenSettings.DrawShips}"  ></CheckBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Display Ship Info" IsChecked="{Binding CommonSettings.ScreenSettings.DisplayShipInfoonScreen}"  ></CheckBox>
+                <TextBox FontSize="10" BorderThickness="0" VerticalContentAlignment="Center"   >Central Hub :</TextBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Show Elements" IsChecked="{Binding CommonSettings.ScreenSettings.ShowCentralHubElements}"  ></CheckBox>
+                <TextBox FontSize="10" BorderThickness="0" VerticalContentAlignment="Center"   >Orbital Body : </TextBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Show Orbital Body Info" IsChecked="{Binding CommonSettings.ScreenSettings.ShowOrbitalBodyInfo}"  ></CheckBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Show Natural Satellites Info" IsChecked="{Binding CommonSettings.ScreenSettings.ShowNaturalSatellitesInfo}"  ></CheckBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Show Elements" IsChecked="{Binding CommonSettings.StellarObjectSettings.ShowElements}"  ></CheckBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Show ElementGroups" IsChecked="{Binding CommonSettings.ScreenSettings.ShowElementGroups}"  ></CheckBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Show Buildings" IsChecked="{Binding CommonSettings.ScreenSettings.ShowBuildings}"  ></CheckBox>
+                <CheckBox FontSize="9" VerticalContentAlignment="Center"  Content="Show Modfiers" IsChecked="{Binding CommonSettings.ScreenSettings.ShowModifiers}"  ></CheckBox>
+                <Separator Background="DarkSlateGray"  />
+                <StackPanel Orientation="Horizontal" >
+                    <TextBlock FontSize="11" VerticalAlignment="Center" Foreground="Black"  Text=" Highlight -> " />
+                    <ComboBox Margin="0"  FontSize="10" Width="140" Height="20" ItemsSource="{Binding CommonSettings.StellarObjectSettings.StellarObjectClasses}" SelectedItem="{Binding CommonSettings.StellarObjectSettings.SelectedStellarObjectClass}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </StackPanel>
             </MenuItem>
             <MenuItem  Background="Black" Foreground="AntiqueWhite" Header="_Information screens">
@@ -84,12 +109,17 @@
                                 <Button FontSize="9" BorderThickness="0" Background="Transparent" Foreground="White" Content=" set path " Visibility="{Binding CommonSettings.ScreenSettings.VisibilityButtonCalculateShiptoStellarObject}" Command="{Binding ISetShipPath}" Canvas.Left="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition.X}" Canvas.Top="{Binding CelestialBodies.StellarObjectSelectedOnScreen.FinalPosition2ndBtn.Z}"/>
                             </Canvas>
                             <StackPanel Orientation="Vertical" Grid.ColumnSpan="3">
-                                <ScrollViewer Height="600" Width="250" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
-                                    <TextBlock Text="{Binding StellarobjectSystemText}" Grid.Column="0" Grid.ColumnSpan="3" Height="2000" FontSize="8"  HorizontalAlignment="left" VerticalAlignment="Top" Background="Transparent" Foreground="CornflowerBlue"/>
+                                <TextBlock Text="--- STELLAR SYSTEM ---"  Height="14" FontSize="{Binding CommonSettings.ScreenSettings.CurrentFontSize}" Background="Transparent" Foreground="CornflowerBlue" />
+                                <ScrollViewer Height="{Binding CommonSettings.ScreenSettings.ScrollViewerHeightBig}" Width="300" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+                                    <TextBlock Text="{Binding StellarobjectSystemText}" Grid.Column="0" Grid.ColumnSpan="3" Height="2000" FontSize="{Binding CommonSettings.ScreenSettings.CurrentFontSize}"  HorizontalAlignment="left" VerticalAlignment="Top" Background="Transparent" Foreground="CornflowerBlue"/>
                                 </ScrollViewer>
-                                <TextBlock Text="-----"  Height="20" Background="Transparent" Foreground="CornflowerBlue" />
-                                <ScrollViewer Height="300" Width="250" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
-                                    <TextBlock Text="{Binding OverviewText}" Grid.Column="0" Grid.ColumnSpan="3" Height="2000" FontSize="8"  HorizontalAlignment="left" VerticalAlignment="Top" Background="Transparent" Foreground="CornflowerBlue"/>
+                                <TextBlock Text="--- CENTRAL HUB ---"  Height="14" FontSize="{Binding CommonSettings.ScreenSettings.CurrentFontSize}" Background="Transparent" Foreground="CornflowerBlue" />
+                                <ScrollViewer Height="{Binding CommonSettings.ScreenSettings.ScrollViewerHeightBig}" Width="300" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Hidden"  HorizontalScrollBarVisibility="Hidden">
+                                    <TextBlock Text="{Binding CentralHubText}" Grid.Column="0" Grid.ColumnSpan="3" Height="2000" FontSize="{Binding CommonSettings.ScreenSettings.CurrentFontSize}"  HorizontalAlignment="left" VerticalAlignment="Top" Background="Transparent" Foreground="CornflowerBlue"/>
+                                </ScrollViewer>
+                                <TextBlock Text="--- GENERAL INFO ---"  Height="14" FontSize="{Binding CommonSettings.ScreenSettings.CurrentFontSize}" Background="Transparent" Foreground="CornflowerBlue" />
+                                <ScrollViewer Height="{Binding CommonSettings.ScreenSettings.ScrollViewerHeightBig}" Width="300" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+                                    <TextBlock Text="{Binding OverviewText}" Grid.Column="0" Grid.ColumnSpan="3" Height="2000" FontSize="{Binding CommonSettings.ScreenSettings.CurrentFontSize}"  HorizontalAlignment="left" VerticalAlignment="Top" Background="Transparent" Foreground="CornflowerBlue"/>
                                 </ScrollViewer>
                             </StackPanel>
                             <!--<Canvas Grid.Column="1" Grid.ColumnSpan="5" Background="Transparent" Width="50" Height="15">

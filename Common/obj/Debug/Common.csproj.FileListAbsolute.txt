@@ -1,0 +1,6 @@
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Common\bin\Debug\Common.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Common\bin\Debug\Common.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Common\obj\Debug\Common.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Common\obj\Debug\Common.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Common\obj\Debug\Common.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Common\obj\Debug\Common.pdb

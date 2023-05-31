@@ -4,17 +4,24 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Media3D;
+using Common.Astronomy;
+using Common.Construction;
+using Common.Logistics;
+using Common.Physics;
+using CompoundProvider.Types;
+using Taxonomy;
 
 namespace SpaceTrader
 {
     //generic class for all habitable and or mineable bodies in a starsystem.  Mainly Planets, Dwarf Planets, Asteroids and Comets.
     //main difference between them is in the extraction modifiers and non-industrial food production .  Habitable planets will produce food, population and happiness without the need for industry or greenhouses.
-    //asteroids and comets are much more useable for extracting resources to build structures in space.  Not only is their Heavy element content more easily accessible but once extracted,
+    //asteroids and comets are much more useable for extracting elements to build structures in space.  Not only is their Heavy element content more easily accessible but once extracted,
     //it does not have to leave the gravity well.
-    //generic Non-stellar Celestial Body types will have certain resource extraction modifiers, food production modifiers and population growth and happiness modifiers. 
+    //generic Non-stellar Celestial Body types will have certain element extraction modifiers, food production modifiers and population growth and happiness modifiers. 
     //each actual instance of these types will inherit these modifiers * some random fluctuation. 
     public interface IOrbitalBody
     {
+        CentralHub CentralHub { get; }
         double Food { get; }
         double ProducedFoodthisTurn { get; }
         double DeathsthisTurn { get; }
@@ -23,14 +30,14 @@ namespace SpaceTrader
         double BirthsthisTurn { get; }
         bool IsHabitable { get; }
         ObservableCollection<OrbitalBody> NaturalSatellites { get; }
-        FullyObservableCollection<ResourceInStorageperBody> ResourcesinStorage { get; }
-        FullyObservableCollection<SpeciesperOrbitalBody> SpeciesonOrbitalBody { get; }
+        ObservableCollection<ElementinStorage> ElementsinStorage { get; }
+        ObservableCollection<ISpeciesperNode> SpeciesonOrbitalBody { get; }
         //void GrowFoodandPopulationEx(FastRandom rand);
-        void GrowFoodandPopulation(FastRandom rand);
+        void GrowFoodandPopulation(FastRandom rand, IStellarObject stellarobject);
         void ConstructBuildings(IReadOnlyList<IBuildingType> buildingtypes, FastRandom rand);
-        void MineResources(FastRandom rand);
-        void SetAvailableResourcesatStart(FastRandom rand, IReadOnlyList<IResource> resources);
-        void SetResourceGroupsatStart(FastRandom rand, IReadOnlyList<IResourceGroup> resourcegroups);
+        void MineElements(FastRandom rand);
+        void SetAvailableElementsatStart(FastRandom rand, IReadOnlyList<IElement> elements);
+        void SetElementGroupsatStart(FastRandom rand, IReadOnlyList<IElementGroup> elementgroups);
         void SetBuildingsatStart(IReadOnlyList<IBuildingType> buildingtypes, FastRandom rand);
     }
     public class OrbitalBody : CelestialBody,  INotifyPropertyChanged, IOrbitalBody
@@ -42,245 +49,81 @@ namespace SpaceTrader
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #region fields
-        //this turn info
+        #region properties
+ 
+        public bool IsHabitable { get; set; }
+        public bool IsNaturalSatellite { get; set; }
+        public bool IsInHabitableZone { get; set; }
 
-        protected double _solarpowerperm2;
-        protected double _newcomersthisturn;
-        protected double _deathsthisturn;
-        protected double _birthsthisturn;
-        protected double _spoiledfoodthisturn;
-        protected double _producedfoodthisturn;
-
-        // base modifiers
-        protected double _basenaturalhabitationmodifier;
-        protected double _basenaturaldeathsperturnpercentage;
-        protected double _basenaturalbirthsperturnpercentage;
+        public int SurfaceStateOfMatter { get; set; } //0 = Solid, 1 = liquid, 2 = gas
+        
+        public double AverageDistanceToCentralStellarObject { get; set; }
+        public double SolarPowerperM2 { get; set; }
+        // turn info
+        public double SpoiledFoodthisTurn { get; set; }
+        public double ProducedFoodthisTurn { get; set; }
+        public double DeathsthisTurn { get; set; }
+        public double BirthsthisTurn { get; set; }
+        public double NewcomersthisTurn { get; set; }
 
         // actual modifiers
-        protected double _naturalimmigrationperturnlinear; // immigration out of nowhere. Not sure yet, how to model this in a closed system. Future :  immigration from other orbital bodies.
-        protected double _naturalbirthsperturnpercentage;
-        protected double _naturaldeathsperturnpercentage;
-        protected double _naturalhabitationmodifier;
-        protected double _foodmodifierfrombuildings; //from buildings
-        protected double _populationmodifierfrombuildigns; //from buildings
+        public double FoodModifierfromBuildings { get; set; }
+        public double PopulationModifierfromBuildings { get; set; }
+        public double NaturalHabitationModifier { get; set; }
+        public double NaturalImmigrationperTurnLinear { get; set; }
+        public double NaturalBirthsperTurnPercentage { get; set; }
+        public double NaturalDeathsperTurnPercentage { get; set; }
 
-        //properties
-        protected double _populationhousing;
-        protected double _foodstorage;
-        protected double _food;
+        //population, food etc 
+        public double FoodStorage { get; set; }
+        public double PopulationHousing { get; set; }
+        public double Food { get; set; }
 
-        //bools
-        protected bool _isinhabitablezone;
-        protected bool _ishabitable;
-        protected bool _isnaturalsatellite;
+        // base modifiers 
+        public double BaseNaturalHabitationModifier { get; set; }
+        public double BaseNaturalBirthsperTurnPercentage { get; set; }
+        public double BaseNaturalDeathsperTurnPercentage { get; set; }
 
-        //type
-        protected BaseTypes.OrbitalBodyType _orbitalbodytype;
+        public CentralHub CentralHub { get; set; }
+        public OrbitalBodyType OrbitalBodyType { get; set; }
 
-        //collections belonging to the orbital body
-        protected FullyObservableCollection<SpeciesperOrbitalBody> _speciesonorbitalbody;
-        protected FullyObservableCollection<Building> _buildings;
-        protected ObservableCollection<OrbitalBody> _naturalsatellites;
-        protected ObservableCollection<ResourceGroup> _resourcegroups;
-        protected FullyObservableCollection<ResourceInStorageperBody> _resourcesinstorage;
-        //not yet used
-
-        protected double _averagedistancetocentralstellarobject;
-        protected int _surfacestateofmatter;
-        protected ObservableCollection<Tradegood> _tradegoods;
-        protected ObservableCollection<Resource> _resources;
-
-        #endregion
-
-        #region properties
+        public ObservableCollection<ISpeciesperNode> SpeciesonOrbitalBody { get; set; }
+        public ObservableCollection<ElementinStorage> ElementsinStorage { get; set; }
         /// <summary>
-        /// solarpower per m2 in watts
+        /// FullyObservableCollection for the onItemProperyChanged Event van Items in the collection
+        /// These make sure, that changed modifiers from buildings in this collection work their way up to orbital body modifiers
         /// </summary>
-        
-        public bool IsInHabitableZone
-        {
-            get { return _isinhabitablezone; }
-            set { _isinhabitablezone = value; }
-        }
-        public double SolarPowerperM2
-        {
-            get { return _solarpowerperm2; }
-            set { _solarpowerperm2 = value; }
-        }
-        public double NewcomersthisTurn
-        {
-            get { return _newcomersthisturn; }
-            set { _newcomersthisturn = value; }
-        }
-        public double FoodModifierfromBuildings
-        {
-            get { return _foodmodifierfrombuildings; }
-            set { _foodmodifierfrombuildings = value; }
-        }
-        public double PopulationModifierfromBuildings
-        {
-            get { return _populationmodifierfrombuildigns; }
-            set { _populationmodifierfrombuildigns = value; }
-        }
-        public double NaturalImmigrationperTurnLinear
-        {
-            get { return _naturalimmigrationperturnlinear; }
-            set { _naturalimmigrationperturnlinear = value; }
-        }
-        public double FoodStorage
-        {
-            get { return _foodstorage; }
-            set { _foodstorage = value; }
-        }
-        public double PopulationHousing
-        {
-            get { return _populationhousing; }
-            set
-            {
-                _populationhousing = value;
-            }
-        }
-        public double Food
-        {
-            get { return _food; }
-            set { _food = value; }
-        }
-//
+        public FullyObservableCollection<Building> Buildings { get; set; }
 
-        public double BaseNaturalHabitationModifier
-        {
-            get { return _basenaturalhabitationmodifier; }
-            set { _basenaturalhabitationmodifier = value; }
-        }
-        public double BaseNaturalBirthsperTurnPercentage
-        {
-            get { return _basenaturalbirthsperturnpercentage; }
-            set { _basenaturalbirthsperturnpercentage = value; }
-        }
-        public double BaseNaturalDeathsperTurnPercentage
-        {
-            get { return _basenaturaldeathsperturnpercentage; }
-            set { _basenaturaldeathsperturnpercentage = value; }
-        }
+        public ObservableCollection<Compound> CompoundsinStorage { get; set; }
+        public ObservableCollection<OrbitalBody> NaturalSatellites { get; set; }
+        public ObservableCollection<ElementGroup> ElementGroups { get; set; }
+        public ObservableCollection<Tradegood> TradeGoods { get; set; }
 
-        public double NaturalHabitationModifier
-        {
-            get { return _naturalhabitationmodifier; }
-            set { _naturalhabitationmodifier = value; }
-        }
-
-        public double NaturalBirthsperTurnPercentage
-        {
-            get { return _naturalbirthsperturnpercentage; }
-            set { _naturalbirthsperturnpercentage = value;
-            }
-        }
-        
-        public double NaturalDeathsperTurnPercentage
-        {
-            get { return _naturaldeathsperturnpercentage; }
-            set 
-            {   
-                _naturaldeathsperturnpercentage = value; 
-            }
-        }
-        public double SpoiledFoodthisTurn
-        {
-            get { return _spoiledfoodthisturn; }
-            set { _spoiledfoodthisturn = value; }
-        }
-        public double ProducedFoodthisTurn
-        {
-            get { return _producedfoodthisturn; }
-            set { _producedfoodthisturn = value; }
-        }
-        public double DeathsthisTurn
-        {
-            get { return _deathsthisturn; }
-            set { _deathsthisturn = value; }
-        }
-        public double BirthsthisTurn
-        {
-            get { return _birthsthisturn; }
-            set { _birthsthisturn = value; }
-        }
-        public bool IsHabitable
-        {
-            get { return _ishabitable; }
-            set { _ishabitable = value; }
-        }
-         public bool IsNaturalSatellite
-        {
-            get { return _isnaturalsatellite; }
-            set { _isnaturalsatellite = value; }
-        }
-        public FullyObservableCollection<SpeciesperOrbitalBody> SpeciesonOrbitalBody
-        {
-            get { return _speciesonorbitalbody; }
-            set { _speciesonorbitalbody = value; }
-        }
-        public FullyObservableCollection<ResourceInStorageperBody> ResourcesinStorage
-        {
-            get { return _resourcesinstorage;}
-            set { _resourcesinstorage = value; }
-        }
-        public FullyObservableCollection<Building> Buildings
-        {
-            get { return _buildings; }
-            set { 
-                _buildings = value;
-            }
-        }
-        public ObservableCollection<OrbitalBody> NaturalSatellites
-        {
-            get { return _naturalsatellites; }
-            set { _naturalsatellites = value; }
-        }
-        public ObservableCollection<ResourceGroup> ResourceGroups
-        {
-            get { return _resourcegroups; }
-            set { _resourcegroups = value; }
-        }
-        public BaseTypes.OrbitalBodyType OrbitalBodyType
-        {
-            get { return _orbitalbodytype; }
-            set { _orbitalbodytype = value; }
-        }
-
-        public int SurfaceStateOfMatter //0 = Solid, 1 = liquid, 2 = gas
-        {
-            get { return _surfacestateofmatter; }
-            set { _surfacestateofmatter = value; }
-        }
-
-
-        public double AverageDistanceToCentralStellarObject
-        {
-            get { return _averagedistancetocentralstellarobject; }
-            set { _averagedistancetocentralstellarobject = value; }
-        }
         #endregion
         #region constructor
         public OrbitalBody(string name, Int64 age, Point3D position) : base(name, position)
         {
             FastRandom fastRandom = new FastRandom();
-            SpeciesonOrbitalBody = new FullyObservableCollection<SpeciesperOrbitalBody>();
+            SpeciesonOrbitalBody = new ObservableCollection<ISpeciesperNode>();
             // make a new functionality to add different kinds of species of different size and reproduction rates to each orbital body.  Don't use Taxonomy.Species for the collection but a SpeciesperOrbitalBody type, that needs
             // to be defined first, including the fields Taxonomy.Species,SizeoPopulation, custom randomized modifiers like reproduction rate etcc. 
 
+            CentralHub = new CentralHub(); //only for Orbitalbodies, not for the Natural Satellites.
             Buildings = new FullyObservableCollection<Building>();
             Buildings.CollectionChanged += (obj, e) => RecalculateModifiersandProperties();       
             Buildings.ItemPropertyChanged += (obj, e) => RecalculateModifiersandProperties();
-            ResourceGroups = new ObservableCollection<ResourceGroup>();
+            ElementGroups = new ObservableCollection<ElementGroup>();
             NaturalSatellites = new ObservableCollection<OrbitalBody>();
-            ResourcesinStorage = new FullyObservableCollection<ResourceInStorageperBody>();
+            ElementsinStorage = new FullyObservableCollection<ElementinStorage>();
+            CompoundsinStorage = new ObservableCollection<Compound>();
             Age = age;
         }
-        #endregion
         public OrbitalBody()
         {
         }
+        #endregion
+
         #region methods
 
         public void RecalculateModifiersandProperties()//object obj, ItemPropertyChangedEventArgs e)
@@ -334,13 +177,13 @@ namespace SpaceTrader
                     {
                         if ((rand.NextDouble() * 100) < buildingtype.ChanceofOccuring && OrbitalBodyType.IsMineable)
                         {
-                            Buildings.Add(new Building { Size = 0, TechLevel = 0, Type = (BaseTypes.BuildingType)buildingtype });
+                            Buildings.Add(new Building { Size = 0, TechLevel = 0, Type = (BuildingType)buildingtype });
                         }
                         foreach (OrbitalBody naturalsatellite in NaturalSatellites)
                         {
                             if ((rand.NextDouble() * 100) < buildingtype.ChanceofOccuring)
                             {
-                                naturalsatellite.Buildings.Add(new Building { Size = 0, TechLevel = 0, Type = (BaseTypes.BuildingType)buildingtype });
+                                naturalsatellite.Buildings.Add(new Building { Size = 0, TechLevel = 0, Type = (BuildingType)buildingtype });
                             }
                         }
                     }
@@ -350,7 +193,7 @@ namespace SpaceTrader
                     {
                             if (IsHabitable && buildingtype.NeedsHabitabilitytoBuild || !buildingtype.NeedsHabitabilitytoBuild)
                             {
-                                Buildings.Add(new Building { Size = 1, TechLevel = 1, Type = (BaseTypes.BuildingType)buildingtype });
+                                Buildings.Add(new Building { Size = 1, TechLevel = 1, Type = (BuildingType)buildingtype });
                             }
                         }
                         foreach (OrbitalBody naturalsatellite in NaturalSatellites)
@@ -359,7 +202,7 @@ namespace SpaceTrader
                             {
                                 if (naturalsatellite.IsHabitable && buildingtype.NeedsHabitabilitytoBuild || !buildingtype.NeedsHabitabilitytoBuild)
                                 {
-                                    naturalsatellite.Buildings.Add(new Building { Size = 1, TechLevel = 1, Type = (BaseTypes.BuildingType)buildingtype });
+                                    naturalsatellite.Buildings.Add(new Building { Size = 1, TechLevel = 1, Type = (BuildingType)buildingtype });
                                 }
                             }
                         }
@@ -367,62 +210,62 @@ namespace SpaceTrader
                 }
             }
         }
-        public void SetAvailableResourcesatStart(FastRandom rand, IReadOnlyList<IResource> resources)
+        public void SetAvailableElementsatStart(FastRandom rand, IReadOnlyList<IElement> elements)
         {
-            bool haslocalresourcegroup;
-            foreach (IResource resource in resources)
+            bool haslocalelementgroup;
+            foreach (IElement element in elements)
             {
-                haslocalresourcegroup = false;
-                foreach (IResourceGroup resourcegroup in ResourceGroups)
+                haslocalelementgroup = false;
+                foreach (IElementGroup elementgroup in ElementGroups)
                 {
-                    foreach (IResource tresource in resourcegroup.Resources)
+                    foreach (IElement _element in elementgroup.Elements)
                     {
-                        if (tresource == resource)
+                        if (_element == element)
                         {
-                            haslocalresourcegroup = true;
+                            haslocalelementgroup = true;
                             break;
                         }
                     }
-                    if (haslocalresourcegroup)
+                    if (haslocalelementgroup)
                     {
                         break;
                     }
                 }
-                ResourcesinStorage.Add(new ResourceInStorageperBody { Amount = 0, Resource = (Resource)resource, HasLocalResourcegroup = haslocalresourcegroup });
+                ElementsinStorage.Add(new ElementinStorage { AmountinStorage = 0, Element = (Element)element, HasLocalElementgroup = haslocalelementgroup });
 
                 foreach (OrbitalBody naturalsatellite in NaturalSatellites)
                 {
-                    haslocalresourcegroup = false;
-                    foreach (IResourceGroup resourcegroup in naturalsatellite.ResourceGroups)
+                    haslocalelementgroup = false;
+                    foreach (IElementGroup elementgroup in naturalsatellite.ElementGroups)
                     {
 
-                        foreach (IResource tresource in resourcegroup.Resources)
+                        foreach (IElement _element in elementgroup.Elements)
                         {
-                            if (tresource == resource)
+                            if (_element == element)
                             {
-                                haslocalresourcegroup = true;
+                                haslocalelementgroup = true;
                                 break;
                             }
                         }
 
-                        if (haslocalresourcegroup)
+                        if (haslocalelementgroup)
                         {
                             break;
                         }
                     }
-                    naturalsatellite.ResourcesinStorage.Add(new ResourceInStorageperBody { Amount = 0, Resource = (Resource)resource, HasLocalResourcegroup = haslocalresourcegroup });
+                    naturalsatellite.ElementsinStorage.Add(new ElementinStorage { AmountinStorage = 0, Element = (Element)element, HasLocalElementgroup = haslocalelementgroup });
                 }
             }
         }
-        public void SetResourceGroupsatStart(FastRandom rand, IReadOnlyList<IResourceGroup> resourcegroups)
+        public void SetElementGroupsatStart(FastRandom rand, IReadOnlyList<IElementGroup> elementgroups)
         {
             if (OrbitalBodyType.IsMineable)
             {
-                foreach (IResourceGroup resourcegroup in resourcegroups)
+                foreach (IElementGroup elementgroup in elementgroups)
                 {
-                    if (rand.Next(0, resourcegroups.Count) < 1)
+                    if (rand.Next(0, elementgroups.Count) < 1)
                     {
-                        ResourceGroups.Add((ResourceGroup)resourcegroup);
+                        ElementGroups.Add((ElementGroup)elementgroup);
                     }
                 }
             }
@@ -431,11 +274,11 @@ namespace SpaceTrader
             {
                 if (naturalsatellite.OrbitalBodyType.IsMineable)
                 {
-                    foreach (IResourceGroup resourcegroup in resourcegroups)
+                    foreach (IElementGroup elementgroup in elementgroups)
                     {
-                        if (rand.Next(0, resourcegroups.Count) < 1)
+                        if (rand.Next(0, elementgroups.Count) < 1)
                         {
-                            naturalsatellite.ResourceGroups.Add((ResourceGroup)resourcegroup);
+                            naturalsatellite.ElementGroups.Add((ElementGroup)elementgroup);
                         }
                     }
                 }
@@ -443,27 +286,27 @@ namespace SpaceTrader
         }
         #endregion
         #region methods to change properties of orbital bodies and their satellites during a turn or after certain other time interval (per month, or year or such)
-        public void MineResources(FastRandom rand)
+        public void MineElements(FastRandom rand)
         {
-            foreach (ResourceInStorageperBody resourceinstorage in ResourcesinStorage)
+            foreach (ElementinStorage elementinstorage in ElementsinStorage)
             {
-                if (resourceinstorage.HasLocalResourcegroup)
+                if (elementinstorage.HasLocalElementgroup)
                 {
-                    resourceinstorage.Amount += rand.NextDouble() * resourceinstorage.Resource.UniversalAbundance;
+                    elementinstorage.AmountinStorage += rand.NextDouble() * elementinstorage.Element.UniversalAbundance;
                 }
             }
             foreach (OrbitalBody naturalsatellite in NaturalSatellites)
             {
-                foreach (ResourceInStorageperBody resourceinstorage in naturalsatellite.ResourcesinStorage)
+                foreach (ElementinStorage elementinstorage in naturalsatellite.ElementsinStorage)
                 {
-                    if (resourceinstorage.HasLocalResourcegroup)
+                    if (elementinstorage.HasLocalElementgroup)
                     {
-                        resourceinstorage.Amount += rand.NextDouble() * resourceinstorage.Resource.UniversalAbundance;
+                        elementinstorage.AmountinStorage += rand.NextDouble() * elementinstorage.Element.UniversalAbundance;
                     }
                 }
             }
         }
-        public void GrowFoodandPopulation(FastRandom rand) //method sets data of given parameter. its apparently byref
+        public void GrowFoodandPopulation(FastRandom rand, IStellarObject currentstellarobject) //method sets data of given parameter. its apparently byref
         {
             double additionalpopulationgrowthfromfoodsurplus;
             double deathsthisturnfromhomelessness;
@@ -473,7 +316,18 @@ namespace SpaceTrader
             SpoiledFoodthisTurn = 0;
             ProducedFoodthisTurn = 100*rand.NextDouble() * NaturalHabitationModifier;
             //set deltapopulation
-            foreach (SpeciesperOrbitalBody species in SpeciesonOrbitalBody)
+            if (rand.NextDouble() * 10000 < 2)
+            {
+                foreach (ISpeciesperNode species in SpeciesonOrbitalBody)
+                {
+                    species.PopulationSize = 0;
+                }
+                Food = 0;
+                //globaldisastercollection.Add((SpaceTrader.StellarObject)currentstellarobject);
+                ((StellarObject)currentstellarobject).GlobalDisasterTimer = 5;
+                return;
+            }
+            foreach (ISpeciesperNode species in SpeciesonOrbitalBody)
             {
                 BirthsthisTurn = species.PopulationSize * NaturalBirthsperTurnPercentage;  // dependent on the current population  . multiplicative factor
                 NewcomersthisTurn = rand.NextDouble() * NaturalImmigrationperTurnLinear; //independent of the current population  . additive  factor
@@ -522,20 +376,19 @@ namespace SpaceTrader
         public void ConstructBuildings(IReadOnlyList<IBuildingType> buildingtypes, FastRandom rand)
         {
             bool AlreadyBuilt;
-            Building tmpbuilding;
+            Building _building;
             if (IsHabitable || OrbitalBodyType.IsMineable)
             {
-                //Console.WriteLine("test");
                 if (rand.Next(1, 10) < 3)
                 {
                     AlreadyBuilt = false;
-                    tmpbuilding = new Building
+                    _building = new Building
                     {
-                        Type = (BaseTypes.BuildingType)buildingtypes[rand.Next(0, buildingtypes.Count)]
+                        Type = (BuildingType)buildingtypes[rand.Next(0, buildingtypes.Count)]
                     };
                     foreach (Building building in Buildings)
                     {
-                        if (tmpbuilding.Type == building.Type)
+                        if (_building.Type == building.Type)
                         {
                             if (building.Type.CanResize == true)
                             {
@@ -545,19 +398,19 @@ namespace SpaceTrader
                             break;
                         }
                     }
-                    if (!AlreadyBuilt && tmpbuilding.Type.CanBeBuilt)
+                    if (!AlreadyBuilt && _building.Type.CanBeBuilt)
                     {
-                        if (tmpbuilding.Type.CanResize == true)
+                        if (_building.Type.CanResize == true)
                         {
-                            tmpbuilding.Size = 1;
-                            tmpbuilding.TechLevel = 1;
+                            _building.Size = 1;
+                            _building.TechLevel = 1;
                         }
                         else
                         {
-                            tmpbuilding.Size = 0;
-                            tmpbuilding.TechLevel = 0;
+                            _building.Size = 0;
+                            _building.TechLevel = 0;
                         }
-                        Buildings.Add(tmpbuilding);
+                        Buildings.Add(_building);
                     }
                 }
             }
@@ -566,13 +419,13 @@ namespace SpaceTrader
                 if (rand.Next(1, 10) < 3)
                 {
                     AlreadyBuilt = false;
-                    tmpbuilding = new Building
+                    _building = new Building
                     {
-                        Type = (BaseTypes.BuildingType)buildingtypes[rand.Next(0, buildingtypes.Count)]
+                        Type = (BuildingType)buildingtypes[rand.Next(0, buildingtypes.Count)]
                     };
                     foreach (Building building in naturalsatellite.Buildings)
                     {
-                        if (tmpbuilding.Type == building.Type)
+                        if (_building.Type == building.Type)
                         {
                             if (building.Type.CanResize == true)
                             {
@@ -582,19 +435,19 @@ namespace SpaceTrader
                             break;
                         }
                     }
-                    if (!AlreadyBuilt && tmpbuilding.Type.CanBeBuilt)
+                    if (!AlreadyBuilt && _building.Type.CanBeBuilt)
                     {
-                        if (tmpbuilding.Type.CanResize == true)
+                        if (_building.Type.CanResize == true)
                         {
-                            tmpbuilding.Size = 1;
-                            tmpbuilding.TechLevel = 1;
+                            _building.Size = 1;
+                            _building.TechLevel = 1;
                         }
                         else
                         {
-                            tmpbuilding.Size = 0;
-                            tmpbuilding.TechLevel = 0;
+                            _building.Size = 0;
+                            _building.TechLevel = 0;
                         }
-                        naturalsatellite.Buildings.Add(tmpbuilding);
+                        naturalsatellite.Buildings.Add(_building);
                     }
                 }
             }

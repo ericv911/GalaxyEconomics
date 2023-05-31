@@ -1,0 +1,6 @@
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\FileLoadingSystem\bin\Debug\FileLoadingSystem.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\FileLoadingSystem\bin\Debug\FileLoadingSystem.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\FileLoadingSystem\obj\Debug\FileHandlingSystem.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\FileLoadingSystem\obj\Debug\FileHandlingSystem.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\FileLoadingSystem\obj\Debug\FileLoadingSystem.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\FileLoadingSystem\obj\Debug\FileLoadingSystem.pdb

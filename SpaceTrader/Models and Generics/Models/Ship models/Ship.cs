@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Common.Constants;
+using Common.Economy;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -21,18 +23,8 @@ namespace SpaceTrader
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #region fields
-        protected bool _shipinfovisibleonscreen;
-        protected bool _ownship;
-        protected EconomicEntity _economicentity;
-        protected Color _color;
-        protected StellarObject _currentstellarobject;
-        protected StellarObject _destinationstellarobject;
-        protected bool _hasmultinodedestination;
-        protected int _movecounter;
+
         protected Vector3D _movevector;
-        protected bool _hasdestination;
-        protected int _speed;
-        protected string _name;
         protected Point3D _beginposition;
         protected Point3D _movedposition;
         protected Point3D _rotatedpositionz;
@@ -45,18 +37,41 @@ namespace SpaceTrader
 
         public Ship()
         {
-            _economicentity = new EconomicEntity();
+            EconomicEntity = new EconomicEntity();
         }
         #region constructor
-        public Ship(string name, Point3D position, int speed, StellarObject destinationstellarobject, StellarObject currentstellarobject, Color color, EconomicEntity economicentity, bool ownship)
+        public Ship(string name, Point3D position, int speed, StellarObject destinationstellarobject, StellarObject currentstellarobject, Color color, EconomicEntity economicentity, bool ownship, int maxhullintegrity, double fuelconsumption, double fuelamount, int baseamountrepairsperturn)
         {
-            _shipinfovisibleonscreen = false;
-            _ownship = ownship;
-            _economicentity = economicentity;
-            _hasdestination = false;
-            //ShipClass for speed later on
-            _color = color;
-            _name = name;
+            //currentstellarobject at the beginning of the simulation is the homestellarobject
+            FuelAmount = fuelamount;
+            FuelConsumption = fuelconsumption;
+            HullIntegrity = maxhullintegrity;
+
+            IsUnloaded = true;
+            NeedsRefueling = false;
+            NeedsRepairing = false;
+            IsDocked = false;
+            IsRepairing = false;
+            IsOverhauling = false;
+            IsRefueling = false;
+            ShipInfoVisibleonScreen = false;
+            HasDestination = false;
+            HasMultiNodeDestination = false;
+            ShipOwnedbyPlayer = ownship;
+
+            ShipUpgradeLevel = 1;
+            DockingDuration = 0;
+            BaseRepairAmountperTurn = baseamountrepairsperturn;
+            Speed = speed;
+
+            Name = name;
+            Color = color;
+            HomeStellarObject = currentstellarobject;
+            CurrentStellarObject = currentstellarobject;
+            DestinationStellarObject = destinationstellarobject;
+
+            EconomicEntity = economicentity;
+
             _beginposition = position;
             _movedposition = position;
             _rotatedpositionz = position;
@@ -64,18 +79,45 @@ namespace SpaceTrader
             _scaledposition = position;
             _translatedposition = position;
             _finalposition = position;
-            _currentstellarobject = currentstellarobject;
-            _destinationstellarobject = destinationstellarobject;
-            _speed = speed;
+
         }
         #endregion
         #region properties
+        public bool IsUnloaded { get; set; }
+        public bool NeedsRefueling { get; set; }
+        public bool NeedsRepairing { get; set; }
+        public bool IsDocked {get; set;}
+        public bool IsOverhauling { get; set; }
+        public bool IsRepairing { get; set; }
+        public bool IsRefueling { get; set; }
+        public bool ShipInfoVisibleonScreen { get; set; }
+        public bool ShipOwnedbyPlayer { get; set; }
+        public bool HasDestination { get; set; }
+        public bool HasMultiNodeDestination { get; set; }
 
-        public bool ShipInfoVisibleonScreen
-        {
-            get { return _shipinfovisibleonscreen; }
-            set { _shipinfovisibleonscreen = value; }
-        }
+        public double FuelAmount { get; set; }
+        public double FuelConsumption { get; set; }
+        public double HullIntegrity { get; set; }
+
+        public int BaseRepairAmountperTurn { get; set; }
+        public int ShipUpgradeLevel { get; set; }
+        public int DockingDuration { get; set; }
+        public int MoveCounter { get; set; }
+        public int Speed { get; set; }
+
+        public string Name { get; set; }
+
+        public Color Color { get; set; }
+        public EconomicEntity EconomicEntity { get; set; }
+        public StellarObject HomeStellarObject { get; set; }
+        public StellarObject DestinationStellarObject { get; set; }
+        public StellarObject CurrentStellarObject { get; set; }
+        public List<int> PathListfromSourcetoDestination = new List<int>();
+        public Queue<int> PathQueuefromSourcetoDestination = new Queue<int>();
+        public List<StellarObject> PathStellarObjectsListfromSourcetoDestination = new List<StellarObject>();
+        public Queue<StellarObject> PathStellarObjectsQueuefromSourcetoDestination = new Queue<StellarObject>();
+
+
         public Point ScreenCoordinates
         {
             get { return _screencoordinates; }
@@ -84,73 +126,13 @@ namespace SpaceTrader
                 OnPropertyChanged();
             }
         }
-        public List<int> PathListfromSourcetoDestination = new List<int>();
-        public Queue<int> PathQueuefromSourcetoDestination = new Queue<int>();
-        public List<StellarObject> PathStellarObjectsListfromSourcetoDestination = new List<StellarObject>();
-        public Queue<StellarObject> PathStellarObjectsQueuefromSourcetoDestination = new Queue<StellarObject>();
 
-        public bool OwnShip
-        {
-            get { return _ownship; }
-            set { _ownship = value; }
-        }
-        public EconomicEntity EconomicEntity
-        {
-            get { return _economicentity; }
-            set { _economicentity = value; }
-        }
-        public Color Color
-        {
-            get { return _color; }
-            set { _color = value; }
-        }
-        public bool HasDestination
-        {
-            get { return _hasdestination; }
-            set { _hasdestination = value; }
-        }
-        public bool HasMultiNodeDestination
-        {
-            get { return _hasmultinodedestination; }
-            set { _hasmultinodedestination = value; }
-        }
         public Vector3D MoveVector
         {
             get { return _movevector; }
             set { _movevector = value; }
         }
-        public int MoveCounter
-        {
-            get { return _movecounter; }
-            set { _movecounter = value; }
-        }
-        public StellarObject DestinationStellarObject
-        {
-            get { return _destinationstellarobject; }
-            set { _destinationstellarobject = value; }
-        }
-        public StellarObject CurrentStellarObject
-        {
-            get { return _currentstellarobject; }
-            set { _currentstellarobject = value; }
-        }
-        public int Speed
-        {
-            get { return _speed; }
-            set
-            {
-                _speed = value;
-            }
-        }
-        public string Name
-        {
-            get { return _name; }
-            private set
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
-        }
+
         public Point3D BeginPosition
         {
             get { return _beginposition; }
@@ -186,7 +168,40 @@ namespace SpaceTrader
             get { return _finalposition; }
             set { _finalposition = value;
                 ScreenCoordinates = new Point( FinalPosition.X -150, FinalPosition.Z);
+            }
+        }
+        #endregion
 
+        #region methods
+        /// <summary>
+        /// What happens to a ship at the moment of Docking
+        /// </summary>
+        /// <param name="rand"></param>
+        /// <param name="maxhullintegrity"></param>
+        /// <param name="shipconstants"></param>
+        public void DockingShipDynamics(FastRandom rand, int maxhullintegrity, IShipConstants shipconstants)
+        {
+            DockingDuration = shipconstants.BaseDockingDurationforLoadingUnloading; //time for loading and unloading
+            IsDocked = true;
+            if (rand.NextDouble() < shipconstants.BaseChanceofOverhaulingShipwhenDocked && !NeedsRepairing && !NeedsRefueling)
+            {
+                NeedsRefueling = false;
+                NeedsRepairing = false;
+                IsOverhauling = true;
+                DockingDuration = shipconstants.BaseDockingDurationforOverhauling;  //length of overhauling-period
+            }
+            else if (NeedsRepairing)
+            {
+                DockingDuration = (int)(((maxhullintegrity * ShipUpgradeLevel) - HullIntegrity) / shipconstants.BaseAmountofDamageRepairedEachTurn);
+                NeedsRepairing = false;
+                NeedsRefueling = false;
+                IsRepairing = true;
+            }
+            else if (NeedsRefueling)
+            {
+                DockingDuration = shipconstants.BaseDockingDurationforRefueling; //time for refueling
+                NeedsRefueling = false;
+                IsRefueling = true;
             }
         }
         #endregion

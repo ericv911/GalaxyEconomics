@@ -1,0 +1,26 @@
+//this file contains often occuring function chemical groups like CN, COOH, Carbonyl, Carboxyl, Rings etc.
+//the groups in this file can be added to the compound rules file and be combined with element groups and with elements to form new compounds
+
+//The order of data is : Name of the Group as used in compounds,  Charge, number of elements (or element groups like Halides),  or combination thereof used in the functional group), 
+//is element(1) or elementgroup(2), what element(or elementgroup), amount, -> this repeats for all number of elements used in the group. Almost always Element.
+// for instance Hydroxyl group : { Hydroxyl, 2, 1, 8, 1, 1, 1, 1} 
+{ Hydroxy-l, -1, 2, 1, 8, 1, 1, 1, 1} 
+{ Carbonyl, 0, 2, 1, 6, 1, 1, 8, 1}
+{ Cyanide, -1, 2, 1, 6, 1, 1, 7, 1}
+{ Amide, -1, 2, 1, 7, 1, 1, 1, 2}
+{ Sulfate, -2, 2, 1, 16, 1, 1, 8, 4}
+{ Selenate, -2, 2, 1, 34, 1, 1, 8, 4}
+{ Tellurate, -2, 2, 1, 52, 1, 1, 8, 4}
+{ Sulfite, -2, 2, 1, 16, 1, 1, 8, 3}
+{ Selenite, -2, 2, 1, 34, 1, 1, 8, 3}
+{ Tellurite, -2, 2, 1, 52, 1, 1, 8, 3}
+{ Carbonate, -2, 2, 1, 6, 1, 1, 8, 3}
+{ Silicate, -2, 2, 1, 14, 1, 1, 8, 3}
+{ Germanate, -2, 2, 1, 32, 1, 1, 8, 3}
+{ Stannate, -2, 2, 1, 50, 1 ,1 ,8, 3}
+{ Plumbate, -2, 2, 1, 82, 1, 1, 8, 3}
+{ Acetate, -1, 3, 1, 6, 2, 1, 1, 3, 1, 8, 2}
+{ Ammonium, 1, 2, 1, 7, 1, 1, 1, 4}
+{ Nitrate, -1, 2, 1, 7, 1, 1, 8, 3}
+{ MetaPhosphate, -1, 2, 1, 15, 1, 1, 8, 3}
+

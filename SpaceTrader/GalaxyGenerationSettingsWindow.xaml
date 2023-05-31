@@ -19,27 +19,27 @@
                 <TextBlock Text="Select sections of the galaxy to initialise  : "/>
                 <TextBlock Text=""/>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox  Content =" Initialise spiralarms " IsChecked="{Binding InitSpiralArms}"></CheckBox>
+                    <CheckBox  Content =" Initialise spiralarms " IsChecked="{Binding InitializeStellarObjectsinSpiralArms}"></CheckBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="    ->  Spiralwindedness (1-15) : "/>
                     <TextBox Text="{Binding SpiralWindedness}" BorderThickness="0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Content =" Initialise bulge" IsChecked="{Binding InitBulge}"></CheckBox>
+                    <CheckBox Content =" Initialise bulge" IsChecked="{Binding InitializeStellarObjectsinBulge}"></CheckBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="    -> Maximum bulge radius (50-500) : "/>
-                    <TextBox Text="{Binding MaxBulgeRadius}" BorderThickness="0"/>
+                    <TextBox Text="{Binding MaximumRadiusofBulge}" BorderThickness="0"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock>
-                    <CheckBox Content =" Initialise bar (spiralwindedness &lt; 4)" IsChecked="{Binding InitBar}"></CheckBox>
+                    <CheckBox Content =" Initialise bar (spiralwindedness &lt; 4)" IsChecked="{Binding InitializeStellarObjectsinBar}"></CheckBox>
                     </TextBlock>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock>
-                    <CheckBox Content =" Initialise disc" IsChecked="{Binding InitDisc}"></CheckBox>
+                    <CheckBox Content =" Initialise disc" IsChecked="{Binding InitializeStellarObjectsinDisc}"></CheckBox>
                     </TextBlock>
                 </StackPanel>
                 <StackPanel>
@@ -47,7 +47,7 @@
                     <CheckBox Content="Initialise stellar objects in the centre"  IsChecked="{Binding DrawStarsinCentre}" ></CheckBox>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="    -> Minimal distance from centre : " />
-                        <TextBox Text="{Binding MinDistancefromCentre}" BorderThickness="0"/>
+                        <TextBox Text="{Binding MinimumDistancefromCentre}" BorderThickness="0"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Vertical">

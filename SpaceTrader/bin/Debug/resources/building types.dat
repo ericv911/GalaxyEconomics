@@ -10,16 +10,17 @@
 // Modifiers will be multiplied together. So a modifiers need to be higher than 0. A modifier > 1 will increase the result, a modifier < 1 will decrease it. 
 // order of data is : Name (string), needsHabitabilitytoBuild(bool), hasTechLevel (bool), canResize(bool), canbeBuilt(bool), canModifyFood (bool), canModifyPopulation (bool), 
 // FoodModifier(double), Populationmodifier(double), PopulationHousing(int), FoodStorage(int) % Chance of occuring at the beginning on a body (double) 
-/
+// CanDoChemistry (bool), CanProduceCompounds (bool) WhereCanitBeBuilt (0 = everywhere, 1 on the CentralHub, 2 on orbital body, 3 in space
 
-{ Farm        ,1, 1, 1, 1, 1, 0, 1.15, 0, 10, 8, 100}
-{ Housing     ,1, 1, 1, 1, 0, 0, 0, 0, 100, 4, 100}
-{ Hospital    ,1, 1, 1, 1, 0, 1, 0, 1.2, 0, 0, 0}
-{ Alien Ruins ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 70}
-{ Fish Farm   ,1, 1, 1, 1, 1, 0, 1.26, 0, 5, 4, 10}
-{ Warehouse   ,1, 1, 1, 1, 0, 0, 0, 0, 0, 50, 0}
-
-
+{ Farm             ,1, 1, 1, 1, 1, 0, 1.15, 0, 10, 8, 100, 0, 0, 2}
+{ Housing          ,1, 1, 1, 1, 0, 0, 0, 0, 100, 4, 100, 0, 0, 2}
+{ Hospital         ,1, 1, 1, 1, 0, 1, 0, 1.2, 0, 0, 0, 0, 0, 2}
+{ Alien Ruins      ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 0, 0, 2}
+{ Fish Farm        ,1, 1, 1, 1, 1, 0, 1.26, 0, 5, 4, 10, 0, 0, 2}
+{ Warehouse        ,1, 1, 1, 1, 0, 0, 0, 0, 0, 50, 10, 0, 0, 2}
+{ Laboratory       ,1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 10, 1, 0, 1}
+{ Docks            ,1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0, 1}
+{ Chemical Factory ,1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 10, 0, 1, 1}
 
 // Farm modifies food production, can house people and needs people to operate. some farms are present at the beginning
 // Housing only houses a certain number of people. some housing is present at the beginning

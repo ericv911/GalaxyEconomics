@@ -1,0 +1,9 @@
+// This file contains constans used for ship actions.
+
+BaseDockingDurationforRefueling=3
+BaseDockingDurationforOverhauling=100
+BaseDockingDurationforLoadingUnloading=5
+BaseMinimalFuelAmountforNeedsRefuelingFlagSet=100
+BaseMinimumHullIntegrityAmountforNeedsRepairingFlagSet=100
+BaseAmountofDamageRepairedEachTurn=15
+BaseChanceofOverhaulingShipwhenDocked=1.0

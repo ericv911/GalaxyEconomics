@@ -1,0 +1,15 @@
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\CompoundCreator.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\CompoundCreator.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\Common.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\FileLoadingSystem.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\Common.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\FileLoadingSystem.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\obj\Debug\Compounds.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\obj\Debug\Compounds.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\obj\Debug\Compounds.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\obj\Debug\CompoundCreator.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\obj\Debug\CompoundCreator.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\ChemistryDynamics.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\ChemistryDynamics.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\FunctionalGroups.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\CompoundCreator\bin\Debug\FunctionalGroups.pdb

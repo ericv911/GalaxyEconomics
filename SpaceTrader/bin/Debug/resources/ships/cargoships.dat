@@ -1,0 +1,8 @@
+// a file used to generate the type of ships that control trade, orbital bodies, ships, stellar system, stellar lanes. This file
+// contains Cargo-ship type information
+// the data is layed out as : Name, MaxHullIntegrity, HullIntegrityincrease per level, Fuel Capacity, Fuelconsumption per turn (nothing is done with this at the moment) 
+// , BaseSpeed, Nr of CargoHolds, max amount loadable per Cargohold,  base repairamount per turn.    
+// More can follow     needs to be added
+{  Yusen, 800, 150, 1500, 1.5, 1, 5, 20000, 20}
+{  Orion, 500, 10, 1000, 0.9, 2, 3, 10000, 10}
+{ Betelgeuse, 2000, 100, 2000, 2.3, 1, 8, 30000, 15}

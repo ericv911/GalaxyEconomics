@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -16,6 +17,22 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using Common.Physics;
+using Common.Logistics;
+using System.Collections.ObjectModel;
+using Common.Construction;
+using Common.Astronomy;
+using Common.Messaging;
+using Common.Constants;
+using Taxonomy;
+using CompoundProvider;
+using CompoundProvider.Types;
+using FunctionalGroups;
+using FunctionalGroups.Types;
+using NAudio.Wave;
+using System.Threading.Tasks;
+using Audio;
+using AudioSwitcher.AudioApi.CoreAudio;
 
 namespace SpaceTrader
 {
@@ -28,38 +45,57 @@ namespace SpaceTrader
         private ICommand _mouseMove;
         private ICommand _keypressedup;
         private ICommand _keypresseddown;
+
         private bool canExecute = true;
         private string _overviewtext;
+        private string _centralhubtext;
         private string _stellarobjectsystemtext;
         private string _stardate;
         private string _selectedshipsystemtext;
-        
-        protected List<string> _items;
-        protected string _currentitem;
+
         protected ImageSource _testimage;
         #endregion
 
-        #region properties. Also Subclasses
-       
+        #region properties & collections
 
         public DateTime TickTimer { get; set; } //  used for calculating framerate
         public int TurnCounter { get; set; }
         /// Settings :  All general gameplay-unrelated settings needed to play the game, such as :
         /// Mouse settings, screen settings, graphics settings, bitmap settings, timer settings etc.
         public GeneralSettings CommonSettings { get; set; } = new GeneralSettings();
-        /// BaseTaxonomyCollections : Set of taxonomy collections that are needed to generate specific gamedata.
-        /// Collections include, Domains of life down to individual species
-        public BaseTaxonomyCollections BaseTaxonomyCollections { get; set; } = new BaseTaxonomyCollections();
         /// BaseCollections : Set of generic collections that are needed to generate specific gamedata.
-        /// Collections include, resource lists, resourcegroup lists, orbital-body types, stellarobject-types etc.
+        /// Collections include, element lists, elementgroup lists, orbital-body types, stellarobject-types etc.
         public BaseCollections BaseCollections { get; set; } = new BaseCollections();
         /// class for ungeneric Ship data and methods to use in game.
         public ShipViewModel Ships { get; set; } = new ShipViewModel();
         /// class for ungeneric CelestialBody data and methods to use in game.  Initialized in ViewModel Initializer with arguments
         public CelestialBodyViewModel CelestialBodies { get; set; } = new CelestialBodyViewModel();
-        /// class for general constants, solar constants, earth constants and such
-        ISolarConstants SolarConstants { get; } = new BaseConstants.SolarConstants();
-        IPhysicalConstants PhysicalConstants { get; } = new BaseConstants.PhysicalConstants();
+
+
+        /// <summary>
+        /// TaxonomyCollections : Set of taxonomy collections that are needed to generate specific gamedata.
+        /// Collections include, Domains of life down to individual species  
+        /// </summary>
+        ITaxonomyCollection TaxonomyCollections { get; set; }
+
+        /// <summary>
+        /// CompoundCollection is a class. 
+        /// Compoundcollection.Compounds is an observablecollection of all possible compounds
+        /// </summary>
+        ICompoundCollection CompoundCollection { get; set; }
+
+        /// <summary>
+        /// FunctionalGroupcollection is a class. 
+        /// FunctionalGroupcollection.FunctionalGroups is an observablecollection of all possible functionalgroups
+        /// </summary>
+        IFunctionalGroupCollection FunctionalGroupCollection { get; set; }
+
+        /// interfaces for  general constants, solar constants, earth constants and such
+        ISolarConstants SolarConstants { get; } = new SolarConstants();
+        IPhysicalConstants PhysicalConstants { get; } = new PhysicalConstants();
+        IShipConstants ShipConstants { get; } = new ShipConstants();
+        IEarthConstants EarthConstants { get; } = new EarthConstants(); 
+
         public bool CanExecute
         {
             get { return this.canExecute; }
@@ -96,32 +132,21 @@ namespace SpaceTrader
                 OnPropertyChanged();
             }
         }
+        public string CentralHubText
+        {
+            get { return _centralhubtext; }
+            set
+            {
+                _centralhubtext = value;
+                OnPropertyChanged();
+            }
+        }
         public string StellarobjectSystemText
         {
             get { return _stellarobjectsystemtext; }
             set
             {
                 _stellarobjectsystemtext = value;
-                OnPropertyChanged();
-            }
-        }
-        public List<String> Items
-        {
-            get { return _items; }
-            set
-            {
-                _items = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string CurrentItem
-        {
-            get { return _currentitem; }
-            set
-            {
-                _currentitem = value;
-                SetHighLightedStellarObjects();
                 OnPropertyChanged();
             }
         }
@@ -137,7 +162,7 @@ namespace SpaceTrader
         }
         #endregion
 
-        #region constructor/initializer
+        #region constructor/initializer load config 
         public SpaceGameMainViewModel(Window window) 
         {
             /* window events */
@@ -151,7 +176,6 @@ namespace SpaceTrader
 
             window.Closed += (sender, e) =>
             {
-                //MessageBox.Show("Thank you for using this application!");
             };
 
             /// each RelayCommand has 2 paremeters. The Action and the Predicate
@@ -169,8 +193,112 @@ namespace SpaceTrader
             IShowGameInitialisationResultsonScreen = new RelayCommand(RelayShowGameInitialisationResultsonScreen, param => this.canExecute);
             ICalculatePathtoDestinationStar = new RelayCommand(RelayCalculatePathFromHometoDestinationStar, param => this.canExecute);
             ICalculatePathFromShiptoDestinationStar = new RelayCommand(RelayCalculatePathFromShiptoDestinationStar, param => this.canExecute);
-            ISetHomeStar = new RelayCommand(RelaySetHomeStar, param => this.canExecute);
             IRedrawScreen = new RelayCommand(RelayRedrawScreen, param => this.canExecute);
+        }
+
+        public void Initialise()
+        {
+            CommonSettings.StellarObjectSettings.PropertyChanged += (s, e) => SetScreenSettingsFromStellarObjectSettings();
+            CommonSettings.BitmapDataSettings.SetBitmapData(CommonSettings.ScreenSettings.ScreenWidth, CommonSettings.ScreenSettings.ScreenHeight);   //add loadsettingsfromfile
+            CommonSettings.Timer.SetTimer();
+            TurnCounter = 1;
+            
+            FunctionalGroupCollection = FunctionalGroupFactory.GetFunctionalGroupCollection(BaseCollections.ElementGroups, BaseCollections.Elements);
+            CompoundCollection = CompoundFactory.GetCompoundCollection(BaseCollections.ElementGroups, BaseCollections.Elements, FunctionalGroupCollection.FunctionalGroups);
+            TaxonomyCollections = TaxonomyFactory.GetCollection();
+            SetStartScreenVariablesandData();
+            SetDynamicScreenVariablesandData();
+            OverviewText = SetStringGeneralInitialisationResults();
+            CommonSettings.Timer.ClockTimer.Interval = new TimeSpan(0, 0, 0, 0, 30);
+            CommonSettings.Timer.ClockTimer.Tick += new EventHandler(DispatcherTimer_Tick);
+            SetSound();
+        }
+        private readonly AudioPlaybackEngine apbe = new AudioPlaybackEngine(0.9f);
+        private readonly AudioPlaybackEngine backgroundmusicaudiothread = new AudioPlaybackEngine(0.1f);
+        private CachedSound BackgroundMusic;
+        private CachedSound leftclicksound;
+        private CachedSound rightclicksound;
+        private CachedSound middleclicksound;
+        private void SetSound()
+        {
+            AudioConverter.Converter.ConvertAudioto441Khz(Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/leftclick.wav"), Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/leftclick441.wav"));
+            AudioConverter.Converter.ConvertAudioto441Khz(Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/rightclick.wav"), Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/rightclick441.wav"));
+            AudioConverter.Converter.ConvertAudioto441Khz(Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/middleclick.wav"), Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/middleclick441.wav"));
+            middleclicksound = new CachedSound(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/middleclick.wav");
+            leftclicksound = new CachedSound(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/leftclick.wav");
+            rightclicksound = new CachedSound(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/rightclick.wav");
+            BackgroundMusic = new CachedSound(AppDomain.CurrentDomain.BaseDirectory + "resources/sounds/backgroundmeditation441.mp3");          
+            backgroundmusicaudiothread.PlaySound(BackgroundMusic);
+        }
+
+
+        private void LoadConfigIni()
+        {
+            string[] splitstring;
+            foreach (string line in System.IO.File.ReadLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"resources/config.ini")))
+            {
+                if (line.Length > 0 && !(line.Substring(0, 1) == "/"))
+                {
+                    splitstring = line.Split('=');
+                    switch (splitstring[0])
+                    {
+                        case "ScreenWidth":
+                            CommonSettings.ScreenSettings.ScreenWidth = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "ScreenHeight":
+                            CommonSettings.ScreenSettings.ScreenHeight = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "StartNumberofStars":
+                            CelestialBodies.StartNumberofStellarObjects = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "MaximumNumberofOrbitalBodies":
+                            CelestialBodies.MaximumNumberofOrbitalBodies = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "MinimumNumberofOrbitalBodies":
+                            CelestialBodies.MinimumNumberofOrbitalBodies = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "MaximumOrbitalBodyMassAroundLowMassStellarObjects":
+                            CelestialBodies.MaximumOrbitalBodyMassAroundLowMassStellarObjects = double.Parse(splitstring[1], CultureInfo.InvariantCulture);
+                            break;
+                        case "MaximumOrbitalBodyMassAroundLowMetallicityStellarObjects":
+                            CelestialBodies.MaximumOrbitalBodyMassAroundLowMetallicityStellarObjects = double.Parse(splitstring[1], CultureInfo.InvariantCulture);
+                            break;
+                        case "LowMassStellarObjectsCutOffforOrbitalBodyGeneration":
+                            CelestialBodies.LowMassStellarObjectsCutOffforOrbitalBodyGeneration = double.Parse(splitstring[1], CultureInfo.InvariantCulture);
+                            break;
+                        case "LowMetallicityStellarObjectsCutOffforOrbitalBodyGeneration":
+                            CelestialBodies.LowMetallicityStellarObjectsCutOffforOrbitalBodyGeneration = double.Parse(splitstring[1], CultureInfo.InvariantCulture);
+                            break;
+                        case "MaximumBulgeRadius":
+                            CelestialBodies.MaximumRadiusofBulge = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "MinimumDistanceFromCentreofGalaxy":
+                            CelestialBodies.MinimumDistancefromCentre = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "DrawStarsinCentre":
+                            CelestialBodies.DrawStarsinCentre = Convert.ToBoolean(Convert.ToInt32(splitstring[1]));
+                            break;
+                        case "SpiralWindedness":
+                            CelestialBodies.SpiralWindedness = Convert.ToInt32(splitstring[1]);
+                            break;
+                        case "InitializeStarsInSpiralArms":
+                            CelestialBodies.InitializeStellarObjectsinSpiralArms = Convert.ToBoolean(Convert.ToInt32(splitstring[1]));
+                            break;
+                        case "InitializeStarsInBulge":
+                            CelestialBodies.InitializeStellarObjectsinBulge = Convert.ToBoolean(Convert.ToInt32(splitstring[1]));
+                            break;
+                        case "InitializeStarsInDisc":
+                            CelestialBodies.InitializeStellarObjectsinDisc = Convert.ToBoolean(Convert.ToInt32(splitstring[1]));
+                            break;
+                        case "InitializeStarsInBar":
+                            CelestialBodies.InitializeStellarObjectsinBar = Convert.ToBoolean(Convert.ToInt32(splitstring[1]));
+                            break;
+                        case "StartNumberofShips":
+                            Ships.StartNumberofCargoShips = Convert.ToInt32(splitstring[1]);
+                            break;
+                    }
+                }
+            }
         }
         #endregion
 
@@ -190,7 +318,6 @@ namespace SpaceTrader
         public ICommand IShowGameInitialisationResultsonScreen { get; set; }
         public ICommand ICalculatePathtoDestinationStar { get; set; }
         public ICommand ICalculatePathFromShiptoDestinationStar { get; set; }
-        public ICommand ISetHomeStar { get; set; }
         public ICommand IRedrawScreen { get; set; }
         ///  the following 4 ICommands are different from the previous ones in the sense that they use Prism and MVVM-light to bind to 
         ///  mouse-actions in the xaml. They do not use the RelayCommand class to bind the Interface to the Viewmodel method.
@@ -200,6 +327,7 @@ namespace SpaceTrader
         public ICommand IMouseClick => _mouseClick = _mouseClick ?? new DelegateCommand<MouseButtonEventArgs>(e => RelayMouseClickCommandExecute(e));
         public ICommand IMouseWheelCommand => _mouseWheelCommand = _mouseWheelCommand ?? new DelegateCommand<MouseWheelEventArgs>(e => RelayMouseWheelCommandExecute(e));
         public ICommand IMouseMove => _mouseMove = _mouseMove ?? new DelegateCommand<MouseEventArgs>(e => RelayMouseMoveCommandExecute(e));
+        
         #endregion
 
         #region methods for relaycommand Icommand to xaml and back with object obj and eventargs e
@@ -208,6 +336,14 @@ namespace SpaceTrader
         {
             if (CommonSettings.ScreenSettings.IsGameDataDrawn)
             {
+                if(e.Key.ToString() == CommonSettings.KeyboardSettings.ShowResources)
+                {
+                    CommonSettings.ScreenSettings.ShowCentralHubElements = !CommonSettings.ScreenSettings.ShowCentralHubElements;
+                }
+                if (e.Key.ToString() == CommonSettings.KeyboardSettings.SwitchElementandSymbol)
+                {
+                    CommonSettings.ScreenSettings.DisplayElementSymbol = !CommonSettings.ScreenSettings.DisplayElementSymbol;
+                }
                 //Console.WriteLine("test" + e.Key.ToString());
                 if (e.Key.ToString() == "A")
                 {
@@ -242,7 +378,7 @@ namespace SpaceTrader
                 }
                 if (e.Key.ToString() == "Space")
                 {
-                    Ships.BMoveShips = !Ships.BMoveShips;
+                    Ships.MoveShips = !Ships.MoveShips;
                 }
             }
         }
@@ -260,15 +396,14 @@ namespace SpaceTrader
                 }
             }
         }
-        private System.Windows.Point GetMousePosition(System.Windows.Point e)
-        {
-            return new System.Windows.Point(e.X - 25, e.Y - 35); // variables come from width and height of other control elements on the form. For now. this is ok. It needs to be documented
-        }
+
         private void RelayMouseClickCommandExecute(MouseButtonEventArgs e)
         {
-            System.Windows.Point position = GetMousePosition(e.GetPosition(Application.Current.MainWindow)); 
+            System.Windows.Point position = GetMousePosition(e.GetPosition(Application.Current.MainWindow));
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+                apbe.PlaySound(leftclicksound);
+                //AudioPlaybackEngine.Instance.PlaySound(leftclicksound);
                 if (CommonSettings.MouseSettings.MousepressedLeft == false)
                 {
                     CommonSettings.MouseSettings.MousePosWhenPressedLeft = new System.Windows.Point(position.X, position.Y);
@@ -278,16 +413,18 @@ namespace SpaceTrader
                 {
                     CommonSettings.MouseSettings.MousePosWhenPressedLeftA = new System.Windows.Point(Ships.ShipSelectedonScreen.ScreenCoordinates.X, Ships.ShipSelectedonScreen.ScreenCoordinates.Y);   //position.X - 150, position.Y);
                     CelestialBodies.SetActiveStar(position);
+                    CelestialBodies.SetActiveStarlane(position);
                     Ships.SetActiveShip(position);
-                    SetImageFromStarArray();
-                    SelectedShipSystemText = SetSelectedShipInfotoString();
-                    StellarobjectSystemText = SetStellarSystemInfotoString();
+                    PrepareScreenDataandDrawBitmap();
+                    SelectedShipSystemText = SetStringSelectedShipInfo();
+                    StellarobjectSystemText = SetStringStellarSystemInfo();
                 }
             }
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
+                apbe.PlaySound(middleclicksound);
+                
                 CelestialBodies.SetActiveStar(position);
-
                 CommonSettings.ScreenSettings.DisplayButtonCalculateShiptoStellarObject = !CommonSettings.ScreenSettings.DisplayButtonCalculateShiptoStellarObject;
                 //if (CommonSettings.ScreenSettings.DisplayButtonCalculateShiptoStellarObject)
                 //{
@@ -297,13 +434,13 @@ namespace SpaceTrader
                 //{
                 //    CommonSettings.ScreenSettings.VisibilityButtonCalculateShiptoStellarObject = Visibility.Hidden;
                 //}
-                SetImageFromStarArray();
-                StellarobjectSystemText = SetStellarSystemInfotoString();
+                PrepareScreenDataandDrawBitmap();
+                StellarobjectSystemText = SetStringStellarSystemInfo();
             }
-            //else if (e.RightButton == MouseButtonState.Pressed)
-            //{
-            //    Console.WriteLine("right");
-            //}
+            else if (e.RightButton == MouseButtonState.Pressed)
+            {
+                apbe.PlaySound(rightclicksound);
+            }
         }
         private void RelayMouseMoveCommandExecute(MouseEventArgs e)
         {
@@ -315,23 +452,23 @@ namespace SpaceTrader
                 {
                     if (position.X < CommonSettings.MouseSettings.MousePosWhenPressedLeft.X)
                     {
-                        CommonSettings.ScreenSettings.Point3DSettings.Translations.X -= 25;
+                        CommonSettings.ScreenSettings._3DSettings.Translations.X -= 25;
                     }
                     else
                     {
-                        CommonSettings.ScreenSettings.Point3DSettings.Translations.X += 25;
+                        CommonSettings.ScreenSettings._3DSettings.Translations.X += 25;
                     }
                     if (position.Y < CommonSettings.MouseSettings.MousePosWhenPressedLeft.Y)
                     {
-                        CommonSettings.ScreenSettings.Point3DSettings.Translations.Y -= 25;
+                        CommonSettings.ScreenSettings._3DSettings.Translations.Y -= 25;
                     }
                     else
                     {
-                        CommonSettings.ScreenSettings.Point3DSettings.Translations.Y += 25;
+                        CommonSettings.ScreenSettings._3DSettings.Translations.Y += 25;
 
                     }
                 }
-                SetImageFromStarArray();
+                PrepareScreenDataandDrawBitmap();
                 CommonSettings.MouseSettings.MousePosWhenPressedLeft = position; // reference for next loop
             }
             if (e.LeftButton == MouseButtonState.Released)
@@ -348,21 +485,21 @@ namespace SpaceTrader
                 //all angles in radians
                 if (position.X < CommonSettings.MouseSettings.MousePosWhenPressedRight.X)
                 {
-                    CommonSettings.ScreenSettings.Point3DSettings.RotationAngles.X -= CommonSettings.ScreenSettings.DeltaRotationAngle; 
+                    CommonSettings.ScreenSettings._3DSettings.RotationAngles.X -= CommonSettings.ScreenSettings.DeltaRotationAngle; 
                 }
                 else
                 {
-                    CommonSettings.ScreenSettings.Point3DSettings.RotationAngles.X += CommonSettings.ScreenSettings.DeltaRotationAngle;
+                    CommonSettings.ScreenSettings._3DSettings.RotationAngles.X += CommonSettings.ScreenSettings.DeltaRotationAngle;
                 }
                 if (position.Y < CommonSettings.MouseSettings.MousePosWhenPressedRight.Y)
                 {
-                    CommonSettings.ScreenSettings.Point3DSettings.RotationAngles.Z += CommonSettings.ScreenSettings.DeltaRotationAngle;
+                    CommonSettings.ScreenSettings._3DSettings.RotationAngles.Z += CommonSettings.ScreenSettings.DeltaRotationAngle;
                 }
                 else
                 {
-                    CommonSettings.ScreenSettings.Point3DSettings.RotationAngles.Z -= CommonSettings.ScreenSettings.DeltaRotationAngle;
+                    CommonSettings.ScreenSettings._3DSettings.RotationAngles.Z -= CommonSettings.ScreenSettings.DeltaRotationAngle;
                 }
-                SetImageFromStarArray();
+                PrepareScreenDataandDrawBitmap();
                 CommonSettings.MouseSettings.MousePosWhenPressedRight = position;
             }
             if (e.RightButton == MouseButtonState.Released)
@@ -377,22 +514,24 @@ namespace SpaceTrader
             {
                 if (e.Delta > 0)
                 {
-                    CommonSettings.ScreenSettings.Point3DSettings.ScaleFactor *= 2;
+                    if (!(CommonSettings.ScreenSettings._3DSettings.ScaleFactor > 10))
+                    CommonSettings.ScreenSettings._3DSettings.ScaleFactor *= 2;
                 }
                 else
                 {
-                    CommonSettings.ScreenSettings.Point3DSettings.ScaleFactor /= 2;
+                    if (!(CommonSettings.ScreenSettings._3DSettings.ScaleFactor < 0.2))
+                    {
+                        CommonSettings.ScreenSettings._3DSettings.ScaleFactor /= 2;
+                    }
                 }
-                SetImageFromStarArray();
+                PrepareScreenDataandDrawBitmap();
             }
-
         }
 
         private void RelayShowCelestialBodyInfoonScreen(object obj) => SendMessagetoMessageWindow(2);
         private void RelayShowGameInitialisationResultsonScreen(object obj) => SendMessagetoMessageWindow(1);
         private void RelayShowGalacticGenerationSettingsScreen(object obj) => SendGalaxyGenerationSettings();
-
-        private void RelaySetHighlightedStellarObjects(object obj) => SetHighLightedStellarObjects();
+        private void RelaySetHighlightedStellarObjects(object obj) => SetScreenSettingsFromStellarObjectSettings();
         private void RelayPauseShips(object obj) => Pause();
         private void RelayUnpauseShips(object obj) => Unpause();
         private void RelaySetShipPath(object obj)
@@ -421,100 +560,87 @@ namespace SpaceTrader
         }
         private void RelayCalculatePathFromShiptoDestinationStar(object obj) => OverviewText = $"  Number of stellar objects from current destination \n  to new destination : {CalculatePathFromShiptoDestinationStar()} ";
         private void RelayCalculatePathFromHometoDestinationStar(object obj) => OverviewText = CalculatePathtoDestinationStar();
-        private void RelaySetHomeStar(object obj) => CelestialBodies.SetHomeStar();
-        private void RelayRedrawScreen(object obj) => SetImageFromStarArray();
+        private void RelayRedrawScreen(object obj) => PrepareScreenDataandDrawBitmap();
 
         #endregion
 
         #region assorted viewmodel methods outside of the Icommand-Relay pipeline. most are called by the RelayCommandfunctions
-        public void Initialise()
+        private System.Windows.Point GetMousePosition(System.Windows.Point e)
         {
-            //CelestialBodies.PropertyChanged  += (s, e) => Console.WriteLine(e.PropertyName);
-            CommonSettings.BitmapDataSettings.SetBitmapData(CommonSettings.ScreenSettings.ScreenWidth, CommonSettings.ScreenSettings.ScreenHeight);   //add loadsettingsfromfile
-            CommonSettings.Timer.SetTimer();
-            TurnCounter = 1;
-            OverviewText = SetOverviewInitString();
-            CommonSettings.Timer.ClockTimer.Interval = new TimeSpan(0,0,0,0, 30);
-            CommonSettings.Timer.ClockTimer.Tick += new EventHandler(DispatcherTimer_Tick);
-            Items = SetCelestialBodyItemSource();
+            return new System.Windows.Point(e.X - 25, e.Y - 35); // variables come from width and height of other control elements on the form. For now. this is ok. It needs to be documented
         }
-
-        private void SetHighLightedStellarObjects()
+        private void SetScreenSettingsFromStellarObjectSettings()
         {
+            CommonSettings.ScreenSettings.ShowElements = CommonSettings.StellarObjectSettings.ShowElements;
             foreach (StellarObject stellarobject in CelestialBodies.StellarObjects)
             {
-                stellarobject.BHighlightonScreen = stellarobject.StellarType.Name == CurrentItem;
+                stellarobject.BHighlightonScreen = (stellarobject.StellarType.Name == CommonSettings.StellarObjectSettings.SelectedStellarObjectClass);
             }
-            SetImageFromStarArray();
+            PrepareScreenDataandDrawBitmap();
+        }
+        private void SetDynamicScreenVariablesandData()
+        {
+            CommonSettings.ScreenSettings.ScrollViewerHeightBig = Convert.ToInt32(((CommonSettings.ScreenSettings.ScreenHeight) / 3));
+            CommonSettings.ScreenSettings.ScrollViewerHeightSmall = Convert.ToInt32(CommonSettings.ScreenSettings.ScreenHeight - (2 * CommonSettings.ScreenSettings.ScrollViewerHeightBig));
+            if (CommonSettings.ScreenSettings.ScrollViewerHeightBig < 50)
+            {
+                CommonSettings.ScreenSettings.ScrollViewerHeightBig = 50;
+                CommonSettings.ScreenSettings.ScrollViewerHeightSmall = 30;
+            }
+        }
+        private void SetStartScreenVariablesandData()
+        {
+            CommonSettings.StellarObjectSettings.StellarObjectClasses = SetCelestialBodyItemSource();
+            CommonSettings.ScreenSettings.FontSizes = new List<string>();
+            for (int i = 8; i < 11; i++)
+            {
+                CommonSettings.ScreenSettings.FontSizes.Add(i.ToString());
+            }
         }
         private List<string> SetCelestialBodyItemSource()
         {
-            List<string> tmplist = new List<string>();
-            foreach (BaseTypes.CelestialBodyType celestialbodytype in BaseCollections.StellarObjectTypes)
+            List<string> celestialbodytypelist = new List<string>();
+            foreach (CelestialBodyType celestialbodytype in BaseCollections.StellarObjectTypes)
             {
-                tmplist.Add(celestialbodytype.Name);
+                celestialbodytypelist.Add(celestialbodytype.Name);
             }
-            return tmplist;
+            return celestialbodytypelist;
         }
-        private void LoadConfigIni()
-        {
-            string[] splitstring;
-            foreach (string line in System.IO.File.ReadLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"resources/config.ini")))
-            {
-                if (line.Length > 0 && !(line.Substring(0,1) =="/"))
-                {
-                    Console.WriteLine(line);
-                    splitstring = line.Split('=');
-                    Console.WriteLine(splitstring[0]);
-                    switch (splitstring[0])
-                    {
-                        case "ScreenWidth":
-                            CommonSettings.ScreenSettings.ScreenWidth = Convert.ToInt32(splitstring[1]);
-                            break;
-                        case "ScreenHeight":
-                            CommonSettings.ScreenSettings.ScreenHeight = Convert.ToInt32(splitstring[1]);
-                            break;
-                        case "StartNumberofStars":
-                            CelestialBodies.StartNumberofStellarObjects = Convert.ToInt32(splitstring[1]);
-                            break;
-                        case "StartNumberofShips":
-                            Ships.StartNumberofCargoShips = Convert.ToInt32(splitstring[1]);
-                            break;
-                    }
-                }
-            }
-            Console.WriteLine(CommonSettings.ScreenSettings.ScreenWidth + "  " + CommonSettings.ScreenSettings.ScreenHeight + " " + CelestialBodies.StartNumberofStellarObjects + " " + Ships.StartNumberofCargoShips);
-        }
+        
 
-        public void SetImageFromStarArray()
+        public void PrepareScreenDataandDrawBitmap() //prepares parameters and sends command to drawbitmap
         {
+            FastRandom rand = new FastRandom();
             if (CommonSettings.ScreenSettings.IsGameDataDrawn)
             {
                 if (CommonSettings.ScreenSettings.OldScreenHeight != (int)Application.Current.MainWindow.ActualHeight|| CommonSettings.ScreenSettings.OldScreenWidth != (int)Application.Current.MainWindow.ActualWidth)
                 {
-
                     CommonSettings.ScreenSettings.ScreenWidth = (int)Application.Current.MainWindow.ActualWidth;
                     CommonSettings.ScreenSettings.ScreenHeight = (int)Application.Current.MainWindow.ActualHeight;
                     CommonSettings.ScreenSettings.OldScreenWidth = (int)Application.Current.MainWindow.ActualWidth;
                     CommonSettings.ScreenSettings.OldScreenHeight = (int)Application.Current.MainWindow.ActualHeight;
+                    SetDynamicScreenVariablesandData();
                     CommonSettings.BitmapDataSettings.Pixels = null;
                     CommonSettings.BitmapDataSettings.Pixels1d = null;
-                    GC.Collect(); //find different method for resizing array without nulling and garbage collection.  At the moment, without GC, there is a memory leak here.
+                   // GC.Collect(); //find different method for resizing array without nulling and garbage collection.  At the moment, without GC, there is a memory leak here.
                     CommonSettings.BitmapDataSettings.Pixels = new byte[CommonSettings.ScreenSettings.ScreenHeight, CommonSettings.ScreenSettings.ScreenWidth, 4];
                     CommonSettings.BitmapDataSettings.Pixels1d = new byte[CommonSettings.ScreenSettings.ScreenHeight * CommonSettings.ScreenSettings.ScreenWidth * 4];
                     CommonSettings.BitmapDataSettings.Rect = new Int32Rect(0, 0, CommonSettings.ScreenSettings.ScreenWidth, CommonSettings.ScreenSettings.ScreenHeight);
                 }
-                BitmapDataCalculations.CalculatePointsafterChange(CelestialBodies.StellarObjects, Ships.CargoShips, CommonSettings.ScreenSettings.Point3DSettings, CommonSettings.BitmapDataSettings.bitmapadjustvector);
-                TestImage = DisplayFunctions.SetImageFromStarArray(CommonSettings.ScreenSettings.ScreenWidth, CommonSettings.ScreenSettings.ScreenHeight, CommonSettings.BitmapDataSettings.Pixels, CommonSettings.BitmapDataSettings.Pixels1d, CelestialBodies.StellarObjects, Ships.CargoShips, CommonSettings.BitmapDataSettings.GrdBmp, CommonSettings.BitmapDataSettings.Rect, CommonSettings.ScreenSettings.BDrawLines, CelestialBodies.StellarObjectSelectedOnScreen, CelestialBodies.StellarPathfromSourcetoDestination, Ships.ShipSelectedonScreen, CommonSettings.ScreenSettings.Point3DSettings.ScaleFactor);
+                BitmapDataCalculations.CalculatePointsafterChange(CelestialBodies.StellarObjects, Ships.CargoShips, Ships.StellarObjectTradingShips, CommonSettings.ScreenSettings._3DSettings, CommonSettings.BitmapDataSettings.bitmapadjustvector);
+                TestImage = DisplayFunctions.SetBitmap(rand, CommonSettings.ScreenSettings.ScreenWidth, CommonSettings.ScreenSettings.ScreenHeight, CommonSettings.BitmapDataSettings.Pixels, CommonSettings.BitmapDataSettings.Pixels1d, CelestialBodies.StellarObjects, Ships.CargoShips, Ships.StellarObjectTradingShips, CommonSettings.BitmapDataSettings.GrdBmp, CommonSettings.BitmapDataSettings.Rect, CommonSettings.ScreenSettings.DrawStarlanes, CommonSettings.ScreenSettings.DrawShips, CelestialBodies.StellarObjectSelectedOnScreen, CelestialBodies.StellarPathfromSourcetoDestination, Ships.ShipSelectedonScreen, CommonSettings.ScreenSettings._3DSettings.ScaleFactor, CelestialBodies.StarlaneSelectedOnScreen);
+                // (ImageSource)  Displayfunction.SetBitmap is a WriteableBitmap. TestImage is an ImageSource.   Apparently they are compatible now. But they weren't compatible before that as far as I can remember.
+                // A cast  TestImage = (ImageSource)Displayfunction.SetBitmap was needed. Now, without the cast, it works. 
             }
         }
         public void InitialiseShips()
         {
-            Ships.InitializeShips(CelestialBodies.StellarObjects, BaseCollections.EconomicEntities);
+            FastRandom rand = new FastRandom();
+            Ships.InitializeShips(BaseCollections.CargoShipTypes, CelestialBodies.StellarObjects, BaseCollections.EconomicEntities, rand);
         }
         public void Pause()
         {
-            Ships.BMoveShips = false;
+            Ships.MoveShips = false;
             CommonSettings.ScreenSettings.GamePaused = true;
         }
         public void Unpause()
@@ -524,41 +650,42 @@ namespace SpaceTrader
                 return;
             }
             TickTimer = DateTime.Now;
-            Ships.BMoveShips = true;
+            Ships.MoveShips = true;
             CommonSettings.ScreenSettings.GamePaused = false;
         }
 
         //not used but handy for the future. string containing 3d-actions settings.
-        public string SetTransformationsString()
+        public string SetStringGraphicalTransformationSettings() //not used currently. Was used for Debugging Results
         {
             StringBuilder VariableTransformationString = new StringBuilder();
             VariableTransformationString.AppendLine("Transformations");
-            VariableTransformationString.AppendLine($"Translations   ->X : {CommonSettings.ScreenSettings.Point3DSettings.Translations.X} , Y : {CommonSettings.ScreenSettings.Point3DSettings.Translations.Y} ");
-            VariableTransformationString.AppendLine($"Scalefactor    -> : {CommonSettings.ScreenSettings.Point3DSettings.ScaleFactor}");
-            VariableTransformationString.AppendLine($"Rotationangles -> X : {CommonSettings.ScreenSettings.Point3DSettings.RotationAngles.X} , Y : {CommonSettings.ScreenSettings.Point3DSettings.RotationAngles.Y} , Z : {CommonSettings.ScreenSettings.Point3DSettings.RotationAngles.Z} ");
-             return VariableTransformationString.ToString();
+            VariableTransformationString.AppendLine($"Translations   ->X : {CommonSettings.ScreenSettings._3DSettings.Translations.X} , Y : {CommonSettings.ScreenSettings._3DSettings.Translations.Y} ");
+            VariableTransformationString.AppendLine($"Scalefactor    -> : {CommonSettings.ScreenSettings._3DSettings.ScaleFactor}");
+            VariableTransformationString.AppendLine($"Rotationangles -> X : {CommonSettings.ScreenSettings._3DSettings.RotationAngles.X} , Y : {CommonSettings.ScreenSettings._3DSettings.RotationAngles.Y} , Z : {CommonSettings.ScreenSettings._3DSettings.RotationAngles.Z} ");
+            return VariableTransformationString.ToString();
         }
         #region set overviewtextblockmethods
        
-        public string SetOverviewInitString()
+        public string SetStringGeneralInitialisationResults()
         {
             StringBuilder overviewstring = new StringBuilder();
             overviewstring.AppendLine("\nTaxonomy results : \n");
-            overviewstring.AppendLine($" Domains generated : {BaseTaxonomyCollections.Domains.Count} ");
-            overviewstring.AppendLine($" Kingdoms generated : {BaseTaxonomyCollections.Kingdoms.Count} ");
-            overviewstring.AppendLine($" Phyla generated : {BaseTaxonomyCollections.Phyla.Count} ");
-            overviewstring.AppendLine($" SubPhyla generated : {BaseTaxonomyCollections.SubPhyla.Count} ");
-            overviewstring.AppendLine($" Classes generated : {BaseTaxonomyCollections.Classes.Count} ");
-            overviewstring.AppendLine($" Orders generated : {BaseTaxonomyCollections.Orders.Count} ");
-            overviewstring.AppendLine($" Families generated : {BaseTaxonomyCollections.Families.Count} ");
-            overviewstring.AppendLine($" Geni generated : {BaseTaxonomyCollections.Geni.Count} ");
-            overviewstring.AppendLine($" Species generated : {BaseTaxonomyCollections.Species.Count} ");
+            overviewstring.AppendLine($" Domains generated : {TaxonomyCollections.Domains.Count} ");
+            overviewstring.AppendLine($" Kingdoms generated : {TaxonomyCollections.Kingdoms.Count} ");
+            overviewstring.AppendLine($" Phyla generated : {TaxonomyCollections.Phyla.Count} ");
+            overviewstring.AppendLine($" SubPhyla generated : {TaxonomyCollections.SubPhyla.Count} ");
+            overviewstring.AppendLine($" Classes generated : {TaxonomyCollections.Classes.Count} ");
+            overviewstring.AppendLine($" Orders generated : {TaxonomyCollections.Orders.Count} ");
+            overviewstring.AppendLine($" Families generated : {TaxonomyCollections.Families.Count} ");
+            overviewstring.AppendLine($" Geni generated : {TaxonomyCollections.Geni.Count} ");
+            overviewstring.AppendLine($" Species generated : {TaxonomyCollections.Species.Count} ");
             overviewstring.AppendLine("\nGeneral other collection results : \n");
-            overviewstring.AppendLine($" Resources generated : {BaseCollections.Resources.Count} ");
-            overviewstring.AppendLine($" Resourcegroups generated : {BaseCollections.ResourceGroups.Count} ");
+            overviewstring.AppendLine($" Cargoship types generated : {BaseCollections.CargoShipTypes.Count}");
+            overviewstring.AppendLine($" Elements generated : {BaseCollections.Elements.Count} ");
+            overviewstring.AppendLine($" Elementgroups generated : {BaseCollections.ElementGroups.Count} ");
             overviewstring.AppendLine($" Orbital body-types generated : {BaseCollections.OrbitalbodyTypes.Count} ");
-            overviewstring.AppendLine($" Stellar-types generated : {BaseCollections.StellarObjectTypes.Count} ");
-            overviewstring.AppendLine($" Building-types generated : {BaseCollections.BuildingTypes.Count} ");
+            overviewstring.AppendLine($" Stellar types generated : {BaseCollections.StellarObjectTypes.Count} ");
+            overviewstring.AppendLine($" Building types generated : {BaseCollections.BuildingTypes.Count} ");
             overviewstring.AppendLine($" Economic entities generated : {BaseCollections.EconomicEntities.Count} ");
             overviewstring.AppendLine($" Technology level-types generated : {BaseCollections.TechLevelCollection.Count} ");
             overviewstring.AppendLine($"\nSolar constants loaded from file :\n");
@@ -567,162 +694,317 @@ namespace SpaceTrader
             overviewstring.AppendLine($" Temperature {SolarConstants.Temperature} Kelvin");
             overviewstring.AppendLine($" Luminosity {SolarConstants.Luminosity} Watt (J/s) (1 kg⋅m\u00B2⋅s\u207B\u00B3)");
             overviewstring.AppendLine($"\nPhysical constants loaded from file :\n");
-            overviewstring.AppendLine($"S tefan Boltzmann constant {PhysicalConstants.StefanBoltzmannConstant} W⋅m\u207B\u00B2⋅k\u207B\u2074");
+            overviewstring.AppendLine($"Stefan Boltzmann constant {PhysicalConstants.StefanBoltzmannConstant} W⋅m\u207B\u00B2⋅k\u207B\u2074");
+            overviewstring.AppendLine($"Earth Mass {EarthConstants.Mass} kg");
             return overviewstring.ToString();
         }
-        public string SetSelectedShipInfotoString()
+        public string SetStringSelectedShipInfo()
         {
             if (CommonSettings.ScreenSettings.IsGameDataDrawn != true)
             {
                 return "game data not set";
             }
             StringBuilder SelectedShipInfotoString = new StringBuilder();
-            SelectedShipInfotoString.AppendLine($"Ship : {Ships.ShipSelectedonScreen.Name} ");
+            SelectedShipInfotoString.AppendLine($"Ship : {Ships.ShipSelectedonScreen.Name} , Class :  {Ships.ShipSelectedonScreen.CargoShipType.Name} ");
             SelectedShipInfotoString.AppendLine($"Owned by {Ships.ShipSelectedonScreen.EconomicEntity.Name}");
             SelectedShipInfotoString.AppendLine($"Destination : {Ships.ShipSelectedonScreen.DestinationStellarObject.Name}");
+            if (Ships.ShipSelectedonScreen.NeedsRefueling && !Ships.ShipSelectedonScreen.IsRefueling)
+            {
+                SelectedShipInfotoString.AppendLine($"Ship needs refueling");
+            }
+            if (Ships.ShipSelectedonScreen.NeedsRepairing && !Ships.ShipSelectedonScreen.IsRepairing)
+            {
+                SelectedShipInfotoString.AppendLine($"Ship needs repairing");
+            }
+            if (Ships.ShipSelectedonScreen.IsRefueling)
+            {
+                SelectedShipInfotoString.AppendLine($"Ship is refueling");
+            }
+            else if (Ships.ShipSelectedonScreen.IsOverhauling)
+            {
+                SelectedShipInfotoString.AppendLine($"Ship is overhauling");
+            }
+            else if (Ships.ShipSelectedonScreen.IsRepairing)
+            {
+                SelectedShipInfotoString.AppendLine($"Ship is repairing");
+            }
+            else if (Ships.ShipSelectedonScreen.IsDocked)
+            {
+                SelectedShipInfotoString.AppendLine($"Ship is docked, loading and unloading supplies");
+            }
+            SelectedShipInfotoString.AppendLine($"Hull : {Ships.ShipSelectedonScreen.HullIntegrity:F2} Level : {Ships.ShipSelectedonScreen.ShipUpgradeLevel} ");
+            SelectedShipInfotoString.AppendLine($"Docking Duration : {Ships.ShipSelectedonScreen.DockingDuration}" );
+            SelectedShipInfotoString.AppendLine($"CargoHolds : {Ships.ShipSelectedonScreen.NumberofCargoHolds} Per hold : {Ships.ShipSelectedonScreen.MaximumAmountofCargoperCargoHold}" );
+            SelectedShipInfotoString.AppendLine($"FuelCapacity : {Ships.ShipSelectedonScreen.FuelAmount:F1} Fuel Consumption : {Ships.ShipSelectedonScreen.FuelConsumption:F2}");
+            SelectedShipInfotoString.AppendLine($"Base Amount of repairs each turn : {Ships.ShipSelectedonScreen.BaseRepairAmountperTurn}");
+            SelectedShipInfotoString.AppendLine(SetStringElementsinStorage(Ships.ShipSelectedonScreen.ElementssonShip));
             return SelectedShipInfotoString.ToString();
         }
-        public StringBuilder SetOrbitalbodystringforOverview(OrbitalBody orbitalbody)
+        public string SetStringElementsinStorage(ObservableCollection<ElementinStorage> elementsinstorage)
         {
             StringBuilder overviewstring = new StringBuilder();
-            StringBuilder tmpResourcestring = new StringBuilder();
+            string _elementname;
+            foreach (ElementinStorage elementinstorage in elementsinstorage)
+            {
+                _elementname = $"          -{(!CommonSettings.ScreenSettings.DisplayElementSymbol ? elementinstorage.Element.Name.Replace("-", "") : elementinstorage.Element.Symbol)} ";
+                if (elementinstorage.AmountinStorage == 0)
+                {
+
+                }
+                else if (elementinstorage.AmountinStorage > 10000)
+                {
+                    overviewstring.AppendLine($"{_elementname} >  {elementinstorage.AmountinStorage / 1000:F0} ton");
+                }
+                else if (elementinstorage.AmountinStorage > 1000)
+                {
+                    overviewstring.AppendLine($"{_elementname} >  {(elementinstorage.AmountinStorage / 1000):F1} ton");
+                }
+                else if (elementinstorage.AmountinStorage > 100)
+                {
+                    overviewstring.AppendLine($"{_elementname} >  {(elementinstorage.AmountinStorage):F0} kilogram");
+                }
+                else if (elementinstorage.AmountinStorage > 10)
+                {
+                    overviewstring.AppendLine($"{_elementname} >  {elementinstorage.AmountinStorage:F1} kilogram");
+                }
+                else if (elementinstorage.AmountinStorage > 1)
+                {
+                    overviewstring.AppendLine($"{_elementname} >  {elementinstorage.AmountinStorage:F2} kilogram");
+                }
+                else if (elementinstorage.AmountinStorage > 0.1)
+                {
+                    overviewstring.AppendLine($"{_elementname} >  {elementinstorage.AmountinStorage * 1000:F1} gram");
+                }
+                else if (elementinstorage.AmountinStorage > 0.01)
+                {
+                    overviewstring.AppendLine($"{_elementname} >   {(elementinstorage.AmountinStorage * 1000):F2} gram");
+                }
+                else if (elementinstorage.AmountinStorage > 0.001)
+                {
+                    overviewstring.AppendLine($"{_elementname} >  {(elementinstorage.AmountinStorage * 1000):F3} gram");
+                }
+                else
+                {
+                    overviewstring.AppendLine($"{_elementname} >  < 0.001 gram");
+                }
+            }
+            if (overviewstring.Length == 0 )
+            {
+                return "\n   - No Elements present ";
+            }
+            return "\n   - Elements present : -> \n" + overviewstring.ToString();
+        }
+        public string SetStringCentralHubInfo(StellarObject stellarobject)
+        {
+            StringBuilder centralhubstring = new StringBuilder();
+
+            if (stellarobject.CentralHub.Buildings.Count > 0)
+            {
+                centralhubstring.AppendLine("   - Buildings present: ");
+                foreach (Building building in stellarobject.CentralHub.Buildings)
+                {
+                    centralhubstring.AppendLine($"          - {building.Type.Name} size : {building.Size} level : {building.TechLevel} ");
+                }
+            }
+            else
+            {
+                centralhubstring.AppendLine("   - No buildings present. ");
+            }
+            if (stellarobject.CentralHub.CompoundsinStorage.Count > 0)
+            {
+                centralhubstring.AppendLine("\n   - Compounds in Storage : ");
+                foreach (CompoundinStorage compoundinstorage in stellarobject.CentralHub.CompoundsinStorage)
+                {
+                    switch (CommonSettings.ScreenSettings.DisplayElementSymbol)
+                    {
+                        case true:
+                            centralhubstring.AppendLine($"          - {(compoundinstorage.Compound.ElementsinCompound[0].Element.Symbol)}{(compoundinstorage.Compound.ElementsinCompound[0].AmountinCompound == 1 ? "" : (compoundinstorage.Compound.ElementsinCompound[0].AmountinCompound == 2 ? "\x2082" : "\x2083"))}{(compoundinstorage.Compound.ElementsinCompound[1].Element.Symbol)}{(compoundinstorage.Compound.ElementsinCompound[1].AmountinCompound == 1 ? "" : (compoundinstorage.Compound.ElementsinCompound[1].AmountinCompound == 2 ? "\x2082" : (compoundinstorage.Compound.ElementsinCompound[1].AmountinCompound == 3 ? "\x2083" : "\x2084")))}     ->   : {compoundinstorage.AmountinStorage:F2} kg");
+                            break;
+                        case false:
+                            centralhubstring.AppendLine($"          - {(compoundinstorage.Compound.ElementsinCompound[0].AmountinCompound == 1 ? "" : (compoundinstorage.Compound.ElementsinCompound[0].AmountinCompound == 2 ? "Di" : "Tri"))}{(compoundinstorage.Compound.ElementsinCompound[0].AmountinCompound == 1 ? compoundinstorage.Compound.ElementsinCompound[0].Element.Name.Substring(2).Replace("-", "") : compoundinstorage.Compound.ElementsinCompound[0].Element.Name.Substring(2).Replace("-", "").ToLower())} {(compoundinstorage.Compound.ElementsinCompound[1].AmountinCompound == 1 ? "" : (compoundinstorage.Compound.ElementsinCompound[1].AmountinCompound == 2 ? "di" : (compoundinstorage.Compound.ElementsinCompound[1].AmountinCompound == 3 ? "tri" : "tetra")))}{(compoundinstorage.Compound.ElementsinCompound[1].Element.Name.Contains("-") ? (compoundinstorage.Compound.ElementsinCompound[1].Element.Name.Substring(2, compoundinstorage.Compound.ElementsinCompound[1].Element.Name.Substring(2).IndexOf("-"))).ToLower() : compoundinstorage.Compound.ElementsinCompound[1].Element.Name.Substring(2).ToLower())}ide     ->   : {compoundinstorage.AmountinStorage:F2} kg");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                centralhubstring.AppendLine("\n   - No compounds in storage. ");
+            }
+            if (stellarobject.CentralHub.FunctionalGroupsResearched.Count > 0)
+            {
+                centralhubstring.AppendLine("\n   - Functional groups researched : ");
+                foreach (FunctionalGroup functionalgroup in stellarobject.CentralHub.FunctionalGroupsResearched)
+                {
+                    switch (CommonSettings.ScreenSettings.DisplayElementSymbol)
+                    {
+                        case true:
+                            centralhubstring.AppendLine($"          - {functionalgroup.Name} : {(functionalgroup.ElementsinFunctionalGroup[0].Element.Symbol)}{(functionalgroup.ElementsinFunctionalGroup[0].AmountinCompound == 1 ? "" : (functionalgroup.ElementsinFunctionalGroup[0].AmountinCompound == 2 ? "\x2082" : "\x2083"))}{(functionalgroup.ElementsinFunctionalGroup[1].Element.Symbol)}{(functionalgroup.ElementsinFunctionalGroup[1].AmountinCompound == 1 ? "" : (functionalgroup.ElementsinFunctionalGroup[1].AmountinCompound == 2 ? "\x2082" : (functionalgroup.ElementsinFunctionalGroup[1].AmountinCompound == 3 ? "\x2083" : "\x2084")))}     charge ->  {functionalgroup.Charge}   -> mass : {functionalgroup.AtomicMass:F3} da");
+                            break;
+                        case false:
+                            centralhubstring.AppendLine($"          - {functionalgroup.Name} : {(functionalgroup.ElementsinFunctionalGroup[0].AmountinCompound == 1 ? "" : (functionalgroup.ElementsinFunctionalGroup[0].AmountinCompound == 2 ? "Di" : "Tri"))}{(functionalgroup.ElementsinFunctionalGroup[0].AmountinCompound == 1 ? functionalgroup.ElementsinFunctionalGroup[0].Element.Name.Substring(2).Replace("-", "") : functionalgroup.ElementsinFunctionalGroup[0].Element.Name.Substring(2).Replace("-", "").ToLower())} {(functionalgroup.ElementsinFunctionalGroup[1].AmountinCompound == 1 ? "" : (functionalgroup.ElementsinFunctionalGroup[1].AmountinCompound == 2 ? "di" : (functionalgroup.ElementsinFunctionalGroup[1].AmountinCompound == 3 ? "tri" : "tetra")))}{(functionalgroup.ElementsinFunctionalGroup[1].Element.Name.Contains("-") ? (functionalgroup.ElementsinFunctionalGroup[1].Element.Name.Substring(2, functionalgroup.ElementsinFunctionalGroup[1].Element.Name.Substring(2).IndexOf("-"))).ToLower() : functionalgroup.ElementsinFunctionalGroup[1].Element.Name.Substring(2).ToLower())}ide     charge ->  {functionalgroup.Charge}     -> mass : {functionalgroup.AtomicMass:F3} da");
+                            break;
+                        default:
+                            break;
+                    }
+                   // centralhubstring.AppendLine($"                  Oxidation states :   {functionalgroup.ElementsinFunctionalGroup[0].Element.Name.Substring(2)} -> {functionalgroup.ElementsinFunctionalGroup[0].OxidationState} {functionalgroup.ElementsinFunctionalGroup[1].Element.Name.Substring(2)} -> {functionalgroup.ElementsinFunctionalGroup[1].OxidationState} ");
+                }
+            }
+            else
+            {
+                centralhubstring.AppendLine("\n   - No functional groups researched. ");
+            }
+            if (stellarobject.CentralHub.CompoundsResearched.Count > 0)
+            {
+                centralhubstring.AppendLine("\n   - Compounds researched : ");
+                foreach (Compound compound in stellarobject.CentralHub.CompoundsResearched)
+                {
+                    switch (CommonSettings.ScreenSettings.DisplayElementSymbol)
+                    {
+                        case true:
+                            centralhubstring.AppendLine($"          - {(compound.ElementsinCompound[0].Element.Symbol)}{(compound.ElementsinCompound[0].AmountinCompound == 1 ? "" : (compound.ElementsinCompound[0].AmountinCompound == 2 ? "\x2082" : "\x2083"))}{(compound.ElementsinCompound[1].Element.Symbol)}{(compound.ElementsinCompound[1].AmountinCompound == 1 ? "" : (compound.ElementsinCompound[1].AmountinCompound == 2 ? "\x2082" : (compound.ElementsinCompound[1].AmountinCompound == 3 ? "\x2083" : "\x2084")))}     -> mass : {compound.AtomicMass:F3} da");
+                            break;
+                        case false:
+                            centralhubstring.AppendLine($"          - {(compound.ElementsinCompound[0].AmountinCompound == 1 ? "" : (compound.ElementsinCompound[0].AmountinCompound == 2 ? "Di" : "Tri"))}{(compound.ElementsinCompound[0].AmountinCompound == 1 ? compound.ElementsinCompound[0].Element.Name.Substring(2).Replace("-", "") : compound.ElementsinCompound[0].Element.Name.Substring(2).Replace("-", "").ToLower())} {(compound.ElementsinCompound[1].AmountinCompound == 1 ? "" : (compound.ElementsinCompound[1].AmountinCompound == 2 ? "di" : (compound.ElementsinCompound[1].AmountinCompound == 3 ? "tri" : "tetra")))}{(compound.ElementsinCompound[1].Element.Name.Contains("-") ? (compound.ElementsinCompound[1].Element.Name.Substring(2, compound.ElementsinCompound[1].Element.Name.Substring(2).IndexOf("-"))).ToLower() : compound.ElementsinCompound[1].Element.Name.Substring(2).ToLower())}ide    -> mass : {compound.AtomicMass:F3} da");
+                            break;
+                        default:
+                            break;
+                    }
+                    //centralhubstring.AppendLine($"                  Oxidation states :   {compound.ElementsinCompound[0].Element.Name.Substring(2)} -> {compound.ElementsinCompound[0].OxidationState} {compound.ElementsinCompound[1].Element.Name.Substring(2)} -> {compound.ElementsinCompound[1].OxidationState} ");
+                }
+            }
+            else
+            {
+                centralhubstring.AppendLine("\n   - No compounds researched. ");
+            }
+
+            if (CommonSettings.ScreenSettings.ShowCentralHubElements)
+            {
+                centralhubstring.AppendLine( SetStringElementsinStorage(stellarobject.CentralHub.ElementsinStorage));
+            }
+
+            return centralhubstring.ToString();
+        }
+
+        public StringBuilder SetStringOrbitalbodyInfo(OrbitalBody orbitalbody)
+        {
+            StringBuilder overviewstring = new StringBuilder();
+            StringBuilder Elementsstring = new StringBuilder();
             overviewstring.AppendLine($" - {orbitalbody.Name} : {orbitalbody.OrbitalBodyType.Name}");
             overviewstring.AppendLine($"      - Mass : {orbitalbody.Mass:F3} earth mass : Radius {orbitalbody.Radius} km. ");
-            foreach (SpeciesperOrbitalBody tspecies in orbitalbody.SpeciesonOrbitalBody)
+            overviewstring.AppendLine($"      - Density : {orbitalbody.Density:F2}");
+            foreach (SpeciesperNode species in orbitalbody.SpeciesonOrbitalBody)
             {
-                overviewstring.AppendLine($"      - {tspecies.Species.Genus.Family.Order.Name} -> {tspecies.Species.Genus.Family.Name} -> {tspecies.Species.Name} ");
-                overviewstring.AppendLine($"      - Population size : {tspecies.PopulationSize:F0} Reproduction rate : {tspecies.ReproductionRate:F2}");
+                overviewstring.AppendLine($"      - {species.Species.Genus.Family.Order.Name} -> {species.Species.Genus.Family.Name} -> {species.Species.Name} ");
+                overviewstring.AppendLine($"      - Population size : {species.PopulationSize:F0} Reproduction rate : {species.ReproductionRate:F2}");
             }
             overviewstring.AppendLine($"      - Housing available for population: {orbitalbody.PopulationHousing}");
             overviewstring.AppendLine($"      - Distance to Star : {orbitalbody.AverageDistanceToCentralStellarObject/150000000000:F2} AU ");
             overviewstring.AppendLine($"      - Solar power per m² : {orbitalbody.SolarPowerperM2:F2} Watt");
             overviewstring.AppendLine($"      - Food : {(int)orbitalbody.Food} -> Food storage : {orbitalbody.FoodStorage}");
-            overviewstring.AppendLine($"      - FoodModifierfromBuildings : {orbitalbody.FoodModifierfromBuildings:F3}");
-            overviewstring.AppendLine($"      - BasNaturalHabitationModifier : {orbitalbody.BaseNaturalHabitationModifier:F3}");
-            overviewstring.AppendLine($"      - NaturalHabitationModifier : {orbitalbody.NaturalHabitationModifier:F3}");
-            overviewstring.AppendLine($"      - PopulationModifierfromBuldings : {orbitalbody.PopulationModifierfromBuildings:F3}");
-            overviewstring.AppendLine($"      - NaturalBirthPercentage : {orbitalbody.NaturalBirthsperTurnPercentage:F3}");
-            overviewstring.AppendLine($"      - NaturalDeathPercentage : {orbitalbody.NaturalDeathsperTurnPercentage:F3}");
-            overviewstring.AppendLine($"      - BaseNaturalDeathPercentage : {orbitalbody.BaseNaturalDeathsperTurnPercentage:F3}");
-            overviewstring.AppendLine($"      - NaturalImmigrationperTurnLinear : {orbitalbody.NaturalImmigrationperTurnLinear:F3}");
-            overviewstring.AppendLine($"      - Buildings : ");
-            foreach (Building building in orbitalbody.Buildings)
+            if (CommonSettings.ScreenSettings.ShowModifiers)
             {
-                overviewstring.Append($"                 - {building.Type.Name}  ");
-                if (building.Type.CanResize == true)
-                {
-                    overviewstring.Append($" Size : {building.Size} Techlevel : {building.TechLevel} ");
-                }
-                overviewstring.Append($"\n");
-            }
-            if (orbitalbody.ResourceGroups.Count == 0)
-            {
-                tmpResourcestring.Append($"   - No resource-modifiers present on {orbitalbody.Name}");
-            }
-            else
-            {
-                overviewstring.AppendLine("   - Resourcegroups present : ");
-                overviewstring.Append("        ");
-                foreach (ResourceGroup resourcegroup in orbitalbody.ResourceGroups)
-                {
-                    tmpResourcestring.Append($"{resourcegroup.Name} , ");
-                }
-                tmpResourcestring.Remove(tmpResourcestring.Length - 1, 1);
+                overviewstring.AppendLine($"      - FoodModifierfromBuildings : {orbitalbody.FoodModifierfromBuildings:F3}");
+                overviewstring.AppendLine($"      - BasNaturalHabitationModifier : {orbitalbody.BaseNaturalHabitationModifier:F3}");
+                overviewstring.AppendLine($"      - NaturalHabitationModifier : {orbitalbody.NaturalHabitationModifier:F3}");
+                overviewstring.AppendLine($"      - PopulationModifierfromBuldings : {orbitalbody.PopulationModifierfromBuildings:F3}");
+                overviewstring.AppendLine($"      - NaturalBirthPercentage : {orbitalbody.NaturalBirthsperTurnPercentage:F3}");
+                overviewstring.AppendLine($"      - NaturalDeathPercentage : {orbitalbody.NaturalDeathsperTurnPercentage:F3}");
+                overviewstring.AppendLine($"      - BaseNaturalDeathPercentage : {orbitalbody.BaseNaturalDeathsperTurnPercentage:F3}");
+                overviewstring.AppendLine($"      - NaturalImmigrationperTurnLinear : {orbitalbody.NaturalImmigrationperTurnLinear:F3}");
             }
 
-            overviewstring.AppendLine(tmpResourcestring.ToString());
-            overviewstring.AppendLine($"   - Resources present : -> ");
-            foreach (ResourceInStorageperBody resourceinstorage in orbitalbody.ResourcesinStorage)
+            if (CommonSettings.ScreenSettings.ShowBuildings)
             {
-                if (resourceinstorage.Amount == 0)
+                overviewstring.AppendLine($"      - Buildings : ");
+                foreach (Building building in orbitalbody.Buildings)
                 {
-
+                    overviewstring.Append($"                 - {building.Type.Name}  ");
+                    if (building.Type.CanResize == true)
+                    {
+                        overviewstring.Append($" Size : {building.Size} Techlevel : {building.TechLevel} ");
+                    }
+                    overviewstring.Append($"\n");
                 }
-                else if (resourceinstorage.Amount > 10000)
+            }
+            if (CommonSettings.ScreenSettings.ShowElementGroups)
+            {
+                if (orbitalbody.ElementGroups.Count == 0)
                 {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {resourceinstorage.Amount / 1000:F0} ton");
-                }
-                else if (resourceinstorage.Amount > 1000)
-                {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {(resourceinstorage.Amount/1000):F1} ton");
-                }
-                else if (resourceinstorage.Amount > 100)
-                {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {(resourceinstorage.Amount):F0} kilogram");
-                }
-                else if (resourceinstorage.Amount > 10)
-                {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {resourceinstorage.Amount:F1} kilogram");
-                }
-                else if (resourceinstorage.Amount > 1)
-                {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {resourceinstorage.Amount:F2} kilogram");
-                }
-                else if (resourceinstorage.Amount > 0.1)
-                {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {resourceinstorage.Amount * 1000:F1} gram");
-                }
-                else if (resourceinstorage.Amount > 0.01)
-                {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {(resourceinstorage.Amount * 1000):F2} gram");
-                }
-                else if (resourceinstorage.Amount > 0.001)
-                {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}   {(resourceinstorage.Amount * 1000):F3} gram");
+                    Elementsstring.Append($"   - No element-modifiers present on {orbitalbody.Name}");
                 }
                 else
                 {
-                    overviewstring.AppendLine($"          -{resourceinstorage.Resource.Name}  < 0.001 gram");
+                    overviewstring.AppendLine("   - Elementgroups present : ");
+                    overviewstring.Append("        ");
+                    foreach (ElementGroup elementgroup in orbitalbody.ElementGroups)
+                    {
+                        Elementsstring.Append($"{elementgroup.Name} , ");
+                    }
+                    Elementsstring.Remove(Elementsstring.Length - 1, 1);
                 }
+            }
+            overviewstring.AppendLine(Elementsstring.ToString());
+            if (CommonSettings.ScreenSettings.ShowElements)
+            {
+                overviewstring.AppendLine(SetStringElementsinStorage(orbitalbody.ElementsinStorage));
             }
             return overviewstring;
         }
 
-        public string SetStellarSystemInfotoString()
+        public string SetStringStellarSystemInfo()
         {
             if (CommonSettings.ScreenSettings.IsGameDataDrawn != true)
             {
                 return "game data not set";
             }
             StringBuilder overviewstring = new StringBuilder();
-            overviewstring.AppendLine("\nSTELLAR OBJECT : \n");
             overviewstring.AppendLine($" {CelestialBodies.StellarObjectSelectedOnScreen.Name} -> {CelestialBodies.StellarObjectSelectedOnScreen.StellarType.Name}");
-            overviewstring.AppendLine($" Mass : {CelestialBodies.StellarObjectSelectedOnScreen.Mass:F2} solar masses.");
-            overviewstring.AppendLine($" Age : {CelestialBodies.StellarObjectSelectedOnScreen.Age:N0}.000 years.");
-            overviewstring.AppendLine($" Radius : {CelestialBodies.StellarObjectSelectedOnScreen.Radius:N0} kilometer.");
-            overviewstring.AppendLine($" Surface temperature : {CelestialBodies.StellarObjectSelectedOnScreen.SurfaceTemperature * 1000:F0} degrees °C. ");
-            overviewstring.AppendLine($" Luminosity : {CelestialBodies.StellarObjectSelectedOnScreen.Luminosity:E4}  kg⋅m\u00B2⋅s\u207B\u00B3 .");
-            overviewstring.AppendLine($" Absolute Magnitude : {CelestialBodies.StellarObjectSelectedOnScreen.AbsoluteMagnitude:F2}.");
-            overviewstring.AppendLine($" Lower boundary habitable zone : {CelestialBodies.StellarObjectSelectedOnScreen.MinimumHabitableZoneRadius / 1000:E3} km / {CelestialBodies.StellarObjectSelectedOnScreen.MinimumHabitableZoneRadius / 150000000000:F2} AU.");
-            overviewstring.AppendLine($" Upper boundary habitable zone : {CelestialBodies.StellarObjectSelectedOnScreen.MaximumHabitableZoneRadius / 1000:E3} km / {CelestialBodies.StellarObjectSelectedOnScreen.MaximumHabitableZoneRadius / 150000000000:F2} AU..");
-            overviewstring.AppendLine($" Maximum orbital body distance : {CelestialBodies.StellarObjectSelectedOnScreen.MaximumOrbitalBodyDistanceFromStar / 1000:E3} km / {CelestialBodies.StellarObjectSelectedOnScreen.MaximumOrbitalBodyDistanceFromStar / 150000000000:F2} AU..\n");
+            overviewstring.AppendLine($" Mass : {CelestialBodies.StellarObjectSelectedOnScreen.Mass:F2} solar masses");
+            overviewstring.AppendLine($" Age : {CelestialBodies.StellarObjectSelectedOnScreen.Age:N0}.000 years");
+            overviewstring.AppendLine($" Radius : {CelestialBodies.StellarObjectSelectedOnScreen.Radius:N0} kilometer");
+            overviewstring.AppendLine($" Metallicity : {CelestialBodies.StellarObjectSelectedOnScreen.Metallicity:N2} Fe/H relative to the sun");
+            overviewstring.AppendLine($" Surface temperature : {CelestialBodies.StellarObjectSelectedOnScreen.SurfaceTemperature * 1000:F0} degrees °C");
+            overviewstring.AppendLine($" Luminosity : {CelestialBodies.StellarObjectSelectedOnScreen.Luminosity:E4}  kg⋅m\u00B2⋅s\u207B\u00B3 ");
+            overviewstring.AppendLine($" Absolute Magnitude : {CelestialBodies.StellarObjectSelectedOnScreen.AbsoluteMagnitude:F2}");
+            overviewstring.AppendLine($" Lower boundary habitable zone : {CelestialBodies.StellarObjectSelectedOnScreen.MinimumHabitableZoneRadius / 1000:E3} km / {CelestialBodies.StellarObjectSelectedOnScreen.MinimumHabitableZoneRadius / 150000000000:F2} AU");
+            overviewstring.AppendLine($" Upper boundary habitable zone : {CelestialBodies.StellarObjectSelectedOnScreen.MaximumHabitableZoneRadius / 1000:E3} km / {CelestialBodies.StellarObjectSelectedOnScreen.MaximumHabitableZoneRadius / 150000000000:F2} AU");
+            overviewstring.AppendLine($" Maximum orbital body distance : {CelestialBodies.StellarObjectSelectedOnScreen.MaximumOrbitalBodyDistanceFromStar / 1000:E3} km / {CelestialBodies.StellarObjectSelectedOnScreen.MaximumOrbitalBodyDistanceFromStar / 150000000000:F2} AU\n");
             overviewstring.AppendLine($"STARLANES : ");
             foreach (Starlane starlane in CelestialBodies.StellarObjectSelectedOnScreen.StarLanes)
             {
-                overviewstring.AppendLine($" - To {starlane.To.Name} , techlevel : {starlane.TechLevelRequiredforTravel.Techlevel}    length : {starlane.Length:F2} lightyears. " );
-            }    
-            overviewstring.AppendLine("\nORBITAL BODIES : ");
-            foreach (OrbitalBody orbitalbody in CelestialBodies.StellarObjectSelectedOnScreen.Orbitalbodies)
-            {
-                overviewstring.Append(SetOrbitalbodystringforOverview(orbitalbody));
-                
-                if (orbitalbody.NaturalSatellites.Count == 0)
-                {
-                    overviewstring.AppendLine($"   - No natural satellites. ");
-                }
+                overviewstring.AppendLine($" - To {starlane.To.Name} , techlevel : {starlane.TechLevelRequiredforTravel.Level}    length : {starlane.Length:F2} lightyears. " );
+            }
 
-                else
+            if (CommonSettings.ScreenSettings.ShowOrbitalBodyInfo)
+            {
+                overviewstring.AppendLine("\nORBITAL BODIES : ");
+                foreach (OrbitalBody orbitalbody in CelestialBodies.StellarObjectSelectedOnScreen.Orbitalbodies)
                 {
-                    overviewstring.AppendLine($"   - Natural satellites : ");
-                    foreach (OrbitalBody naturalsatellite in orbitalbody.NaturalSatellites)
+                    overviewstring.Append(SetStringOrbitalbodyInfo(orbitalbody));
+                    if (CommonSettings.ScreenSettings.ShowNaturalSatellitesInfo)
                     {
-                        overviewstring.Append(SetOrbitalbodystringforOverview(naturalsatellite)); 
+                        if (orbitalbody.NaturalSatellites.Count == 0)
+                        {
+                            overviewstring.AppendLine($"   - No natural satellites. ");
+                        }
+
+                        else
+                        {
+                            overviewstring.AppendLine($"   - Natural satellites : ");
+                            foreach (OrbitalBody naturalsatellite in orbitalbody.NaturalSatellites)
+                            {
+                                overviewstring.Append(SetStringOrbitalbodyInfo(naturalsatellite));
+                            }
+                        }
                     }
                 }
             }
+            CentralHubText = SetStringCentralHubInfo(CelestialBodies.StellarObjectSelectedOnScreen);
             return overviewstring.ToString();
         }
-        public string CelestialBodyInfoToString()
+        public string SetStringCelestialBodyInitialisationResults()
         {
             StringBuilder overviewstring = new System.Text.StringBuilder();
             var stellarinfo = new List<StellarObject>();
@@ -731,7 +1013,7 @@ namespace SpaceTrader
             int totalcntr = 0;
             overviewstring.AppendLine($"CELESTIAL BODY GENERATION RESULTS  \n");
             overviewstring.AppendLine($" ---Stellar objects  : ");
-            foreach (BaseTypes.StellarObjectType stellartype in BaseCollections.StellarObjectTypes)
+            foreach (StellarObjectType stellartype in BaseCollections.StellarObjectTypes)
             {
                 stellarinfo = CelestialBodies.StellarObjects.Where(stl => stl.StellarType.Name == stellartype.Name).ToList();
                 if (stellarinfo.Count > 0)
@@ -743,7 +1025,7 @@ namespace SpaceTrader
 
             overviewstring.AppendLine($"Total stellar objects : {totalcntr} \n\n ---Orbital bodies around stellar objects  :");
             totalcntr = 0;
-            foreach (BaseTypes.OrbitalBodyType orbitalbodytype in BaseCollections.OrbitalbodyTypes)
+            foreach (OrbitalBodyType orbitalbodytype in BaseCollections.OrbitalbodyTypes)
             {
                 orbitalbodyinfo = CelestialBodies.StellarObjects.SelectMany(stl => stl.Orbitalbodies).Where(ob => ob.OrbitalBodyType.Name == orbitalbodytype.Name).ToList();
                 if (orbitalbodyinfo.Count > 0)
@@ -754,7 +1036,7 @@ namespace SpaceTrader
             }
             overviewstring.AppendLine($"Total orbital bodies : {totalcntr} \n\n ---Natural sattelites around orbital bodies  :");
             totalcntr = 0;
-            foreach (BaseTypes.OrbitalBodyType naturalsatellite in BaseCollections.OrbitalbodyTypes)
+            foreach (OrbitalBodyType naturalsatellite in BaseCollections.OrbitalbodyTypes)
             {
                 naturalsatelliteinfo = CelestialBodies.StellarObjects.SelectMany(h => h.Orbitalbodies)
                             .SelectMany(j => j.NaturalSatellites).Where(rt => rt.OrbitalBodyType.Name == naturalsatellite.Name).ToList();
@@ -779,8 +1061,8 @@ namespace SpaceTrader
             {
                 foreach (OrbitalBody orbitalbody in stellarobject.Orbitalbodies.ToList())
                 {
-                    orbitalbody.ResourcesinStorage.Clear();
-                    orbitalbody.ResourceGroups.Clear();
+                    orbitalbody.ElementsinStorage.Clear();
+                    orbitalbody.ElementGroups.Clear();
                     orbitalbody.Buildings.CollectionChanged -= (obj, e) => orbitalbody.RecalculateModifiersandProperties();
                     orbitalbody.Buildings.ItemPropertyChanged -= (obj, e) => orbitalbody.RecalculateModifiersandProperties();
                     orbitalbody.Buildings.Clear();
@@ -789,18 +1071,19 @@ namespace SpaceTrader
                 stellarobject.Orbitalbodies.Clear();
                 stellarobject.StarLanes.Clear();
             }
+            Ships.StellarObjectTradingShips.Clear();
             Ships.CargoShips.Clear();
             CelestialBodies.StellarObjects.Clear();
 
-            await CelestialBodies.SetCelestialBodyDatasAsync(CommonSettings.ScreenSettings.ScreenWidth, BaseTaxonomyCollections.Species,   BaseCollections.OrbitalbodyTypes, BaseCollections.StellarObjectTypes, BaseCollections.ResourceGroups, BaseCollections.TechLevelCollection, BaseCollections.BuildingTypes, BaseCollections.Resources, PhysicalConstants, SolarConstants);
+            await CelestialBodies.SetCelestialBodyDatasAsync(CommonSettings.ScreenSettings.ScreenWidth, TaxonomyCollections.Species,   BaseCollections.OrbitalbodyTypes, BaseCollections.StellarObjectTypes, BaseCollections.ElementGroups, BaseCollections.TechLevelCollection, BaseCollections.BuildingTypes, BaseCollections.Elements, PhysicalConstants, SolarConstants);
             InitialiseShips();
             CelestialBodies.SetActiveStar(new System.Windows.Point(0, 0));
             Ships.SetActiveShip(new System.Windows.Point(0, 0));
-            CommonSettings.ScreenSettings.Point3DSettings.Translations.X = 0;
-            CommonSettings.ScreenSettings.Point3DSettings.Translations.Y = -200;
-            
-            SetImageFromStarArray();
-            StellarobjectSystemText = SetStellarSystemInfotoString();
+            CommonSettings.ScreenSettings._3DSettings.Translations.X = 0;
+            CommonSettings.ScreenSettings._3DSettings.Translations.Y = -200;
+
+            PrepareScreenDataandDrawBitmap();
+            StellarobjectSystemText = SetStringStellarSystemInfo();
             SendMessagetoMessageWindow(2);
 
         }
@@ -812,7 +1095,7 @@ namespace SpaceTrader
                 CelestialBodies.StellarPathfromSourcetoDestination = CelestialBodies.CalculateShortestPathfromShiptoStar(Ships.CargoShips[Ships.CargoShips.Count() - 1].DestinationStellarObject, 1);
                 CommonSettings.ScreenSettings.DisplayButtonCalculateShiptoStellarObject = false;
 
-                SetImageFromStarArray();
+                PrepareScreenDataandDrawBitmap();
 
                 return CelestialBodies.StellarPathfromSourcetoDestination.Count.ToString();
             }
@@ -830,21 +1113,19 @@ namespace SpaceTrader
         }
         #endregion
 
-         
-
         private void SendGalaxyGenerationSettings()
         {
             IGalaxyGenerationSettings galaxygenerationsettings = new GalaxyGenerationSettings
             {
                 StartNumberofStellarObjects = CelestialBodies.StartNumberofStellarObjects,
                 StartNumberofShips = Ships.StartNumberofCargoShips,
-                InitBar = CelestialBodies.InitBar,
-                InitBulge = CelestialBodies.InitBulge,
-                InitSpiralArms = CelestialBodies.InitSpiralArms,
-                InitDisc = CelestialBodies.InitDisc,
+                InitializeStellarObjectsinBar = CelestialBodies.InitializeStellarObjectsinBar,
+                InitializeStellarObjectsinBulge = CelestialBodies.InitializeStellarObjectsinBulge,
+                InitializeStellarObjectsinSpiralArms = CelestialBodies.InitializeStellarObjectsinSpiralArms,
+                InitializeStellarObjectsintDisc = CelestialBodies.InitializeStellarObjectsinDisc,
                 DrawStarsinCentre = CelestialBodies.DrawStarsinCentre,
-                MinDistancefromCentre = CelestialBodies.MinDistancefromCentre,
-                MaxBulgeRadius = CelestialBodies.MaxBulgeRadius,
+                MinimumDistancefromCentre = CelestialBodies.MinimumDistancefromCentre,
+                MaximumRadiusofBulge = CelestialBodies.MaximumRadiusofBulge,
                 SpiralWindedness = CelestialBodies.SpiralWindedness
             };
             foreach (Window window in Application.Current.Windows)
@@ -879,14 +1160,14 @@ namespace SpaceTrader
                 case 1:
                     {
                         Title = "Initialisation results";
-                        Message = SetOverviewInitString();
+                        Message = SetStringGeneralInitialisationResults();
                         break;
                     }
 
                 case 2:
                     {
                         Title = "Generation results";
-                        Message = CelestialBodyInfoToString();
+                        Message = SetStringCelestialBodyInitialisationResults();
                         break;
                     }
             }
@@ -903,13 +1184,13 @@ namespace SpaceTrader
             CelestialBodies.StartNumberofStellarObjects = msg.GalaxyGenerationSettings.StartNumberofStellarObjects;
             Ships.StartNumberofCargoShips = msg.GalaxyGenerationSettings.StartNumberofShips;
             CelestialBodies.SpiralWindedness = msg.GalaxyGenerationSettings.SpiralWindedness;
-            CelestialBodies.InitBar = msg.GalaxyGenerationSettings.InitBar;
-            CelestialBodies.InitBulge = msg.GalaxyGenerationSettings.InitBulge;
-            CelestialBodies.InitDisc = msg.GalaxyGenerationSettings.InitDisc;
-            CelestialBodies.InitSpiralArms = msg.GalaxyGenerationSettings.InitSpiralArms;
+            CelestialBodies.InitializeStellarObjectsinBar = msg.GalaxyGenerationSettings.InitializeStellarObjectsinBar;
+            CelestialBodies.InitializeStellarObjectsinBulge = msg.GalaxyGenerationSettings.InitializeStellarObjectsinBulge;
+            CelestialBodies.InitializeStellarObjectsinDisc = msg.GalaxyGenerationSettings.InitializeStellarObjectsintDisc;
+            CelestialBodies.InitializeStellarObjectsinSpiralArms = msg.GalaxyGenerationSettings.InitializeStellarObjectsinSpiralArms;
             CelestialBodies.DrawStarsinCentre = msg.GalaxyGenerationSettings.DrawStarsinCentre;
-            CelestialBodies.MaxBulgeRadius = msg.GalaxyGenerationSettings.MaxBulgeRadius;
-            CelestialBodies.MinDistancefromCentre = msg.GalaxyGenerationSettings.MinDistancefromCentre;
+            CelestialBodies.MaximumRadiusofBulge = msg.GalaxyGenerationSettings.MaximumRadiusofBulge;
+            CelestialBodies.MinimumDistancefromCentre = msg.GalaxyGenerationSettings.MinimumDistancefromCentre;
         }
         private void SetFoodandProductionStrings(TickerSymbolTotalAmountofFoodandPopulation msg)
         {
@@ -920,11 +1201,12 @@ namespace SpaceTrader
         }
         private void SetDate()
         {
-            int tmpyear = (int)(TurnCounter / 200);
-            int tmpmonth = (int)(TurnCounter / 20) - tmpyear * 10;
-            int tmpday = TurnCounter - tmpyear * 200 - tmpmonth * 20;
-            StarDate = $"Year  : {tmpyear}  Month : {tmpmonth + 1}  Day : {tmpday}";
+            int year = (int)(TurnCounter / 200);
+            //int month = (int)(TurnCounter / 20) - year * 10;
+            int day = TurnCounter - year * 200; // - month * 20;
+            StarDate = $"Year  : {year}  Day : {day}"; // Month : {month + 1} 
         }
+
         #region windowsapio
         [DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
@@ -938,7 +1220,8 @@ namespace SpaceTrader
         #region What happens in a timertick
         public void DispatcherTimer_Tick(object sender, EventArgs e) //Set timer parameters and start
         {
-            if (Ships.BMoveShips == true)
+            FastRandom Rand = new FastRandom();
+            if (Ships.MoveShips == true)
             {
 
                 if (TurnCounter % 30 == 0)
@@ -954,18 +1237,29 @@ namespace SpaceTrader
                 ////monthly occurences 
                 if (TurnCounter % 20 == 0)
                 {
-                    CelestialBodies.BuildBuildingperOrbitalbody(BaseCollections.BuildingTypes);
+
                 }
                 //daily occurences
+                #region actions specific to Celestial Bodies 
+                CelestialBodies.OrbitalBodyDynamics(BaseCollections.BuildingTypes, Rand, TurnCounter, FunctionalGroupCollection.FunctionalGroups, CompoundCollection.Compounds);
+                #endregion
+                #region actions specific to Ships and Fleets
+                // Responsibilities for adding and removing cargo from ships lies with ships. Responsibility of adding and removing elements from central hubs lies with central hubs.   
+                Ships.PerformActions(Rand, ShipConstants);
+                #endregion
 
-                CelestialBodies.MineResourcesperOrbitalbody();
-                CelestialBodies.GrownFoodandPopulationperOrbitalbody();
-                SelectedShipSystemText = SetSelectedShipInfotoString();
-                StellarobjectSystemText = SetStellarSystemInfotoString();
+                #region actions requiring both Ships, Mining facilities and/or stellarobjects
+
+                #endregion
+                // add in Ships.Performactions some trade routines
+                // to determine where the ship is headed.  the ship's destination depends on the Demand situation of neighboring star system 
+                // The ship can then determine which of its neighbours has stuff it needs. 
+
+                SelectedShipSystemText = SetStringSelectedShipInfo();
+                StellarobjectSystemText = SetStringStellarSystemInfo();
                 SetDate();
+                PrepareScreenDataandDrawBitmap();
                 TurnCounter += 1;
-                Ships.MoveShipsNew();
-                SetImageFromStarArray();
             }
         }
         #endregion

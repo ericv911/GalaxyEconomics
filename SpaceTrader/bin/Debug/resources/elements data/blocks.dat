@@ -1,0 +1,12 @@
+// Periodic table block configuration
+// every period (horizontal row) of the Periodic table, the Block will repeat. 
+// so there will be 1s, 2s, 3s, etc -- 2p ,3p.... --  3d (starting at the 3rd shell), 4d....  4f (starting at the 4th shell) 
+// block g is theoretical at the moment. the first element that would have an electron in a 5g subshell is element 121
+
+//order of appearance of subshells { 1s, 2s, 2p, 3s,3p, 4s, 3d, 4p, 5s, 4d, 5p, 6s, 4f, 5d, 6p, 7s, 5f, 6d, 7p, 8s, 5g}
+// order : Name, NumberofElectrons, Startingperiod, startingshell
+{ s, 2, 1, 1}
+{ p, 6, 2, 2}
+{ d, 10, 4, 3}
+{ f, 14, 6, 4}
+{ g, 18, 8, 5} 

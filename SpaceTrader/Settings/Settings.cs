@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,7 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-
+using _3DOperations;
 namespace SpaceTrader
 {
     public interface ITimerSettings
@@ -18,6 +20,8 @@ namespace SpaceTrader
     }
     public interface IGeneralSettings
     {
+        FileSettings FileSettings { get; }
+        StellarObjectSettings StellarObjectSettings { get; }
         ScreenSettings ScreenSettings { get; }
         KeyboardSettings KeyboardSettings { get; }
         MouseSettings MouseSettings { get; }
@@ -28,11 +32,21 @@ namespace SpaceTrader
     {
         public GeneralSettings()
         {
+            FileSettings = new FileSettings();
             ScreenSettings = new ScreenSettings();
             MouseSettings = new MouseSettings();
             Timer = new TimerSettings();
             BitmapDataSettings = new BitmapDataSettings();
             KeyboardSettings = new KeyboardSettings();
+            StellarObjectSettings = new StellarObjectSettings();
+        }
+        public StellarObjectSettings StellarObjectSettings
+        {
+            get; set;
+        }
+        public FileSettings FileSettings
+        {
+            get;set;
         }
         public KeyboardSettings KeyboardSettings
         {
@@ -63,16 +77,53 @@ namespace SpaceTrader
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
+        public string SwitchElementandSymbol { get; set; }
+        public string ShowResources { get; set; }
         public bool PressedShift {get; set;}
         public bool PressedAlt { get; set; }
         public bool PressedCtrl { get; set; }
         public KeyboardSettings()
         {
+            LoadSettingsfromFile();
             PressedShift = false;
             PressedAlt = false;
             PressedCtrl = false;
         }
+
+        private void LoadSettingsfromFile()
+        {
+            string[] splitstring;
+            foreach (string line in System.IO.File.ReadLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"resources/keyboardconfig.ini")))
+            {
+                if (line.Length > 0 && !(line.Substring(0, 1) == "/"))
+                {
+                    splitstring = line.Split('=');
+                    switch (splitstring[0])
+                    {
+                        case "SwitchElementandSymbol":
+                            SwitchElementandSymbol = splitstring[1];
+                            break;
+                        case "ShowResources":
+                            ShowResources = splitstring[1];
+                            break;
+                    }
+                }
+            }
+        }
+    }
+    public class FileSettings : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #region fields
+
+        #endregion
+        #region properties
+
+        #endregion
     }
     public class BitmapDataSettings : INotifyPropertyChanged
     {
@@ -176,6 +227,93 @@ namespace SpaceTrader
             ClockTimer.Start();
         }
     }
+    public class StellarObjectSettings: INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        protected bool _showcentralhubelements;
+        protected bool _showelements;
+        protected bool _showmodifiers;
+        protected bool _showbuildings;
+        protected bool _showelementgroups;
+        protected List<string> _stellarobjectclasses;
+        protected string _selectedstellarobjectclass;
+
+        public List<string> StellarObjectClasses
+        {
+            get { return _stellarobjectclasses; }
+            set
+            {
+                _stellarobjectclasses = value;
+                OnPropertyChanged();
+            }
+        }
+        public string SelectedStellarObjectClass
+        {
+            get { return _selectedstellarobjectclass; }
+            set
+            {
+                _selectedstellarobjectclass = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool ShowElementGroups
+        {
+            get { return _showelementgroups; }
+            set
+            {
+                _showelementgroups = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowCentralHubElements
+        {
+            get { return _showcentralhubelements; }
+            set
+            {
+                _showcentralhubelements = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowElements
+        {
+            get { return _showelements; }
+            set
+            {
+                _showelements = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowBuildings
+        {
+            get { return _showbuildings; }
+            set
+            {
+                _showbuildings = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowModifiers
+        {
+            get { return _showmodifiers; }
+            set
+            {
+                _showmodifiers = value;
+                OnPropertyChanged();
+            }
+        }
+        public StellarObjectSettings()
+        {
+
+        }
+    }
     public class ScreenSettings : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -183,17 +321,67 @@ namespace SpaceTrader
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        protected List<string> _fontsizes;
+        protected string _currentfontsize;
         protected bool _displaybuttoncalculateshiptostellarobject;
+        protected int _scrollviewerheightbig;
+        protected int _scrollviewerheightsmall;
         protected int _screenwidth;
         protected int _screenheight;
         protected int _oldscreenwidth;
         protected int _oldscreenheight;
-
+        protected bool _displayelementsymbol;
         protected Visibility _visibilityshipinfoonscreen;
         protected Visibility _visibilitybuttoncalculateshiptostellarobject;
         protected bool _displayshipinfoonscreen;
-        protected bool _bdrawlines;
-        protected Point3dSettings _point3dsettings;
+        protected bool _showorbitalbodyinfo;
+        protected bool _shownaturalsatellitesinfo;
+        protected bool _drawstarlanes;
+        protected bool _showcentralhubelements;
+        protected bool _showelements;
+        protected bool _showmodifiers;
+        protected bool _showbuildings;
+        protected bool _showelementgroups;
+        protected bool _drawshipsonscreen;
+        protected _3DSettings _3dsettings;
+
+        public int ScrollViewerHeightSmall
+        {
+            get { return _scrollviewerheightsmall; }
+            set
+            {
+                _scrollviewerheightsmall = value;
+                OnPropertyChanged();
+            }
+        }
+        public int ScrollViewerHeightBig
+        {
+            get { return _scrollviewerheightbig; }
+            set
+            {
+                _scrollviewerheightbig = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<string> FontSizes
+        {
+            get { return _fontsizes; }
+            set
+            {
+                _fontsizes = value;
+                OnPropertyChanged();
+            }
+
+        }
+        public string CurrentFontSize
+        {
+            get { return _currentfontsize; }
+            set
+            {
+                _currentfontsize = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Visibility VisibilityButtonCalculateShiptoStellarObject
         {
@@ -213,6 +401,7 @@ namespace SpaceTrader
                 OnPropertyChanged();
             }
         }
+
         public int OldScreenWidth
         {
             get { return _oldscreenwidth; }
@@ -251,14 +440,25 @@ namespace SpaceTrader
         }
         public ScreenSettings()
         {
+            _currentfontsize = "10";
             _visibilityshipinfoonscreen = Visibility.Hidden;
             _visibilitybuttoncalculateshiptostellarobject = Visibility.Hidden;
-            _point3dsettings = new Point3dSettings();
+            _3dsettings = new _3DSettings();
             IsGameDataDrawn = false;
+            _drawshipsonscreen = false;
+            _showcentralhubelements = true;
+            _showelements = false;
+            _showmodifiers = false;
+            _showelementgroups = false;
+            _shownaturalsatellitesinfo = false;
+            _showorbitalbodyinfo = false;
+            _showbuildings = false;
+            _displayelementsymbol = false;
             DeltaRotationAngle = 0.05;
         }
-        public bool DisplayShipInfoonScreen 
-        { get 
+        public bool DisplayShipInfoonScreen
+        {
+            get
             { return _displayshipinfoonscreen; }
             set
             {
@@ -292,22 +492,108 @@ namespace SpaceTrader
                 OnPropertyChanged();
             }
         }
+        public bool DisplayElementSymbol
+        {
+            get { return _displayelementsymbol; }
+            set 
+            { 
+                _displayelementsymbol = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool IsGameDataDrawn { get; set; }
         public bool GamePaused { get; set; }
         public double DeltaRotationAngle { get; set; }
-        public Point3dSettings Point3DSettings
+        public _3DSettings _3DSettings
         {
-            get { return _point3dsettings; }
-            set { _point3dsettings = value; }
+            get { return _3dsettings; }
+            set { _3dsettings = value; }
         }
-
-        public bool BDrawLines
+        public bool DrawShips
         {
-            get { return _bdrawlines; }
+            get { return _drawshipsonscreen; }
             set
             {
-                _bdrawlines = value;
+                _drawshipsonscreen = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool DrawStarlanes
+        {
+            get { return _drawstarlanes; }
+            set
+            {
+                _drawstarlanes = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool ShowNaturalSatellitesInfo
+        {
+            get { return _shownaturalsatellitesinfo; }
+            set
+            {
+                _shownaturalsatellitesinfo = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowOrbitalBodyInfo
+        {
+            get { return _showorbitalbodyinfo; }
+            set
+            {
+                _showorbitalbodyinfo = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowElementGroups
+        {
+            get { return _showelementgroups; }
+            set
+            {
+                _showelementgroups = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowCentralHubElements
+        {
+            get { return _showcentralhubelements; }
+            set
+            {
+                _showcentralhubelements = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowElements
+        {
+            get { return _showelements; }
+            set 
+            { 
+                _showelements = value;
+                OnPropertyChanged();
+                
+            }
+        }
+        public bool ShowBuildings
+        {
+            get { return _showbuildings; }
+            set
+            {
+                _showbuildings = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public bool ShowModifiers
+        {
+            get { return _showmodifiers; }
+            set
+            {
+                _showmodifiers = value;
                 OnPropertyChanged();
             }
         }

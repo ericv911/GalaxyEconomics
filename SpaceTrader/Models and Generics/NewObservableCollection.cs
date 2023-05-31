@@ -6,6 +6,10 @@ using System.ComponentModel;
 
 namespace SpaceTrader
 {
+    /// <summary>
+    /// Needed for the IteminCollectionChangedEvent
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class FullyObservableCollection<T> : ObservableCollection<T>
         where T : INotifyPropertyChanged
     {

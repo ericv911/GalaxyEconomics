@@ -1,0 +1,6 @@
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\3DOperations\bin\Debug\3DOperations.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\3DOperations\bin\Debug\3DOperations.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\3DOperations\obj\Debug\3DOperations.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\3DOperations\obj\Debug\3DOperations.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\3DOperations\obj\Debug\3DOperations.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\3DOperations\obj\Debug\3DOperations.pdb

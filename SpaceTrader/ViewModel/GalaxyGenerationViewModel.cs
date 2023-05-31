@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Messaging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,16 +15,16 @@ namespace SpaceTrader
     {
         #region fields
         private bool canExecute = true;
-        protected bool _initspirals;
+        protected bool _initializestellarobjectsinspiralarms;
         protected int _spiralwindedness;
-        protected bool _initbulge;
-        protected int _maxbulgeradius;
-        protected bool _initbar;
-        protected bool _initdisc;
+        protected bool _initializestellarobjectsinbulge;
+        protected int _maximumradiusofbulge;
+        protected bool _initializestellarobjectsinbar;
+        protected bool _initializestellarobjectsindisc;
         protected int _startnumberofships;
-        protected bool _bdrawstarsincentre;
+        protected bool _drawstarsincentre;
         protected int _startnumberofstellarobjects;
-        protected int _mindistancefromcentre;
+        protected int _minimumdistancefromcentre;
         protected string _actionstring;
         #endregion
         #region properties
@@ -57,30 +58,30 @@ namespace SpaceTrader
         }
         public bool DrawStarsinCentre
         {
-            get { return _bdrawstarsincentre; }
+            get { return _drawstarsincentre; }
             set
             {
-                _bdrawstarsincentre = value;
+                _drawstarsincentre = value;
                 OnPropertyChanged();
             }
         }
-        public int MinDistancefromCentre
+        public int MinimumDistancefromCentre
         {
-            get { return _mindistancefromcentre; }
+            get { return _minimumdistancefromcentre; }
             set
             {
-                _mindistancefromcentre = value;
+                _minimumdistancefromcentre = value;
                 OnPropertyChanged();
             }
         }
 
-        public bool InitSpiralArms
+        public bool InitializeStellarObjectsinSpiralArms
         {
-            get { return _initspirals; }
+            get { return _initializestellarobjectsinspiralarms; }
             set
             {
-                if (!value) InitBar = false;
-                _initspirals = value;
+                if (!value) InitializeStellarObjectsinBar = false;
+                _initializestellarobjectsinspiralarms = value;
                 OnPropertyChanged();
             }
         }
@@ -95,41 +96,41 @@ namespace SpaceTrader
                 OnPropertyChanged();
             }
         }
-        public int MaxBulgeRadius
+        public int MaximumRadiusofBulge
         {
-            get { return _maxbulgeradius; }
+            get { return _maximumradiusofbulge; }
             set
             {
-                if (value < 50) _maxbulgeradius = 50;
-                else if (value > 500) _maxbulgeradius = 500;
-                else _maxbulgeradius = value;
+                if (value < 50) _maximumradiusofbulge = 50;
+                else if (value > 500) _maximumradiusofbulge = 500;
+                else _maximumradiusofbulge = value;
                 OnPropertyChanged();
             }
         }
-        public bool InitBulge
+        public bool InitializeStellarObjectsinBulge
         {
-            get { return _initbulge; }
+            get { return _initializestellarobjectsinbulge; }
             set
             {
-                _initbulge = value;
+                _initializestellarobjectsinbulge = value;
                 OnPropertyChanged();
             }
         }
-        public bool InitBar
+        public bool InitializeStellarObjectsinBar
         {
-            get { return _initbar; }
+            get { return _initializestellarobjectsinbar; }
             set
             {
-                _initbar = value;
+                _initializestellarobjectsinbar = value;
                 OnPropertyChanged();
             }
         }
-        public bool InitDisc
+        public bool InitializeStellarObjectsinDisc
         {
-            get { return _initdisc; }
+            get { return _initializestellarobjectsindisc; }
             set
             {
-                _initdisc = value;
+                _initializestellarobjectsindisc = value;
                 OnPropertyChanged();
             }
         }
@@ -165,13 +166,13 @@ namespace SpaceTrader
             StartNumberofStellarObjects = msg.GalaxyGenerationSettings.StartNumberofStellarObjects;
             StartNumberofCargoShips = msg.GalaxyGenerationSettings.StartNumberofShips;
             SpiralWindedness = msg.GalaxyGenerationSettings.SpiralWindedness;
-            InitBar = msg.GalaxyGenerationSettings.InitBar;
-            InitBulge = msg.GalaxyGenerationSettings.InitBulge;
-            InitDisc = msg.GalaxyGenerationSettings.InitDisc;
-            InitSpiralArms = msg.GalaxyGenerationSettings.InitSpiralArms;
+            InitializeStellarObjectsinBar = msg.GalaxyGenerationSettings.InitializeStellarObjectsinBar;
+            InitializeStellarObjectsinBulge = msg.GalaxyGenerationSettings.InitializeStellarObjectsinBulge;
+            InitializeStellarObjectsinDisc = msg.GalaxyGenerationSettings.InitializeStellarObjectsintDisc;
+            InitializeStellarObjectsinSpiralArms = msg.GalaxyGenerationSettings.InitializeStellarObjectsinSpiralArms;
             DrawStarsinCentre = msg.GalaxyGenerationSettings.DrawStarsinCentre;
-            MaxBulgeRadius = msg.GalaxyGenerationSettings.MaxBulgeRadius;
-            MinDistancefromCentre = msg.GalaxyGenerationSettings.MinDistancefromCentre;
+            MaximumRadiusofBulge = msg.GalaxyGenerationSettings.MaximumRadiusofBulge;
+            MinimumDistancefromCentre = msg.GalaxyGenerationSettings.MinimumDistancefromCentre;
         }
         private void RelaySaveSettings (object obj)
         {
@@ -179,13 +180,13 @@ namespace SpaceTrader
             {
                 StartNumberofStellarObjects = StartNumberofStellarObjects,
                 StartNumberofShips = StartNumberofCargoShips,
-                InitBar = InitBar,
-                InitBulge = InitBulge,
-                InitSpiralArms = InitSpiralArms,
-                InitDisc = InitDisc,
+                InitializeStellarObjectsinBar = InitializeStellarObjectsinBar,
+                InitializeStellarObjectsinBulge = InitializeStellarObjectsinBulge,
+                InitializeStellarObjectsinSpiralArms = InitializeStellarObjectsinSpiralArms,
+                InitializeStellarObjectsintDisc = InitializeStellarObjectsinDisc,
                 DrawStarsinCentre = DrawStarsinCentre,
-                MinDistancefromCentre = MinDistancefromCentre,
-                MaxBulgeRadius = MaxBulgeRadius,
+                MinimumDistancefromCentre = MinimumDistancefromCentre,
+                MaximumRadiusofBulge = MaximumRadiusofBulge,
                 SpiralWindedness = SpiralWindedness
             };
             EventSystem.Publish<TickerSymbolGalaxyGenerationSettings>(new TickerSymbolGalaxyGenerationSettings { GalaxyGenerationSettings = galaxygenerationsettings});

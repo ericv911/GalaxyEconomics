@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Economy;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Media3D;
@@ -19,9 +20,6 @@ namespace SpaceTrader
         protected EconomicEntity _economicentity;
         protected double _surfacetemperature;
         protected string _name;
-        protected long _age;
-        protected double _mass;
-        protected int _radius;
         protected Point3D _beginposition;
         protected Point3D _rotatedpositionz;
         protected Point3D _rotatedpositionx;
@@ -35,7 +33,7 @@ namespace SpaceTrader
         }
         public CelestialBody(string name, Point3D position)
         {
-            _name = name;
+            Name = name;
             _beginposition = position;
             _rotatedpositionz = position;
             _rotatedpositionx = position;
@@ -113,20 +111,9 @@ namespace SpaceTrader
                 OnPropertyChanged();
             }
         }
-        public long Age
-        {
-            get { return _age; }
-            set { _age = value; }
-        }
-        public int Radius
-        {
-            get { return _radius; }
-            set { _radius = value; }
-        }
-        public double Mass
-        {
-            get { return _mass; }
-            set { _mass = value; }
-        }
+        public long Age { get; set; }
+        public int Radius { get; set; } //in km
+        public double Mass { get; set; } //in kg
+        public double Density { get; set; } //in g/cm³
     }
 }

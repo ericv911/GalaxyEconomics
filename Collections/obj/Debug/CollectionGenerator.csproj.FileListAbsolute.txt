@@ -1,0 +1,11 @@
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\bin\Debug\Collections.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\bin\Debug\Collections.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\bin\Debug\Common.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\bin\Debug\FileLoadingSystem.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\bin\Debug\Common.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\bin\Debug\FileLoadingSystem.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\obj\Debug\CollectionGenerator.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\obj\Debug\CollectionGenerator.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\obj\Debug\CollectionGenerator.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\obj\Debug\Collections.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Collections\obj\Debug\Collections.pdb

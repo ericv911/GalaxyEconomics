@@ -1,212 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Media;
+using Common.Physics;
+using Common.Economy;
+using Common.Construction;
+using Common.Astronomy;
+using Common.Transportation;
+using Common.Technology;
+using FileHandlingSystem;
+using CompoundProvider.Types;
 
 namespace SpaceTrader
 {
     /// <summary>
     /// This class is only used as a creation-factory from associated .dat files ,
-    /// for the creation of collections of resources, resourcegroups, tradegoods and related other collections.
+    /// for the creation of collections of element, elementgroups, tradegoods and related other collections.
     /// These collections will be stored in ObservableCollection and List types.
     /// Other parts of the program can add these collections to Ships, ORbital Bodies, use them for economic calculation purposes, etc.
-    /// For now these collections are :
-    /// - Resources
-    /// - Resourcegroups
     /// Later on collections of Tradegoods, refined resources, manufactured supplies etc. will be added.
     /// </summary>
     ///     
-    public class BaseTaxonomyCollections //: INotifyPropertyChanged
-    {
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
-
-        public BaseTaxonomyCollections()
-        {
-            SetTaxonomyCollections();
-            foreach (Taxonomy.Class tclass in Classes)
-            {
-                Console.WriteLine($"Class :  {tclass.Name} -> SubPhylum : {tclass.SubPhylum.Name} -> Phylum : {tclass.SubPhylum.Phylum.Name} -> Kingdom : {tclass.SubPhylum.Phylum.Kingdom.Name} -> Domain : {tclass.SubPhylum.Phylum.Kingdom.Domain.Name}");
-            }
-            foreach (Taxonomy.Order order in Orders)
-            {
-                Console.WriteLine($"Order :  {order.Name} -> Class : {order.Class.Name}");
-            }
-            foreach (Taxonomy.Species species in Species)
-            {
-                Console.WriteLine($"Species :  {species.Name} -> Genus : {species.Genus.Name} -> Family : {species.Genus.Family.Name}-> Order : {species.Genus.Family.Order.Name}");
-            }
-        }
-        #region collections 
-        public ObservableCollection<Taxonomy.Domain> Domains = new ObservableCollection<Taxonomy.Domain>();
-        public ObservableCollection<Taxonomy.Kingdom> Kingdoms = new ObservableCollection<Taxonomy.Kingdom>();
-        public ObservableCollection<Taxonomy.Phylum> Phyla = new ObservableCollection<Taxonomy.Phylum>();
-        public ObservableCollection<Taxonomy.SubPhylum> SubPhyla = new ObservableCollection<Taxonomy.SubPhylum>();
-        public ObservableCollection<Taxonomy.Class> Classes = new ObservableCollection<Taxonomy.Class>();
-        public ObservableCollection<Taxonomy.Order> Orders = new ObservableCollection<Taxonomy.Order>();
-        public ObservableCollection<Taxonomy.Family> Families = new ObservableCollection<Taxonomy.Family>();
-        public ObservableCollection<Taxonomy.Genus> Geni = new ObservableCollection<Taxonomy.Genus>();
-        public ObservableCollection<Taxonomy.Species> Species = new ObservableCollection<Taxonomy.Species>();
+    public class BaseCollections
+    { 
+        #region world collections
+        public ObservableCollection<CargoShipType> CargoShipTypes = new ObservableCollection<CargoShipType>();
+        public ObservableCollection<BuildingType> BuildingTypes = new ObservableCollection<BuildingType>();
+        public ObservableCollection<OrbitalBodyType> OrbitalbodyTypes = new ObservableCollection<OrbitalBodyType>();
+        public ObservableCollection<StellarObjectType> StellarObjectTypes = new ObservableCollection<StellarObjectType>();
+        public ObservableCollection<EconomicEntity> EconomicEntities = new ObservableCollection<EconomicEntity>();
+        public List<TechnologyLevel> TechLevelCollection = new List<TechnologyLevel>();
         #endregion
+        #region chemistry and physics
+        public ObservableCollection<Block> Blocks = new ObservableCollection<Block>();
+        public ObservableCollection<Element> Elements = new ObservableCollection<Element>();
+        public ObservableCollection<ElementGroup> ElementGroups = new ObservableCollection<ElementGroup>();
 
-        private int SetTaxonomyCollections()
-        {
-            Taxonomy.Domain tmpdomain;
-            Taxonomy.Kingdom tmpkingdom;
-            Taxonomy.Phylum tmpphylum;
-            Taxonomy.SubPhylum tmpsubphylum;
-            Taxonomy.Class tmpclass;
-            Taxonomy.Order tmporder;
-            Taxonomy.Family tmpfamily;
-            Taxonomy.Genus tmpgenus;
-            Taxonomy.Species tmpspecies;
-            string[] splitstring;
-            string[] stringfromfile = FileActions.ReadData(@"resources/taxonomy/domain.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpdomain = new Taxonomy.Domain
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' })
-                };
-                Domains.Add(tmpdomain);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/kingdom.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpkingdom = new Taxonomy.Kingdom
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    Domain = Domains[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1]
-                };
-                Kingdoms.Add(tmpkingdom);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/phylum.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpphylum = new Taxonomy.Phylum
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    Kingdom = Kingdoms[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1]
-                };
-                Phyla.Add(tmpphylum);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/subphylum.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpsubphylum = new Taxonomy.SubPhylum
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    Phylum = Phyla[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1]
-                };
-                SubPhyla.Add(tmpsubphylum);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/class.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpclass = new Taxonomy.Class
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    SubPhylum = SubPhyla[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1]
-                };
-                Classes.Add(tmpclass);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/order.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmporder = new Taxonomy.Order
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    Class = Classes[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1]
-                };
-                Orders.Add(tmporder);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/family.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpfamily = new Taxonomy.Family
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    Order = Orders[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1]
-                };
-                Families.Add(tmpfamily);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/genus.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpgenus = new Taxonomy.Genus
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    Family = Families[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1]
-                };
-                Geni.Add(tmpgenus);
-            }
-            stringfromfile = FileActions.ReadData(@"resources/taxonomy/species.dat", 1);
-            foreach (string line in stringfromfile)
-            {
-                splitstring = line.Split(',');
-                tmpspecies = new Taxonomy.Species
-                {
-                    Name = splitstring[0].Trim(new Char[] { '{' }),
-                    Genus = Geni[Convert.ToInt32(splitstring[1].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture) - 1],
-                    ReproductionRate = double.Parse(splitstring[2].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture),
-                };
-                Species.Add(tmpspecies);
-            }
-            return 0;
-        }
-    }
-    public class BaseCollections //: INotifyPropertyChanged
-    {
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
+        #endregion 
 
         public BaseCollections()
         {
+            #region chemistry and physics
+            SetBlockCollection();
+            SetElementCollection();
+            SetElementGroupCollection();
+
+            #endregion
+
+            #region world
+            SetTechLevelTypeCollection();
+            SetShipTypeCollection();
             SetBuildingTypeCollection();
             SetEconomicEntityCollection();
-            SetResourceCollection();
-            SetResourceGroupCollection();
             SetOrbitalBodyTypeCollection();
             SetStellarObjectTypeCollection();
-            SetTechLevelTypeCollection();
+            #endregion
         }
 
-        public ObservableCollection<BaseTypes.BuildingType> BuildingTypes = new ObservableCollection<BaseTypes.BuildingType>();
-        public ObservableCollection<EconomicEntity> EconomicEntities = new ObservableCollection<EconomicEntity>();
-        public List<TechLevel> TechLevelCollection = new List<TechLevel>();
-        public ObservableCollection<Resource> Resources = new ObservableCollection<Resource>();
-        public ObservableCollection<ResourceGroup> ResourceGroups = new ObservableCollection<ResourceGroup>();
-        public ObservableCollection<BaseTypes.OrbitalBodyType> OrbitalbodyTypes = new ObservableCollection<BaseTypes.OrbitalBodyType>();
-        public ObservableCollection<BaseTypes.StellarObjectType> StellarObjectTypes = new ObservableCollection<BaseTypes.StellarObjectType>();
-
+         private int SetShipTypeCollection()
+        {
+            CargoShipType _cargoshiptype;
+            string[] splitstring;
+            string[] stringfromfile = FileActions.ReadData(@"resources/ships/cargoships.dat", 1);
+            foreach (string line in stringfromfile)
+            {
+                splitstring = line.Split(',');
+                _cargoshiptype = new CargoShipType
+                {
+                    Name = splitstring[0].Trim(new Char[] { '{' }),
+                    MaxHullIntegrity = Convert.ToInt32(splitstring[1]),
+                    MaxHullIntegrityIncreaseperLevel = Convert.ToInt32(splitstring[2]),
+                    FuelCapacity = double.Parse(splitstring[3]),
+                    FuelConsumption = double.Parse(splitstring[4]),
+                    BaseSpeed = Convert.ToInt32(splitstring[5]),
+                    MaxNumberoFCargoHolds = Convert.ToInt32(splitstring[6]),
+                    MaxLoadperCargoHold = Convert.ToInt32(splitstring[7]),
+                    BaseRepairAmountperTurn = Convert.ToInt32(splitstring[8].Trim(new Char[] { '}' })),
+                };
+                CargoShipTypes.Add(_cargoshiptype);
+            }
+            return 0;
+        }
         private int SetBuildingTypeCollection()
         {
-            BaseTypes.BuildingType tmpbuildingtype;
+            BuildingType _buildingtype;
             string[] splitstring;
             string[] stringfromfile = FileActions.ReadData(@"resources/building types.dat", 1);
             foreach (string line in stringfromfile)
             {
                 splitstring = line.Split(',');
-                tmpbuildingtype = new BaseTypes.BuildingType
+                _buildingtype = new BuildingType
                 {
                     Name = splitstring[0].Trim(new Char[] { '{' }),
                     NeedsHabitabilitytoBuild = Convert.ToBoolean(Convert.ToInt32(splitstring[1])),
@@ -219,48 +104,51 @@ namespace SpaceTrader
                     PopulationModifier = double.Parse(splitstring[8], CultureInfo.InvariantCulture),
                     PopulationHousing = Convert.ToInt32(splitstring[9]),
                     FoodStorage = Convert.ToInt32(splitstring[10]),
-                    ChanceofOccuring = double.Parse(splitstring[11].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture)
+                    ChanceofOccuring = double.Parse(splitstring[11], CultureInfo.InvariantCulture),
+                    CanDoChemistry = Convert.ToBoolean(Convert.ToInt32(splitstring[12])),
+                    CanProduceCompounds = Convert.ToBoolean(Convert.ToInt32(splitstring[13])),
+                    WhereCanItBeBuilt = Convert.ToInt32(splitstring[14].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture),
                 };
-                BuildingTypes.Add(tmpbuildingtype);
+                BuildingTypes.Add(_buildingtype);
             }
             return 0;
         }
         private int SetEconomicEntityCollection()
         {
             string[] splitstring;
-            EconomicEntity tmpEconomicEntity;
+            EconomicEntity _EconomicEntity;
             int R, B, G;
             string[] stringfromfile = FileActions.ReadData(@"resources/corporateentities.dat", 1);
             foreach (string line in stringfromfile)
             {
                 splitstring = line.Split(',');
-                tmpEconomicEntity = new EconomicEntity();
+                _EconomicEntity = new EconomicEntity();
                 // Name, Color RGB
                 R = Convert.ToInt32(splitstring[1]);
                 B = Convert.ToInt32(splitstring[2]);
                 G = Convert.ToInt32(splitstring[3].Trim(new Char[] { '}' }));
-                tmpEconomicEntity.Name = splitstring[0].Trim(new Char[] { '{' });
-                tmpEconomicEntity.Color = Color.FromRgb((byte)R, (byte)B, (byte)G);
-                EconomicEntities.Add(tmpEconomicEntity);
+                _EconomicEntity.Name = splitstring[0].Trim(new Char[] { '{' });
+                _EconomicEntity.Color = Color.FromRgb((byte)R, (byte)B, (byte)G);
+                EconomicEntities.Add(_EconomicEntity);
             }
             return 0;
         }
         private int SetTechLevelTypeCollection()
         {
-            TechLevelCollection.Add(new TechLevel("Basic", 1, Color.FromRgb(0, 0, 255)));
-            TechLevelCollection.Add(new TechLevel("Advanced", 2, Color.FromRgb(50, 100, 200)));
-            TechLevelCollection.Add(new TechLevel("Express", 3, Color.FromRgb(0, 255, 255)));
+            TechLevelCollection.Add(new TechnologyLevel("Basic", 1, Color.FromRgb(30, 0, 60)));
+            TechLevelCollection.Add(new TechnologyLevel("Advanced", 2, Color.FromRgb(0, 30, 60)));
+            TechLevelCollection.Add(new TechnologyLevel("Express", 3, Color.FromRgb(30, 30, 70)));
             return 0;
         }
         private int SetOrbitalBodyTypeCollection()
         {
             string[] splitstring;
-            BaseTypes.OrbitalBodyType tmpOrbitalBodyType;
+            OrbitalBodyType _OrbitalBodyType;
             string[] stringfromfile = FileActions.ReadData(@"resources/celestial bodies/orbitalbodydata.dat", 1);
             foreach (string line in stringfromfile)
             {
                 splitstring = line.Split(',');
-                tmpOrbitalBodyType = new BaseTypes.OrbitalBodyType
+                _OrbitalBodyType = new OrbitalBodyType
                 {
                     Name = splitstring[0].Trim(new Char[] { '{' }),
                     RelativeOccurence = Convert.ToInt32(splitstring[1]),
@@ -275,22 +163,24 @@ namespace SpaceTrader
                     FoodSpoilageFactor = double.Parse(splitstring[10], CultureInfo.InvariantCulture)/100,
                     HomelessDeathFactor = double.Parse(splitstring[11], CultureInfo.InvariantCulture)/100,
                     NaturalHabitationModifier = double.Parse(splitstring[12], CultureInfo.InvariantCulture),
-                    SurfaceStateofMatter = Convert.ToInt32(splitstring[13].Trim(new Char[] { '}' }))
+                    SurfaceStateofMatter = Convert.ToInt32(splitstring[13]),
+                    MaximumNumberofMoons = Convert.ToInt32(splitstring[14]),
+                    MinimumDensity = double.Parse(splitstring[15], CultureInfo.InvariantCulture),
+                    MaximumDensity = double.Parse(splitstring[16].Trim(new Char[] { '}' }), CultureInfo.InvariantCulture)
                 };
-                OrbitalbodyTypes.Add(tmpOrbitalBodyType);
+                OrbitalbodyTypes.Add(_OrbitalBodyType);
             }
             return 0;
         }
         private int SetStellarObjectTypeCollection()
         {
             string[] splitstring;
-            BaseTypes.StellarObjectType tmpStellarType;
+            StellarObjectType _StellarType;
             string[] stringfromfile = FileActions.ReadData(@"resources/celestial bodies/stellarobjectdata.dat", 1);
             foreach (string line in stringfromfile)
             {
                 splitstring = line.Split(',');
-                // Name, relative occurence, min mass, max mass, max age, color, phase
-                tmpStellarType = new BaseTypes.StellarObjectType
+                _StellarType = new StellarObjectType
                 {
                     Name = splitstring[0].Trim(new Char[] { '{' }),
                     RelativeOccurence = Convert.ToInt32(splitstring[1]),
@@ -309,24 +199,46 @@ namespace SpaceTrader
                     Maximum_Radius = Convert.ToInt32(splitstring[14]),
                     LifePhase = splitstring[15].Trim(new Char[] { '}' })
                 };
-                StellarObjectTypes.Add(tmpStellarType);
+                StellarObjectTypes.Add(_StellarType);
             }
             return 0;
         }
-        private int SetResourceGroupCollection()
+        private int SetBlockCollection()
         {
+            Block _block;
             string[] splitstring;
-            string[] splitarray;
-            int resourcecounter;
-            ResourceGroup tmpresourcegroup;
-            string[] stringfromfile = FileActions.ReadData(@"resources/resource data/resourcegroup.dat", 1);
+            string[] stringfromfile = FileActions.ReadData(@"resources/elements data/blocks.dat", 1);
             foreach (string line in stringfromfile)
             {
                 splitstring = line.Split(',');
-                resourcecounter = 0;
-                tmpresourcegroup = new ResourceGroup();
-                tmpresourcegroup.Name = splitstring[0].Trim(new Char[] { '{' });
-                tmpresourcegroup.ResourcegroupExtractionModifier = double.Parse(splitstring[1]);
+                _block = new Block
+                {
+                    Name = splitstring[0].Trim(new Char[] { '{', ' '}),
+                    NumberofElectronsperPeriod = Convert.ToInt32(splitstring[1]),
+                    StartingPeriod = Convert.ToInt32(splitstring[2]),
+                    StartingShell = Convert.ToInt32(splitstring[3].Trim(new char[] { '}' }))
+                };
+                Blocks.Add(_block);
+            }
+            return 0;
+        }
+
+        private int SetElementGroupCollection()
+        {
+            string[] splitstring;
+            string[] splitarray;
+            int elementcounter;
+            ElementGroup _elementgroup;
+            string[] stringfromfile = FileActions.ReadData(@"resources/elements data/elementgroups.dat", 1);
+            foreach (string line in stringfromfile)
+            {
+                splitstring = line.Split(',');
+                elementcounter = 0;
+                _elementgroup = new ElementGroup
+                {
+                    Name = splitstring[0].Trim(new Char[] { '{' }),
+                    ElementGroupExtractionModifier = double.Parse(splitstring[1])
+                };
                 for (int i = 2; i < splitstring.Count(); i++)
                 {
                     splitstring[i].Replace(" ", string.Empty);
@@ -335,44 +247,60 @@ namespace SpaceTrader
                         splitarray = splitstring[i].Split('-');
                         for (int j = Convert.ToInt32(splitarray[0]); j < Convert.ToInt32(splitarray[1].Trim(new Char[] { '}' })) + 1; j++)
                         {
-                            tmpresourcegroup.Resources.Add(Resources[j - 1]);
-                            tmpresourcegroup.IntResources.Add(j);
-                            resourcecounter += 1;
+                            _elementgroup.Elements.Add(Elements[j - 1]);
+                            elementcounter += 1;
                         }
                     }
                     else
                     {
-                        tmpresourcegroup.Resources.Add(Resources[Convert.ToInt32(splitstring[i].Trim(new Char[] { '}' })) - 1]);
-                        tmpresourcegroup.IntResources.Add(Convert.ToInt32(splitstring[i].Trim(new Char[] { '}' })));
-                        resourcecounter += 1;
+                        _elementgroup.Elements.Add(Elements[Convert.ToInt32(splitstring[i].Trim(new Char[] { '}' })) - 1]);
+                        elementcounter += 1;
                     }
                 }
-                ResourceGroups.Add(tmpresourcegroup);
+                ElementGroups.Add(_elementgroup);
             }
             return 0;
         }
 
-        private int SetResourceCollection()
-        {
-
-            Resource tmpresource;
+        private int SetElementCollection()
+        {          
+            Element _element;
             string[] splitstring;
-            string[] stringfromfile = FileActions.ReadData(@"resources/resource data/resources.dat", 1);
+            string[] splitstringbracket;
+            string[] stringfromfile = FileActions.ReadData(@"resources/elements data/elements.dat", 1);
             foreach (string line in stringfromfile)
             {
+                splitstringbracket = line.Split('(');
+                _element = new Element();
                 splitstring = line.Split(',');
-
-                tmpresource = new Resource();
-                splitstring = line.Split(',');
-                tmpresource.Name = splitstring[0].Trim(new Char[] { '{' });
-                tmpresource.UniversalAbundance = double.Parse(splitstring[1], CultureInfo.InvariantCulture);
-                if (tmpresource.UniversalAbundance == 0)
+                _element.Name = splitstring[0].Trim(new Char[] { '{' });
+                _element.Symbol = splitstring[1].Trim(new Char[] { '{' });
+                var _block = (from _blocks in Blocks
+                              where _blocks.Name == splitstring[2]
+                              select _blocks).First();
+                _element.Block = _block;
+                _element.UniversalAbundance = double.Parse(splitstring[3], CultureInfo.InvariantCulture);
+                if (_element.UniversalAbundance == 0)
                 {
-                    tmpresource.UniversalAbundance = 0.000000001;
+                    _element.UniversalAbundance = 0.000000001;
                 }
-                tmpresource.StateofMatter = Convert.ToInt32(splitstring[2]);
-                tmpresource.IsRadioActive = Convert.ToInt32(splitstring[3].Trim(new Char[] { '}' })) == 1 ? tmpresource.IsRadioActive = true : tmpresource.IsRadioActive = false; // Convert.ToBoolean(splitstring[3]);
-                Resources.Add(tmpresource);
+                _element.StateofMatter = Convert.ToInt32(splitstring[4]);
+                _element.IsRadioActive = Convert.ToInt32(splitstring[5].Trim(new Char[] { '}' })) == 1 ? _element.IsRadioActive = true : _element.IsRadioActive = false; // Convert.ToBoolean(splitstring[3]);
+                _element.AtomicMass = double.Parse(splitstring[6], CultureInfo.InvariantCulture);
+                _element.ElectroNegativity = double.Parse(splitstring[7], CultureInfo.InvariantCulture);
+                splitstringbracket[1] = splitstringbracket[1].Substring(0, splitstringbracket[1].IndexOf(")") + 1);
+                splitstringbracket[2] = splitstringbracket[2].Substring(0, splitstringbracket[2].IndexOf(")") + 1);
+                splitstring = splitstringbracket[1].Split(',');
+                for (int i = 0; i < splitstring.Count();i++)
+                {
+                    _element.OxidationStates.Add(Convert.ToInt32(splitstring[i].Trim(new Char[] { '}', ')' })));
+                }
+                splitstring = splitstringbracket[2].Split(',');
+                for (int i = 0; i < splitstring.Count(); i++)
+                {
+                    _element.CommonOxidationStates.Add(Convert.ToInt32(splitstring[i].Trim(new Char[] { '}', ')' })));
+                }
+                Elements.Add(_element);
             }
             return 0;
         }

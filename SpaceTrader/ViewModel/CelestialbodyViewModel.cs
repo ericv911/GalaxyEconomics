@@ -4,11 +4,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using _3DOperations;
+using Common.Astronomy;
+using Common.Constants;
+using Common.Construction;
+using Common.Logistics;
+using Common.Physics;
+
+using Common.Technology;
+using CompoundProvider.Types;
+using FunctionalGroups.Types;
+using Taxonomy;
+using Taxonomy.Types;
 
 namespace SpaceTrader
 {
@@ -20,195 +34,45 @@ namespace SpaceTrader
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #region fields
-        protected List<StellarObject> _stellarobjectpathfromsourcetodestination;
-        protected int _nodesconsidered;
-        protected string _timerresults;
-        protected bool _initspirals;
-        protected int _spiralwindedness;
-        protected bool _initbulge;
-        protected int _maxbulgeradius;
-        protected bool _initbar;
-        protected bool _initdisc;
-        protected bool _starlanesfirst;
-        protected bool _starlanesother;
-        protected bool _drawstarsincentre;
-        protected int _startnumberofstellarobjects;
-        protected int _mindistancefromcentre;
-        protected StellarObject _homestellarobject;
-        protected StellarObject _stellarobjectselectedonscreen;
-
-        #endregion
-
         #region Class properties
 
-        public int StartNumberofStellarObjects
-        {
-            get { return _startnumberofstellarobjects; }
-            set
-            {
-                _startnumberofstellarobjects = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool DrawStarsinCentre
-        {
-            get { return _drawstarsincentre; }
-            set
-            {
-                _drawstarsincentre = value;
-                OnPropertyChanged();
-            }
-        }
-        public int MinDistancefromCentre
-        {
-            get { return _mindistancefromcentre; }
-            set
-            {
-                _mindistancefromcentre = value;
-                OnPropertyChanged();
-            }
-        }
-        public string TimerResults
-        {
-            get { return _timerresults; }
-            set
-            {
-                _timerresults = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool StarlanesOther
-        {
-            get { return _starlanesother; }
-            set
-            {
-                _starlanesother = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool StarlanesFirst
-        {
-            get { return _starlanesfirst; }
-            set
-            {
-                _starlanesfirst = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool InitSpiralArms
-        {
-            get { return _initspirals; }
-            set
-            {
-                if (!value) InitBar = false;
-                _initspirals = value;
-                OnPropertyChanged();
-            }
-        }
-        public int SpiralWindedness
-        {
-            get { return _spiralwindedness; }
-            set
-            {
-                if (value < 1) _spiralwindedness = 1;
-                else if (value > 15) _spiralwindedness = 15;
-                else _spiralwindedness = value;
-                OnPropertyChanged();
-            }
-        }
-        public int MaxBulgeRadius
-        {
-            get { return _maxbulgeradius; }
-            set
-            {
-                if (value < 50) _maxbulgeradius = 50;
-                else if (value > 500) _maxbulgeradius = 500;
-                else _maxbulgeradius = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool InitBulge
-        {
-            get { return _initbulge; }
-            set
-            {
-                _initbulge = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool InitBar
-        {
-            get { return _initbar; }
-            set
-            {
-                _initbar = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool InitDisc
-        {
-            get { return _initdisc; }
-            set
-            {
-                _initdisc = value;
-                OnPropertyChanged();
-            }
-        }
-        public int NodesConsidered
-        {
-            get { return _nodesconsidered; }
-            set
-            {
-                _nodesconsidered = value;
-                OnPropertyChanged();
-            }
-        }
-        public StellarObject HomeStellarObject
-        {
-            get { return _homestellarobject; }
-            set
-            {
-                _homestellarobject = value;
-                OnPropertyChanged();
-            }
-        }
-        public StellarObject StellarObjectSelectedOnScreen
-        {
-            get { return _stellarobjectselectedonscreen; }
-            set
-            {
-                _stellarobjectselectedonscreen = value;
-                OnPropertyChanged();
-            }
-        }
+        public bool StarlanesOther { get; set; }
+        public bool StarlanesFirst { get; set; }
+        public int StartNumberofStellarObjects { get; set; }
+        public int SpiralWindedness { get; set; }
+        public int MaximumRadiusofBulge { get; set; }
+        public int MinimumDistancefromCentre { get; set; }
+        public int MaximumNumberofOrbitalBodies { get; set; }
+        public int MinimumNumberofOrbitalBodies {get;set;}
+        public double LowMetallicityStellarObjectsCutOffforOrbitalBodyGeneration { get; set; }
+        public double LowMassStellarObjectsCutOffforOrbitalBodyGeneration { get; set; }
+        public double MaximumOrbitalBodyMassAroundLowMassStellarObjects { get; set; }
+        public double MaximumOrbitalBodyMassAroundLowMetallicityStellarObjects { get; set; }
+        public bool DrawStarsinCentre { get; set; } //standard off. preferably not, it get's cluttered beyond belief
+        public bool InitializeStellarObjectsinSpiralArms { get; set; }
+        public bool InitializeStellarObjectsinBulge { get; set; }
+        public bool InitializeStellarObjectsinBar { get; set; }
+        public bool InitializeStellarObjectsinDisc { get; set; }
 
+        public Starlane StarlaneSelectedOnScreen { get; set; }
+        public StellarObject StellarObjectSelectedOnScreen { get; set; }
         public ObservableCollection<StellarObject> StellarPathfromSourcetoDestination = new ObservableCollection<StellarObject>();
         public ObservableCollection<StellarObject> StellarObjects { get; set; } = new ObservableCollection<StellarObject>();
+
         #endregion
 
         #region constructor
         public CelestialBodyViewModel()
         {
-            
-            _mindistancefromcentre = 200;
-            _drawstarsincentre = false;
-            _maxbulgeradius = 205;
-            _spiralwindedness = 5;
-            _initspirals = false;
-            _initbulge = true;
-            _initbar = false;
-            _initdisc = false;
-            _starlanesother = true;
-            _starlanesfirst = true;
-            _nodesconsidered = 0;
+            StarlanesOther = true;
+            StarlanesFirst = true;
         }
         #endregion
 
         #region Class Methods
 
         #region public methods
-        public async Task SetCelestialBodyDatasAsync(int width, IReadOnlyList<Taxonomy.ISpecies> species, IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IResourceGroup> resourcegroups, IEnumerable<TechLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<Resource> resources, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
+        public async Task SetCelestialBodyDatasAsync(int width, IReadOnlyList<ISpecies> species, IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IElementGroup> elementgroups, IEnumerable<TechnologyLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<Element> elements, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
         {
             #region clear exisiting data;
             StellarPathfromSourcetoDestination.Clear();
@@ -216,10 +80,10 @@ namespace SpaceTrader
             #endregion
             #region async part of setting celestial object data and properties 
             FastRandom rand = new FastRandom();
-            var getspiralstars = GetSpiralStars(StartNumberofStellarObjects, rand, width, SpiralWindedness, InitBar, InitSpiralArms);
-            var getbarstars = GetBarStars(StartNumberofStellarObjects, rand, SpiralWindedness, InitBar);
-            var getbulgestars = GetBulgeStars(StartNumberofStellarObjects, rand, MaxBulgeRadius, InitBulge);
-            var getdiscstars = GetDiscStars(StartNumberofStellarObjects, rand, width, InitDisc);
+            var getspiralstars = GetSpiralStars(StartNumberofStellarObjects, rand, width, SpiralWindedness, InitializeStellarObjectsinBar, InitializeStellarObjectsinSpiralArms);
+            var getbarstars = GetBarStars(StartNumberofStellarObjects, rand, SpiralWindedness, InitializeStellarObjectsinBar);
+            var getbulgestars = GetBulgeStars(StartNumberofStellarObjects, rand, MaximumRadiusofBulge, InitializeStellarObjectsinBulge);
+            var getdiscstars = GetDiscStars(StartNumberofStellarObjects, rand, width, InitializeStellarObjectsinDisc);
             Task[] Tasks = new Task[4] { getspiralstars, getbarstars, getbulgestars, getdiscstars };
             Task.WaitAll(Tasks, 2000);
             IEnumerable<StellarObject> spiralstars = await getspiralstars;
@@ -236,13 +100,75 @@ namespace SpaceTrader
             await Task.WhenAll(setstarlanes);
             #endregion
             #region non-async part of setting celestial object data and properties 
-            SetCelestialBodyProperties(species, orbitalbodytypes, stellarobjectypes, resourcegroups, techlevels, buildingtypes, resources, physicalconstants, solarconstants);
+            SetCelestialBodyProperties(species, orbitalbodytypes, stellarobjectypes, elementgroups, techlevels, buildingtypes, elements, physicalconstants, solarconstants);
+            ElementinStorage elementinstorage;
+            foreach(StellarObject stellarobject in StellarObjects)
+            {
+                foreach (Element element in elements)
+                {
+                    elementinstorage = new ElementinStorage
+                    {
+                        AmountinStorage = 0,
+                        Element = element
+                    };
+                    stellarobject.CentralHub.ElementsinStorage.Add(elementinstorage);
+                }
+                foreach (OrbitalBody orbitalbody in stellarobject.Orbitalbodies)
+                {
+                    foreach (Element element in elements)
+                    {
+                        elementinstorage = new ElementinStorage
+                        {
+                            AmountinStorage = 0,
+                            Element = element
+                        };
+                        orbitalbody.CentralHub.ElementsinStorage.Add(elementinstorage);
+                    }
+                }
+            }
             #endregion  
             return;
         }
-        public void SetHomeStar()
+
+        public double CalculateDistancetoStarlane(double x1, double y1, double x2, double y2, double x3, double y3)
         {
-            HomeStellarObject = StellarObjectSelectedOnScreen;
+            double px = x2 - x1;
+            double py = y2 - y1;
+            double temp = (px * px) + (py * py);
+            double u = ((x3 - x1) * px + (y3 - y1) * py) / (temp);
+            if (u > 1)
+            {
+                u = 1;
+            }
+            else if (u < 0)
+            {
+                u = 0;
+            }
+            double x = x1 + u * px;
+            double y = y1 + u * py;
+
+            double dx = x - x3;
+            double dy = y - y3;
+
+            return Math.Sqrt(dx * dx + dy * dy); 
+        }
+
+        public void SetActiveStarlane(Point mouseposition)
+        {
+            double tdistance;
+            double distance = 100000;
+            foreach (StellarObject stellarobject in StellarObjects)
+            {
+                foreach (Starlane starlane in stellarobject.StarLanes)
+                {
+                    tdistance = CalculateDistancetoStarlane(starlane.To.FinalPosition.X, starlane.To.FinalPosition.Z, starlane.From.FinalPosition.X, starlane.From.FinalPosition.Z, mouseposition.X, mouseposition.Y);
+                    if (tdistance < distance)
+                    {
+                        StarlaneSelectedOnScreen = starlane;
+                        distance = tdistance;
+                    }
+                }
+            }
         }
         public void SetActiveStar(Point mousepostion)
         {
@@ -275,16 +201,17 @@ namespace SpaceTrader
 
         //    return 0;
         //}
-        private void SetCelestialBodyProperties(IReadOnlyList<Taxonomy.ISpecies> species, IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IResourceGroup> resourcegroups, IEnumerable<TechLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<IResource> resources, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
+        private void SetCelestialBodyProperties(IReadOnlyList<ISpecies> species, IEnumerable<IOrbitalBodyType> orbitalbodytypes, IEnumerable<IStellarObjectType> stellarobjectypes, IReadOnlyList<IElementGroup> elementgroups, IEnumerable<TechnologyLevel> techlevels, IReadOnlyList<IBuildingType> buildingtypes, IReadOnlyList<IElement> elements, IPhysicalConstants physicalconstants, ISolarConstants solarconstants)
         {
             StellarPathfromSourcetoDestination.Clear();
             SetStellarObjectProperties(stellarobjectypes, physicalconstants, solarconstants); //set properties of the stellar object population
             SetOrbitalBodyProperties(species, orbitalbodytypes, physicalconstants); //set properties of the orbital bodies around stellar objects
-            SetOrbitalBodyResourceGroups(resourcegroups); //set resourcegroups of each orbital body. Used for extraction modifiers etc.
+            SetOrbitalBodyElementGroups(elementgroups); //set elementgroups of each orbital body. Used for extraction modifiers etc.
             SetOrbitalBodyInitialBuildings(buildingtypes); //set initial buildings of each orbital body
-            SetOrbitalBodyResourcesatStart(resources);
+            SetOrbitalBodyElementsatStart(elements);
             foreach (StellarObject stellarobject in StellarObjects)
             {
+                
                 foreach (OrbitalBody orbitalbody in stellarobject.Orbitalbodies)
                 {
                     orbitalbody.RecalculateModifiersandProperties();
@@ -296,18 +223,18 @@ namespace SpaceTrader
             }
         }
 
-        private void SetOrbitalBodyResourceGroups(IReadOnlyList<IResourceGroup> resourcegroups)
+        private void SetOrbitalBodyElementGroups(IReadOnlyList<IElementGroup> elementgroups)
         {
             FastRandom rand = new FastRandom();
             foreach (IStellarObject stellarobject in StellarObjects)
             {
                 foreach (IOrbitalBody orbitalbody in stellarobject.Orbitalbodies)
                 {
-                    orbitalbody.SetResourceGroupsatStart(rand, resourcegroups);
+                    orbitalbody.SetElementGroupsatStart(rand, elementgroups);
                 }
             }
         }
-        private void SetOrbitalBodyResourcesatStart(IReadOnlyList<IResource> resources)
+        private void SetOrbitalBodyElementsatStart(IReadOnlyList<IElement> elements)
         {
             FastRandom Rand = new FastRandom();
 
@@ -315,7 +242,7 @@ namespace SpaceTrader
             {
                 foreach (IOrbitalBody orbitalbody in stellarobject.Orbitalbodies)
                 {
-                    orbitalbody.SetAvailableResourcesatStart(Rand, resources);
+                    orbitalbody.SetAvailableElementsatStart(Rand, elements);
                 }
             }
         }
@@ -331,107 +258,133 @@ namespace SpaceTrader
             }
         }
 
-        private int SetOrbitalBodyProperties(IReadOnlyList<Taxonomy.ISpecies> species, IEnumerable<IOrbitalBodyType> OrbitalBodyTypes, IPhysicalConstants physicalconstants)
+        private OrbitalBodyType DetermineOrbitalType(IEnumerable<IOrbitalBodyType> orbitalbodytypes, int rand_inrange_sumrelativeoccurenceallorbitalbodytypes)
         {
-            int totalrelativeoccurence = 0;
-            int randomnumber;
-            int relativeoccurencecounter;
-            int orbitalbodytypeindex;
-            double trand;
-            OrbitalBody tmporbitalbody;
-            bool bmoonset;
-            int charcntr;
-            FastRandom rand = new FastRandom();
-            foreach (IOrbitalBodyType orbitalbodytypes in OrbitalBodyTypes)
+            int relativeoccurencecurrentorbitalbodytype = 0;
+            OrbitalBodyType orbitalbodytype = new OrbitalBodyType();
+            foreach (IOrbitalBodyType _orbitalbodytype in orbitalbodytypes)
             {
-                totalrelativeoccurence += orbitalbodytypes.RelativeOccurence;
+                relativeoccurencecurrentorbitalbodytype += _orbitalbodytype.RelativeOccurence;
+                if (rand_inrange_sumrelativeoccurenceallorbitalbodytypes < relativeoccurencecurrentorbitalbodytype)
+                {
+                    orbitalbodytype = (OrbitalBodyType)_orbitalbodytype;
+                    break;
+                }
             }
+            return orbitalbodytype;
+        }
+        private int SetOrbitalBodyProperties(IReadOnlyList<ISpecies> species, IEnumerable<IOrbitalBodyType> OrbitalBodyTypes, IPhysicalConstants physicalconstants)
+        {
+            double cuberoot = (1.0 / 3.0); //
+            IEnumerable<IOrbitalBodyType> _orbitalbodytypes;
+            int sumrelativeoccurenceallorbitalbodytypes = 0;
+            int sumrelativeoccurenceallorbitalbodytypeallowedaroundlowmassstellarobjects = 0;
+            int sumrelativeoccurenceallorbitalbodytypeallowedaroundlowmetallicitystellarobjects = 0;
+            int sumrelativeoccurenceallorbitalbodytypeallowedtobemoons = 0;
+            int _sumrelativeoccurenceselectedorbitalbodytypes;
+            OrbitalBody _naturalsatellite;
+            FastRandom rand = new FastRandom();
+            var _allorbitalbodytypearoundlowmassstellarobjects = from __orbitalbodytypes in OrbitalBodyTypes
+                                              where __orbitalbodytypes.Maximum_Mass < MaximumOrbitalBodyMassAroundLowMassStellarObjects
+                                              select __orbitalbodytypes;
+            var _allorbitalbodytypesallowedaroundlowmetallicitystellarobjects = from __orbitalbodytypes in OrbitalBodyTypes
+                                                   where __orbitalbodytypes.Maximum_Mass < MaximumOrbitalBodyMassAroundLowMetallicityStellarObjects
+                                                   select __orbitalbodytypes;
+            var _allorbitalbodytypesthatcanbemoons = from __orbitalbodytypes in OrbitalBodyTypes
+                                                    where __orbitalbodytypes.CanBeMoon == true
+                                                    select __orbitalbodytypes;
+            foreach (IOrbitalBodyType _orbitalbodytype in OrbitalBodyTypes)
+            {
+                sumrelativeoccurenceallorbitalbodytypes += _orbitalbodytype.RelativeOccurence;
+                if (_orbitalbodytype.Maximum_Mass < MaximumOrbitalBodyMassAroundLowMassStellarObjects)
+                {
+                    sumrelativeoccurenceallorbitalbodytypeallowedaroundlowmassstellarobjects += _orbitalbodytype.RelativeOccurence;
+                }
+                if (_orbitalbodytype.Maximum_Mass < MaximumOrbitalBodyMassAroundLowMetallicityStellarObjects)
+                {
+                    sumrelativeoccurenceallorbitalbodytypeallowedaroundlowmetallicitystellarobjects += _orbitalbodytype.RelativeOccurence;
+                }
+                if (_orbitalbodytype.CanBeMoon == true)
+                {
+                    sumrelativeoccurenceallorbitalbodytypeallowedtobemoons += _orbitalbodytype.RelativeOccurence;
+                }
+            }
+
             foreach (IStellarObject stellarobject in StellarObjects)
             {
+                if (stellarobject.Metallicity < LowMetallicityStellarObjectsCutOffforOrbitalBodyGeneration)
+                {
+                    _sumrelativeoccurenceselectedorbitalbodytypes = sumrelativeoccurenceallorbitalbodytypeallowedaroundlowmetallicitystellarobjects;
+                    _orbitalbodytypes = _allorbitalbodytypesallowedaroundlowmetallicitystellarobjects;
+                }
+                else if (stellarobject.Mass < LowMassStellarObjectsCutOffforOrbitalBodyGeneration)
+                {
+                    _sumrelativeoccurenceselectedorbitalbodytypes = sumrelativeoccurenceallorbitalbodytypeallowedaroundlowmassstellarobjects;
+                    _orbitalbodytypes = _allorbitalbodytypearoundlowmassstellarobjects;
+                }
+                else
+                {
+                    _sumrelativeoccurenceselectedorbitalbodytypes = sumrelativeoccurenceallorbitalbodytypes;
+                    _orbitalbodytypes = OrbitalBodyTypes;
+                }
+
                 foreach (OrbitalBody orbitalbody in stellarobject.Orbitalbodies)
                 {
-                    relativeoccurencecounter = 0;
-                    orbitalbodytypeindex = 0;
-                    randomnumber = rand.Next(0, totalrelativeoccurence);
-   
-                    foreach (IOrbitalBodyType orbitalbodytype in OrbitalBodyTypes)
-                    {
-                        relativeoccurencecounter += orbitalbodytype.RelativeOccurence;
-                        if (randomnumber < relativeoccurencecounter)
-                        {
-                            trand = rand.NextDouble();
-                            orbitalbody.OrbitalBodyType = (BaseTypes.OrbitalBodyType)orbitalbodytype;
-                            orbitalbody.IsHabitable = orbitalbody.OrbitalBodyType.IsHabitable; //each orbitalbody instance can be made uninhabitable. at first though it derives habitability from it's type
-                            orbitalbody.Mass = Math.Pow(trand, 2) * (orbitalbodytype.Maximum_Mass - orbitalbodytype.Minimum_Mass) + orbitalbodytype.Minimum_Mass;
-                            orbitalbody.Radius = Convert.ToInt32(Math.Pow(trand, 2) * (orbitalbodytype.Maximum_Radius - orbitalbodytype.Minimum_Radius) + orbitalbodytype.Minimum_Radius);
-                            if (orbitalbody.IsHabitable)
-                            {
-                                orbitalbody.BaseNaturalBirthsperTurnPercentage = (1 + rand.NextDouble() * 2) / 100;
-                                orbitalbody.BaseNaturalHabitationModifier = (rand.NextDouble()) * orbitalbodytype.NaturalHabitationModifier  ;
-                                orbitalbody.BaseNaturalDeathsperTurnPercentage = (5 + rand.NextDouble() * 10) / 100;
-                                orbitalbody.Food = 10000;
-                                Taxonomy.Species humans = new Taxonomy.Species();
-                                foreach (Taxonomy.Species tspecies in species)
-                                {
-                                    orbitalbody.SpeciesonOrbitalBody.Add(new SpeciesperOrbitalBody(tspecies, (int)(200 * rand.NextDouble()), tspecies.ReproductionRate * rand.NextDouble()));
-                                }
-                            }
-                            else
-                            {
-                                orbitalbody.BaseNaturalHabitationModifier = 0;
-                                orbitalbody.BaseNaturalDeathsperTurnPercentage = 0;
-                                orbitalbody.BaseNaturalBirthsperTurnPercentage = 0;
-                            }
+                    orbitalbody.OrbitalBodyType = DetermineOrbitalType(_orbitalbodytypes,rand.Next(0, _sumrelativeoccurenceselectedorbitalbodytypes));
+                    orbitalbody.IsHabitable = orbitalbody.OrbitalBodyType.IsHabitable; //each orbitalbody instance can be made uninhabitable. at first though it derives habitability from it's type
+                    orbitalbody.Mass = Math.Pow(rand.NextDouble(), 2) * (orbitalbody.OrbitalBodyType.Maximum_Mass - orbitalbody.OrbitalBodyType.Minimum_Mass) + orbitalbody.OrbitalBodyType.Minimum_Mass;
+                    orbitalbody.Density = Math.Pow(rand.NextDouble(), 2) * (orbitalbody.OrbitalBodyType.MaximumDensity - orbitalbody.OrbitalBodyType.MinimumDensity) + orbitalbody.OrbitalBodyType.MinimumDensity;
+                    orbitalbody.Radius = Convert.ToInt32(Math.Pow((orbitalbody.Mass * 3000) / (4 * Math.PI * orbitalbody.Density), cuberoot)*1000);
 
-                            break;
+                    if (orbitalbody.IsHabitable)
+                    {
+                        orbitalbody.BaseNaturalBirthsperTurnPercentage = (1 + rand.NextDouble() * 2) / 100;
+                        orbitalbody.BaseNaturalHabitationModifier = (rand.NextDouble()) * orbitalbody.OrbitalBodyType.NaturalHabitationModifier  ;
+                        orbitalbody.BaseNaturalDeathsperTurnPercentage = (5 + rand.NextDouble() * 10) / 100;
+                        orbitalbody.Food = 10000;
+                        Species humans = new Species();
+                        foreach (Species _species in species)
+                        {
+                            orbitalbody.SpeciesonOrbitalBody.Add(new SpeciesperNode(_species, (int)(200 * rand.NextDouble()), _species.ReproductionRate * rand.NextDouble()));
                         }
-                        orbitalbodytypeindex += 1;
+                    }
+                    else
+                    {
+                        orbitalbody.BaseNaturalHabitationModifier = 0;
+                        orbitalbody.BaseNaturalDeathsperTurnPercentage = 0;
+                        orbitalbody.BaseNaturalBirthsperTurnPercentage = 0;
                     }
                     if (orbitalbody.OrbitalBodyType.CanHaveMoons == true)
                     {
-                        if (rand.Next(1, 9) < 7)
+                        for (int j = 0; j < orbitalbody.OrbitalBodyType.MaximumNumberofMoons; j++)
                         {
-                            charcntr = 97;
-                            for (int i = 0; i < rand.Next(1, 4); i++)
                             {
-                                tmporbitalbody = new OrbitalBody(orbitalbody.Name + ((char)charcntr).ToString(), orbitalbody.Age, orbitalbody.BeginPosition);
-                                charcntr += 1;
-                                bmoonset = rand.Next(1, 100) < 35;
-                                foreach (IOrbitalBodyType orbitalbodytype in OrbitalBodyTypes)
-                                {
-                                    if (orbitalbodytype.CanBeMoon == true)
-                                    {
-                                        if (bmoonset)
-                                        {
-                                            trand = rand.NextDouble();
-                                            tmporbitalbody.OrbitalBodyType = (BaseTypes.OrbitalBodyType)orbitalbodytype;
-                                            tmporbitalbody.IsHabitable = tmporbitalbody.OrbitalBodyType.IsHabitable;
-                                            tmporbitalbody.Mass = Math.Pow(trand, 2) * (orbitalbodytype.Maximum_Mass - orbitalbodytype.Minimum_Mass) + orbitalbodytype.Minimum_Mass;
-                                            tmporbitalbody.Radius = Convert.ToInt32(Math.Pow(trand, 2) * (orbitalbodytype.Maximum_Radius - orbitalbodytype.Minimum_Radius) + orbitalbodytype.Minimum_Radius);
-                                            if (tmporbitalbody.IsHabitable)
-                                            {
-                                                tmporbitalbody.BaseNaturalBirthsperTurnPercentage = (1 + rand.NextDouble() * 5) / 100;
-                                                tmporbitalbody.BaseNaturalDeathsperTurnPercentage = (5 + rand.NextDouble() * 10) / 100;
-                                                tmporbitalbody.BaseNaturalHabitationModifier = (rand.NextDouble()) * orbitalbodytype.NaturalHabitationModifier;
-                                                tmporbitalbody.Food = 100;
-                                                foreach (Taxonomy.Species tspecies in species)
-                                                {
-                                                    tmporbitalbody.SpeciesonOrbitalBody.Add(new SpeciesperOrbitalBody(tspecies, (int)(20 * rand.NextDouble()), tspecies.ReproductionRate * rand.NextDouble()));
-                                                }
-                                            }
-                                            else
-                                            {
-                                                tmporbitalbody.BaseNaturalDeathsperTurnPercentage = 0;
-                                                tmporbitalbody.BaseNaturalHabitationModifier = 0;
-                                                tmporbitalbody.BaseNaturalBirthsperTurnPercentage = 0;
-                                            }
-                                            //tmporbitalbody.Population = 10;
+                                _naturalsatellite = new OrbitalBody(orbitalbody.Name + ((char)j+97).ToString(), orbitalbody.Age, orbitalbody.BeginPosition); //j+97 is from 'b' upwards to designate moons
+                                 {
+                                    _naturalsatellite.OrbitalBodyType = DetermineOrbitalType(_allorbitalbodytypesthatcanbemoons, rand.Next(0, sumrelativeoccurenceallorbitalbodytypeallowedtobemoons));
+                                    _naturalsatellite.IsHabitable = _naturalsatellite.OrbitalBodyType.IsHabitable;
+                                    _naturalsatellite.Mass = Math.Pow(rand.NextDouble(), 2) * (_naturalsatellite.OrbitalBodyType.Maximum_Mass - _naturalsatellite.OrbitalBodyType.Minimum_Mass) + _naturalsatellite.OrbitalBodyType.Minimum_Mass;
+                                    _naturalsatellite.Density = Convert.ToInt32(Math.Pow(rand.NextDouble(), 2) * (_naturalsatellite.OrbitalBodyType.MaximumDensity - _naturalsatellite.OrbitalBodyType.MinimumDensity) + _naturalsatellite.OrbitalBodyType.MinimumDensity);
+                                    _naturalsatellite.Radius = Convert.ToInt32(Math.Pow((_naturalsatellite.Mass * 3000) / (4 * Math.PI * _naturalsatellite.Density), cuberoot) * 1000);
 
-                                            orbitalbody.NaturalSatellites.Add(tmporbitalbody);
-                                            break;
+                                    if (_naturalsatellite.IsHabitable)
+                                    {
+                                        _naturalsatellite.BaseNaturalBirthsperTurnPercentage = (1 + rand.NextDouble() * 5) / 100;
+                                        _naturalsatellite.BaseNaturalDeathsperTurnPercentage = (5 + rand.NextDouble() * 10) / 100;
+                                        _naturalsatellite.BaseNaturalHabitationModifier = (rand.NextDouble()) * _naturalsatellite.OrbitalBodyType.NaturalHabitationModifier;
+                                        _naturalsatellite.Food = 100;
+                                        foreach (Species _species in species)
+                                        {
+                                            _naturalsatellite.SpeciesonOrbitalBody.Add(new SpeciesperNode(_species, (int)(20 * rand.NextDouble()), _species.ReproductionRate * rand.NextDouble()));
                                         }
-                                        bmoonset = true;
                                     }
+                                    else
+                                    {
+                                        _naturalsatellite.BaseNaturalDeathsperTurnPercentage = 0;
+                                        _naturalsatellite.BaseNaturalHabitationModifier = 0;
+                                        _naturalsatellite.BaseNaturalBirthsperTurnPercentage = 0;
+                                    }
+                                    orbitalbody.NaturalSatellites.Add(_naturalsatellite);
                                 }
                             }
                         }
@@ -439,16 +392,16 @@ namespace SpaceTrader
                 }
             }
             double distancebetweenorbitalbodies;
-            double tcntr ;
+            double _planetcounter ; //counts how many planets are present in the habitable zone
             foreach (IStellarObject stellarobject in StellarObjects)
             {
                 distancebetweenorbitalbodies = stellarobject.MaximumOrbitalBodyDistanceFromStar / stellarobject.Orbitalbodies.Count;
-                tcntr = 0;
+                _planetcounter = 0;
                 int howmanyinhabitablezone;
                 foreach (OrbitalBody orbitalbody in stellarobject.Orbitalbodies)
                 {
                     howmanyinhabitablezone = rand.Next(1, 3);
-                    if (tcntr < howmanyinhabitablezone)
+                    if (_planetcounter < howmanyinhabitablezone)
                     {
                         orbitalbody.AverageDistanceToCentralStellarObject = stellarobject.MinimumHabitableZoneRadius + rand.NextDouble() * (stellarobject.MaximumHabitableZoneRadius - stellarobject.MinimumHabitableZoneRadius);
                         orbitalbody.IsInHabitableZone = true;
@@ -481,7 +434,7 @@ namespace SpaceTrader
                             naturalsatellite.BaseNaturalHabitationModifier *= Math.Pow((physicalconstants.WattperM2OptimalforHabitablezone / naturalsatellite.SolarPowerperM2),2);
                         }
                     }
-                    tcntr += 1;
+                    _planetcounter += 1;
                 }
             }
             return 0;
@@ -492,11 +445,12 @@ namespace SpaceTrader
             int randomnumber;
             int relativeoccurencecounter;
             int stellartypeindex;
-            int tred, tblue, tgreen;
+            int _red, _blue, _green;
             int deviation = 30;
-            double trand;
+            double _rand;
             Color clr;
             FastRandom rand = new FastRandom();
+
             foreach (IStellarObjectType stellartypes in StellarTypes)
             {
                 totalrelativeoccurence += stellartypes.RelativeOccurence;
@@ -515,27 +469,27 @@ namespace SpaceTrader
                     relativeoccurencecounter += stellartype.RelativeOccurence;
                     if (randomnumber < relativeoccurencecounter)
                     {
-                        trand = rand.NextDouble();
-                        tred = rand.Next(stellartype.StarColorRed - deviation, stellartype.StarColorRed + deviation);
-                        tgreen = rand.Next(stellartype.StarColorGreen - deviation, stellartype.StarColorGreen + deviation);
-                        tblue = rand.Next(stellartype.StarColorBlue - deviation, stellartype.StarColorBlue + deviation);
-                        if (tred < 0) tred = 0; if (tred > 255) tred = 255;
-                        if (tgreen < 0) tgreen = 0; if (tgreen > 255) tgreen = 255;
-                        if (tblue < 0) tblue = 0; if (tblue > 255) tblue = 255;
-                        clr = Color.FromRgb((byte)tgreen, (byte)tred, (byte)tblue);
-                        stellarobject.StellarType = (BaseTypes.StellarObjectType)stellartype;
-                        stellarobject.Mass = Math.Pow(trand, 2) * (stellartype.Maximum_Mass - stellartype.Minimum_Mass) + stellartype.Minimum_Mass;
+                        _rand = rand.NextDouble();
+                        _red = rand.Next(stellartype.StarColorRed - deviation, stellartype.StarColorRed + deviation);
+                        _green = rand.Next(stellartype.StarColorGreen - deviation, stellartype.StarColorGreen + deviation);
+                        _blue = rand.Next(stellartype.StarColorBlue - deviation, stellartype.StarColorBlue + deviation);
+                        if (_red < 0) _red = 0; if (_red > 255) _red = 255;
+                        if (_green < 0) _green = 0; if (_green > 255) _green = 255;
+                        if (_blue < 0) _blue = 0; if (_blue > 255) _blue = 255;
+                        clr = Color.FromRgb((byte)_green, (byte)_red, (byte)_blue);
+                        stellarobject.StellarType = (StellarObjectType)stellartype;
+                        stellarobject.Mass = Math.Pow(_rand, 2) * (stellartype.Maximum_Mass - stellartype.Minimum_Mass) + stellartype.Minimum_Mass;
                         stellarobject.Age = rand.Next(stellartype.Minimum_Age * 1000, stellartype.Maximum_Age * 1000);
-                        stellarobject.SurfaceTemperature = Math.Pow(trand, 2) * (stellartype.Maximum_Temp - stellartype.Minimum_Temp) + stellartype.Minimum_Temp;
-                        stellarobject.AbsoluteMagnitude = Math.Pow(trand, 2) * (stellartype.Maximum_AbsoluteMagnitude - stellartype.Minimum_AbsoluteMagnitude) + stellartype.Minimum_AbsoluteMagnitude;
-                        stellarobject.Radius = Convert.ToInt32(Math.Pow(trand, 2) * (stellartype.Maximum_Radius - stellartype.Minimum_Radius) + stellartype.Minimum_Radius);
+                        stellarobject.SurfaceTemperature = Math.Pow(_rand, 2) * (stellartype.Maximum_Temp - stellartype.Minimum_Temp) + stellartype.Minimum_Temp;
+                        stellarobject.AbsoluteMagnitude = Math.Pow(_rand, 2) * (stellartype.Maximum_AbsoluteMagnitude - stellartype.Minimum_AbsoluteMagnitude) + stellartype.Minimum_AbsoluteMagnitude;
+                        stellarobject.Radius = Convert.ToInt32(Math.Pow(_rand, 2) * (stellartype.Maximum_Radius - stellartype.Minimum_Radius) + stellartype.Minimum_Radius);
                         stellarobject.StarColor = clr;
                         stellarobject.Luminosity = physicalconstants.StefanBoltzmannConstant * (Math.PI * 4 * Math.Pow(stellarobject.Radius * 1000, 2)) * Math.Pow(stellarobject.SurfaceTemperature * 1000, 4);
                         stellarobject.MinimumHabitableZoneRadius = Math.Sqrt(stellarobject.Luminosity / (4 * Math.PI * physicalconstants.WattperM2UpperBoundaryforHabitablezone));
                         stellarobject.MaximumHabitableZoneRadius = Math.Sqrt(stellarobject.Luminosity / (4 * Math.PI * physicalconstants.WattperM2LowerBoundaryforHabitablezone));
                         stellarobject.MaximumOrbitalBodyDistanceFromStar = Math.Sqrt(stellarobject.Luminosity / (4 * Math.PI)); //1 watt / m² is maximum distance
 
-                        for (int i = 1; i < rand.Next(2, 8); i++)
+                        for (int i = 1; i < rand.Next(MinimumNumberofOrbitalBodies, MaximumNumberofOrbitalBodies); i++)
                         {
                             stellarobject.Orbitalbodies.Add(new OrbitalBody(stellarobject.Name + " " + Helperfunction.IntToLetters(i).ToLower(), stellarobject.Age, stellarobject.BeginPosition));
                         }
@@ -566,13 +520,13 @@ namespace SpaceTrader
         {
             return await Task.Run(() => SetListStarsinDisc(numberofstars, rand, width, initdisc));
         }
-        async Task<int> SetStarlanesAsync(FastRandom rand, IEnumerable<TechLevel> techlevels)
+        async Task<int> SetStarlanesAsync(FastRandom rand, IEnumerable<TechnologyLevel> techlevels)
         {
             return await Task.Run(() => SetStarlanes(rand, techlevels));
         }
 
         //Normal synchronous methods
-        private int SetStarlanes(FastRandom rand, IEnumerable<TechLevel> techlevels )
+        private int SetStarlanes(FastRandom rand, IEnumerable<TechnologyLevel> techlevels )
         {
             #region create first starlane
             string stringforformattingcounter;
@@ -585,23 +539,23 @@ namespace SpaceTrader
             int loopcounter = 0;
             long ttlcntloopotherstarlanes = StellarObjects.Count * StellarObjects.Count;
             int searchsquare = StellarObjects.Count > 30000 ? 40 : (StellarObjects.Count > 25000 ? 50 : (StellarObjects.Count > 20000 ? 75 : (StellarObjects.Count > 15000 ? 100 : (StellarObjects.Count > 10000 ? 150 : (StellarObjects.Count > 7500 ? 200 : 500)))));
-            List<int> tmpstarlist = new List<int>();
+            List<int> _stellarobjectlist = new List<int>();
             Stopwatch stopwatch = new Stopwatch();
             bool bbasicstarlaneskipped;
-            Starlane tmpstarlane;
-            TechLevel tmptechlevel;
+            Starlane _starlane;
+            TechnologyLevel _techlevel;
             if (StarlanesFirst)
             {
                 for (int i = 0; i < StellarObjects.Count; i++)
                 {
-                    tmpstarlist.Add(i);
+                    _stellarobjectlist.Add(i);
                 }
                 int iremoveindexat = 0;
                 int currentindex = 0;
                 for (int i = 0; i < StellarObjects.Count; i++)
                 {
                     smallestdistance = 100000000;
-                    for (int j = 0; j < tmpstarlist.Count; j++)
+                    for (int j = 0; j < _stellarobjectlist.Count; j++)
                     {
                         if (smallestdistance < 200)
                         {
@@ -610,11 +564,11 @@ namespace SpaceTrader
 
                         if (j != currentindex)
                         {
-                            distance = GetDistanceBetweenStars(StellarObjects[currentindex], StellarObjects[tmpstarlist[j]]);
+                            distance = GetDistanceBetweenStars(StellarObjects[currentindex], StellarObjects[_stellarobjectlist[j]]);
                             if (distance < smallestdistance)
                             {
                                 smallestdistance = distance;
-                                smallestindex = tmpstarlist[j];
+                                smallestindex = _stellarobjectlist[j];
                                 iremoveindexat = j;
                             }
                         }
@@ -622,17 +576,17 @@ namespace SpaceTrader
                     if (smallestdistance < 300000)
                     {
                         bbasicstarlaneskipped = false;
-                        tmptechlevel = new TechLevel();
-                        foreach (TechLevel techlevel in techlevels)
+                        _techlevel = new TechnologyLevel();
+                        foreach (TechnologyLevel techlevel in techlevels)
                         {
                             if (bbasicstarlaneskipped)
                             {
-                                tmptechlevel = techlevel;
+                                _techlevel = techlevel;
                                 break;
                             }
                             if (rand.Next(1, 17) < 16)
                             {
-                                tmptechlevel = techlevel;
+                                _techlevel = techlevel;
                                 break;
                             }
                             else
@@ -640,27 +594,27 @@ namespace SpaceTrader
                                 bbasicstarlaneskipped = true;
                             }
                         }
-                        tmpstarlane = new Starlane
+                        _starlane = new Starlane
                         {
                             From = StellarObjects[currentindex],
                             To = StellarObjects[smallestindex],
-                            TechLevelRequiredforTravel = tmptechlevel
+                            TechLevelRequiredforTravel = _techlevel
                         };
-                        StellarObjects[currentindex].StarLanes.Add(tmpstarlane);
-                        tmpstarlane = new Starlane
+                        StellarObjects[currentindex].StarLanes.Add(_starlane);
+                        _starlane = new Starlane
                         {
                             From = StellarObjects[smallestindex],
                             To = StellarObjects[currentindex],
-                            TechLevelRequiredforTravel = tmptechlevel
+                            TechLevelRequiredforTravel = _techlevel
                         };
-                        StellarObjects[smallestindex].StarLanes.Add(tmpstarlane);
+                        StellarObjects[smallestindex].StarLanes.Add(_starlane);
                         currentindex = smallestindex;
-                        tmpstarlist.RemoveAt(iremoveindexat);
+                        _stellarobjectlist.RemoveAt(iremoveindexat);
                     }
                     else
                     {
                         currentindex = smallestindex;
-                        tmpstarlist.RemoveAt(iremoveindexat);
+                        _stellarobjectlist.RemoveAt(iremoveindexat);
                     }
                 }
             }
@@ -674,8 +628,8 @@ namespace SpaceTrader
                 int deltax, deltay;
                 stopwatch.Start();
                 stringforformattingtotal = String.Format("{0:#,0}", ttlcntloopotherstarlanes);
-                int tmpsmallestdistance, tmpsmallestindex, smallestdistance1;
-                int[] tmptwoindices = new int[2];
+                int _smallestdistance, _smallestindex, smallestdistance1;
+                int[] _twoindices = new int[2];
                 int smallestindex1 = 0;
                 bool writeindextostarlane, writeindextootherstarlane;
 
@@ -709,39 +663,39 @@ namespace SpaceTrader
                                 distance = GetDistanceBetweenStars(StellarObjects[i], StellarObjects[j]);
                                 if (distance < smallestdistance)
                                 {
-                                    tmpsmallestdistance = smallestdistance;
-                                    tmpsmallestindex = smallestindex;
+                                    _smallestdistance = smallestdistance;
+                                    _smallestindex = smallestindex;
                                     smallestdistance = distance;
-                                    tmptwoindices[0] = j;
+                                    _twoindices[0] = j;
                                     smallestindex = j;
-                                    if (tmpsmallestdistance < smallestdistance1)
+                                    if (_smallestdistance < smallestdistance1)
                                     {
-                                        smallestdistance1 = tmpsmallestdistance;
-                                        tmptwoindices[1] = tmpsmallestindex;
-                                        smallestindex1 = tmpsmallestindex;
+                                        smallestdistance1 = _smallestdistance;
+                                        _twoindices[1] = _smallestindex;
+                                        smallestindex1 = _smallestindex;
                                     }
                                 }
                                 else if (distance < smallestdistance1)
                                 {
                                     smallestdistance1 = distance;
-                                    tmptwoindices[1] = j;
+                                    _twoindices[1] = j;
                                     smallestindex1 = j;
                                 }
                             }
                         }
                     }
                     bbasicstarlaneskipped = false;
-                    tmptechlevel = new TechLevel();
-                    foreach (TechLevel techlevel in techlevels)
+                    _techlevel = new TechnologyLevel();
+                    foreach (TechnologyLevel techlevel in techlevels)
                     {
                         if (bbasicstarlaneskipped)
                         {
-                            tmptechlevel = techlevel;
+                            _techlevel = techlevel;
                             break;
                         }
                         if (rand.Next(1, 17) < 16) //ratio of starlane tech 1 and 2
                         {
-                            tmptechlevel = techlevel;
+                            _techlevel = techlevel;
                             break;
                         }
                         else
@@ -750,40 +704,40 @@ namespace SpaceTrader
 
                         }
                     }
-                    tmptwoindices[0] = smallestindex;
-                    tmptwoindices[1] = smallestindex1;
+                    _twoindices[0] = smallestindex;
+                    _twoindices[1] = smallestindex1;
                     for (int k = 0; k < 2; k++)
                     {
                         writeindextostarlane = true;
                         writeindextootherstarlane = true;
                         foreach (Starlane starlane in StellarObjects[i].StarLanes)
                         {
-                            if (starlane.To == StellarObjects[tmptwoindices[k]]) writeindextostarlane = false;
+                            if (starlane.To == StellarObjects[_twoindices[k]]) writeindextostarlane = false;
                         }
-                        foreach (Starlane otherstarlane in StellarObjects[tmptwoindices[k]].StarLanes)
+                        foreach (Starlane otherstarlane in StellarObjects[_twoindices[k]].StarLanes)
                         {
                             if (otherstarlane.To == StellarObjects[i]) writeindextootherstarlane = false;
                         }
                         if (writeindextostarlane == true)
                         {
-                            tmpstarlane = new Starlane
+                            _starlane = new Starlane
                             {
                                 From = StellarObjects[i],
-                                To = StellarObjects[tmptwoindices[k]],
-                                TechLevelRequiredforTravel = tmptechlevel
+                                To = StellarObjects[_twoindices[k]],
+                                TechLevelRequiredforTravel = _techlevel
                             };
 
-                            StellarObjects[i].StarLanes.Add(tmpstarlane);
+                            StellarObjects[i].StarLanes.Add(_starlane);
                         }
                         if (writeindextootherstarlane == true)
                         {
-                            tmpstarlane = new Starlane
+                            _starlane = new Starlane
                             {
-                                From = StellarObjects[tmptwoindices[k]],
+                                From = StellarObjects[_twoindices[k]],
                                 To = StellarObjects[i],
-                                TechLevelRequiredforTravel = tmptechlevel
+                                TechLevelRequiredforTravel = _techlevel
                             };
-                            StellarObjects[tmptwoindices[k]].StarLanes.Add(tmpstarlane);
+                            StellarObjects[_twoindices[k]].StarLanes.Add(_starlane);
                         }
                     }
                 }
@@ -796,7 +750,7 @@ namespace SpaceTrader
         }
         private ObservableCollection<StellarObject> SetListStarsinSpiralArms(int numberofstars, FastRandom rand, int width, int spiralwindedness, bool initbar, bool initspiral)
         {
-            ObservableCollection<StellarObject> tmpstars = new ObservableCollection<StellarObject>();
+            ObservableCollection<StellarObject> _stellarobjects = new ObservableCollection<StellarObject>();
             if (initspiral)
             {
                 Task task = Task.Factory.StartNew(() =>
@@ -847,22 +801,22 @@ namespace SpaceTrader
                         pnt = new Point3D() { X = a * Math.Cos(theta) + rand.Next(-randomizer, randomizer), Y = a * Math.Sin(theta) + rand.Next(-randomizer, randomizer), Z = rand.Next(-randomizerheight, randomizerheight) };
                         if (!initbar || spiralwindedness > 3 || pnt.X > 90 || pnt.Y > 90 || pnt.X < -90 || pnt.Y < -90)
                         {
-                            tmpstars.Add(new StellarObject("sp-" + cntr, pnt));
+                            _stellarobjects.Add(new StellarObject("sp-" + cntr, pnt, rand.NextDouble()));
 
                         }
                         pnt = new Point3D() { X = -1 * a * Math.Cos(theta) + rand.Next(-randomizer, randomizer), Y = -1 * a * Math.Sin(theta) + rand.Next(-randomizer, randomizer), Z = rand.Next(-randomizerheight, randomizerheight) };
                         if (!initbar || spiralwindedness > 3 || pnt.X > 90 || pnt.Y > 90 || pnt.X < -90 || pnt.Y < -90)
                         {
-                            tmpstars.Add(new StellarObject("sp-" + cntr, pnt));
+                            _stellarobjects.Add(new StellarObject("sp-" + cntr, pnt, rand.NextDouble()));
                         }
                     }
                 });
             }
-            return tmpstars;
+            return _stellarobjects;
         }
         private ObservableCollection<StellarObject> SetListStarsinBar(int numberofstars, FastRandom rand, int spiralwindedness, bool initbar)
         {
-            ObservableCollection<StellarObject> tmpstars = new ObservableCollection<StellarObject>();
+            ObservableCollection<StellarObject> _stellarobjects = new ObservableCollection<StellarObject>();
             Task task = Task.Factory.StartNew(() =>
             {
                 if (spiralwindedness < 4 && initbar)
@@ -870,7 +824,7 @@ namespace SpaceTrader
                     Point3D pnt;
                     int barlength = spiralwindedness > 2 ? 95 : 110;
                     int cntr = 0;
-                    for (int i = 0; i < numberofstars && i < 500; i++) //draw bar
+                    for (int i = 0; i < numberofstars && i < 200; i++) //draw bar
                     {
                         cntr += 1;
                         pnt = new Point3D(rand.Next(-18, 18), rand.Next(-barlength, barlength), rand.Next(-18, 18));
@@ -886,15 +840,15 @@ namespace SpaceTrader
                         {
                             pnt = Rotations.Z(pnt, -15);
                         }
-                        tmpstars.Add(new StellarObject("br-" + cntr, pnt));
+                        _stellarobjects.Add(new StellarObject("br-" + cntr, pnt, rand.NextDouble() * 0.5));
                     }
                 }
             });
-            return tmpstars;
+            return _stellarobjects;
         }
         private ObservableCollection<StellarObject> SetListStarsinBulge(int numberofstars, FastRandom rand, int maxbulgeradius, bool initbulge)
         {
-            ObservableCollection<StellarObject> tmpstars = new ObservableCollection<StellarObject>();
+            ObservableCollection<StellarObject> _stellarobjects = new ObservableCollection<StellarObject>();
             if (initbulge)
             {
                 Task task = Task.Factory.StartNew(() =>
@@ -905,7 +859,7 @@ namespace SpaceTrader
                     double radius, theta, phi;
                     double xylength;
                     int xyzlength;
-                    if (MinDistancefromCentre > maxbulgeradius) maxbulgeradius = MinDistancefromCentre + 10;
+                    if (MinimumDistancefromCentre > maxbulgeradius) maxbulgeradius = MinimumDistancefromCentre + 10;
 
                     for (int i = 0; truestarcounter < numberofstars; i++) //draw bulge
                     {
@@ -920,25 +874,25 @@ namespace SpaceTrader
                             xylength = Math.Pow(pnt.X, 2) + Math.Pow(pnt.Y, 2);
                             xyzlength = Convert.ToInt32(Math.Sqrt(Math.Pow(pnt.Z, 2) + xylength));
 
-                            if (xyzlength > MinDistancefromCentre)
+                            if (xyzlength > MinimumDistancefromCentre)
                             {
-                                tmpstars.Add(new StellarObject("bl-" + cntr, pnt)); //
+                                _stellarobjects.Add(new StellarObject("bl-" + cntr, pnt, (rand.NextDouble() - 1)* 3)); //
                                 truestarcounter += 1;
                             }
                         }
                         else
                         {
-                            tmpstars.Add(new StellarObject("bl-" + cntr, pnt)); //
+                            _stellarobjects.Add(new StellarObject("bl-" + cntr, pnt, (rand.NextDouble() - 1) * 3)); //
                             truestarcounter += 1;
                         }
                     }
                 });
             }
-            return tmpstars;
+            return _stellarobjects;
         }
         private ObservableCollection<StellarObject> SetListStarsinDisc(int numberofstars, FastRandom rand, int width, bool initdisc)
         {
-            ObservableCollection<StellarObject> tmpstars = new ObservableCollection<StellarObject>();
+            ObservableCollection<StellarObject> _stellarobjects = new ObservableCollection<StellarObject>();
             if (initdisc)
             {
                 Task task = Task.Factory.StartNew(() =>
@@ -962,22 +916,22 @@ namespace SpaceTrader
                                 xylength = Math.Pow(pnt.X, 2) + Math.Pow(pnt.Y, 2);
                                 xyzlength = Convert.ToInt32(Math.Sqrt(Math.Pow(pnt.Z, 2) + xylength));
 
-                                if (xyzlength > MinDistancefromCentre)
+                                if (xyzlength > MinimumDistancefromCentre)
                                 {
-                                    tmpstars.Add(new StellarObject("dc-" + cntr, pnt)); //
+                                    _stellarobjects.Add(new StellarObject("dc-" + cntr, pnt, (rand.NextDouble() - 1)* 2)); //
                                     truestarcounter += 1;
                                 }
                             }
                         }
                         else
                         {
-                            tmpstars.Add(new StellarObject("dc-" + cntr, pnt)); //
+                            _stellarobjects.Add(new StellarObject("dc-" + cntr, pnt, (rand.NextDouble() - 1) * 2)); //
                             truestarcounter += 1;
                         }
                     }
                 });
             }
-            return tmpstars;
+            return _stellarobjects;
         }
 
         #endregion
@@ -1065,32 +1019,9 @@ namespace SpaceTrader
 
         #region public timer events for orbitalbodies
 
-        public void BuildBuildingperOrbitalbody(IReadOnlyList<IBuildingType> buildingtypes)
+        public void OrbitalBodyDynamics(IReadOnlyList<IBuildingType> buildingtypes, FastRandom rand, int turncounter, IReadOnlyList<IFunctionalGroup> functionalgroups, IReadOnlyList<ICompound> compounds)
         {
-            FastRandom rand = new FastRandom();
-            foreach (IStellarObject stellarobject in StellarObjects)
-            {
-                foreach (IOrbitalBody orbitalbody in stellarobject.Orbitalbodies)
-                {
-                    orbitalbody.ConstructBuildings(buildingtypes, rand);
-                }
-            }
-        }      
-        public void MineResourcesperOrbitalbody()
-        {
-            FastRandom Rand = new FastRandom();
-            foreach (IStellarObject stellarobject in StellarObjects)
-            {
-                foreach (IOrbitalBody orbitalbody in stellarobject.Orbitalbodies)
-                {
-                    orbitalbody.MineResources(Rand);
-                }
-            }
-        }
-
-        public void GrownFoodandPopulationperOrbitalbody()
-        {
-            double foodproduced = 0; 
+            double foodproduced = 0;
             double newpeoplecounter = 0;
             double birthscounter = 0;
             double newcomerscounter = 0;
@@ -1098,18 +1029,101 @@ namespace SpaceTrader
             double spoiledfoodcounter = 0;
             double foodcounter = 0;
             double populationcounter = 0;
-            FastRandom Rand = new FastRandom();
-            //population changes
+
             foreach (IStellarObject stellarobject in StellarObjects)
             {
+                if (turncounter % 20 == 0)
+                {
+                    stellarobject.CentralHub.ConstructBuildings(buildingtypes, rand);
+                    foreach (Building building in stellarobject.CentralHub.Buildings)
+                    {
+                        if (building.Type.CanProduceCompounds)
+                        {
+                            stellarobject.CentralHub.ProduceCompounds(stellarobject, rand);
+                            break;
+                        }
+                    }
+                    foreach (Building building in stellarobject.CentralHub.Buildings)
+                    {
+                        if (building.Type.CanDoChemistry)
+                        {
+
+                            stellarobject.CentralHub.DoChemistry(stellarobject, rand, functionalgroups, compounds);
+                            break;
+                        }
+                    }
+                }
+                if (stellarobject.GlobalDisasterTimer > 0)
+                {
+                    ((StellarObject)stellarobject).GlobalDisasterTimer -= 1;
+                }
                 foreach (IOrbitalBody orbitalbody in stellarobject.Orbitalbodies)
                 {
+                    if (turncounter % 20 == 0)
+                    {
+                        orbitalbody.ConstructBuildings(buildingtypes, rand);
+                        // keep this piece. it is a lot more efficient than the foreach loop.  Try to optimize the foreach 
+                        // as far as it goes, so that it might be reimplemented again.
+                        for (int i = 0; i < stellarobject.CentralHub.ElementsinStorage.Count; i++)
+                        {
+                            if (orbitalbody.CentralHub.ElementsinStorage[i].AmountinStorage > 0)
+                            {
+                                stellarobject.CentralHub.ElementsinStorage[i].AmountinStorage += orbitalbody.CentralHub.ElementsinStorage[i].AmountinStorage;
+                                orbitalbody.CentralHub.ElementsinStorage[i].AmountinStorage = 0; //send all the mined elements from previous turn to the stellarobject
+                            }
+                        }
+                        //send all the mined elements from the natural satellites and the orbitalbody to the CentralHub of the orbital body.
+                        for (int i = 0; i < orbitalbody.CentralHub.ElementsinStorage.Count; i++)
+                        {
+                            if (orbitalbody.ElementsinStorage[i].AmountinStorage > 0)
+                            {
+                                orbitalbody.CentralHub.ElementsinStorage[i].AmountinStorage += orbitalbody.ElementsinStorage[i].AmountinStorage;
+                                orbitalbody.ElementsinStorage[i].AmountinStorage = 0; //send all the mined elements from this turn to the orbitalbody
+                            }
+                        }
+
+                        foreach (IOrbitalBody naturalsatellite in orbitalbody.NaturalSatellites)
+                        {
+                            {
+                                for (int i = 0; i < orbitalbody.CentralHub.ElementsinStorage.Count; i++)
+                                {
+                                    if (naturalsatellite.ElementsinStorage[i].AmountinStorage > 0)
+                                    {
+                                        orbitalbody.CentralHub.ElementsinStorage[i].AmountinStorage += naturalsatellite.ElementsinStorage[i].AmountinStorage;
+                                        naturalsatellite.ElementsinStorage[i].AmountinStorage = 0; //send all the mined elements from previous turn to the stellarobject
+                                    }
+                                }
+                            }
+                        }
+                        //foreach loops. the way it is intended? Not very efficient at the moment
+                        //foreach (ResourceinStorage CentralHubResourceinStorage in stellarobject.CentralHub.ResourcesonCentralHub)
+                        //{
+                        //    var tresourceinStorge = orbitalbody.ResourcesinStorage.First(a => a.Resource == CentralHubResourceinStorage.Resource);
+                        //    if (tresourceinStorge.Amount > 0)
+                        //    {
+                        //        CentralHubResourceinStorage.Amount += tresourceinStorge.Amount;
+                        //    }
+                        //}
+
+                        //    foreach (ResourceinStorage CentralHubResourceinStorage in orbitalbody.CentralHub.ResourcesonCentralHub)
+                        //    {
+                        //        var tresourceinStorge = naturalsatellite.ResourcesinStorage.First(a => a.Resource == CentralHubResourceinStorage.Resource);
+                        //        if (tresourceinStorge.Amount > 0)
+                        //        {
+                        //            CentralHubResourceinStorage.Amount += tresourceinStorge.Amount;
+                        //        }
+                        //    }
+                        //}
+
+
+                    }
+                    orbitalbody.MineElements(rand);
                     if (orbitalbody.IsHabitable)
                     {
-                        orbitalbody.GrowFoodandPopulation(Rand); //method sets data of given parameter. its apparently byref
+                        orbitalbody.GrowFoodandPopulation(rand, stellarobject); //method sets data of given parameter. its apparently byref
                         foodproduced += orbitalbody.ProducedFoodthisTurn;
                         foodcounter += orbitalbody.Food;
-                        foreach (SpeciesperOrbitalBody species in orbitalbody.SpeciesonOrbitalBody)
+                        foreach (ISpeciesperNode species in orbitalbody.SpeciesonOrbitalBody)
                         {
                             populationcounter += species.PopulationSize;
                         }
@@ -1122,12 +1136,13 @@ namespace SpaceTrader
                     }
                     foreach (IOrbitalBody naturalsatellite in orbitalbody.NaturalSatellites)
                     {
+                        naturalsatellite.MineElements(rand);
                         if (naturalsatellite.IsHabitable)
                         {
-                            naturalsatellite.GrowFoodandPopulation(Rand); //method sets data of given parameter. its apparently byref
+                            naturalsatellite.GrowFoodandPopulation(rand, stellarobject); //method sets data of given parameter. its apparently byref
                             foodproduced += naturalsatellite.ProducedFoodthisTurn;
                             foodcounter += naturalsatellite.Food;
-                            foreach (SpeciesperOrbitalBody species in naturalsatellite.SpeciesonOrbitalBody)
+                            foreach (ISpeciesperNode species in naturalsatellite.SpeciesonOrbitalBody)
                             {
                                 populationcounter += species.PopulationSize;
                             }
@@ -1140,8 +1155,9 @@ namespace SpaceTrader
                     }
                 }
             }
-            EventSystem.Publish(new TickerSymbolTotalAmountofFoodandPopulation {  ProducedFoodperTurn =((int)foodproduced).ToString(), NewcomersperTurn = ((int)newcomerscounter).ToString(), BirthsperTurn = ((int)birthscounter).ToString(), SpoiledFoodperTurn = ((int)spoiledfoodcounter).ToString(), DeathsthisTurn = ((int)deathscounter).ToString(), TotalPopulationEndofTurn = ((int)(populationcounter)).ToString(), TotalFoodEndofTurn = ((int)(foodcounter)).ToString() });
+            EventSystem.Publish(new TickerSymbolTotalAmountofFoodandPopulation { ProducedFoodperTurn = ((int)foodproduced).ToString(), NewcomersperTurn = ((int)newcomerscounter).ToString(), BirthsperTurn = ((int)birthscounter).ToString(), SpoiledFoodperTurn = ((int)spoiledfoodcounter).ToString(), DeathsthisTurn = ((int)deathscounter).ToString(), TotalPopulationEndofTurn = ((int)(populationcounter)).ToString(), TotalFoodEndofTurn = ((int)(foodcounter)).ToString() });
         }
+ 
         #endregion
         #endregion
 

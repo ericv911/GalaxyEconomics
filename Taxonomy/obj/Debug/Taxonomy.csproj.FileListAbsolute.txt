@@ -1,0 +1,9 @@
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\bin\Debug\Taxonomy.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\bin\Debug\Taxonomy.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\bin\Debug\FileLoadingSystem.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\bin\Debug\FileLoadingSystem.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\obj\Debug\Taxonomy.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\obj\Debug\Taxonomy.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\obj\Debug\Taxonomy.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\obj\Debug\Taxonomy.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\Taxonomy\obj\Debug\Taxonomy.pdb

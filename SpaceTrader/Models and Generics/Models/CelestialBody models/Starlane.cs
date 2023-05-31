@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Technology;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,9 @@ namespace SpaceTrader
 {
     public interface IStarlane
     {
+        StellarObject From { get; }
         StellarObject To { get; }
-        TechLevel TechLevelRequiredforTravel { get; }
+        TechnologyLevel TechLevelRequiredforTravel { get; }
         Color Color { get; }
     }
 
@@ -29,7 +31,7 @@ namespace SpaceTrader
     {
         protected double _length;
         protected Color _color;
-        protected TechLevel _techlevelrequiredfortravel;
+        protected TechnologyLevel _techlevelrequiredfortravel;
         protected StellarObject _from;
         protected StellarObject _to;
         protected double _distance;
@@ -57,7 +59,7 @@ namespace SpaceTrader
             get { return _color; }
             set { _color = value; }
         }
-        public TechLevel TechLevelRequiredforTravel
+        public TechnologyLevel TechLevelRequiredforTravel
         {
             get { return _techlevelrequiredfortravel; }
             set { _techlevelrequiredfortravel = value;

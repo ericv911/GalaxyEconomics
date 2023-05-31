@@ -1,0 +1,13 @@
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\obj\Debug\ChemistryDynamics.csprojAssemblyReference.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\obj\Debug\ChemistryDynamics.csproj.CoreCompileInputs.cache
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\ChemistryDynamics.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\ChemistryDynamics.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\Common.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\Common.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\obj\Debug\ChemistryDynamics.csproj.CopyComplete
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\obj\Debug\ChemistryDynamics.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\obj\Debug\ChemistryDynamics.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\FileLoadingSystem.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\FileLoadingSystem.pdb
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\FunctionalGroups.dll
+C:\Users\Vosselmans\Desktop\currentprojects\Own Programs\GalacticEconomics\ChemistryDynamics\bin\Debug\FunctionalGroups.pdb

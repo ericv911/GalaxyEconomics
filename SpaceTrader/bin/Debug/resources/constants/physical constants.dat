@@ -1,8 +1,14 @@
 // Physical constants to use in the program.
-// Each line represents a separate physical category.
-// The first line are solar constants in the order : Mass, Radius, Temperature, Luminosity   In Kg, Km, Kelvin and Watts.
-// The second line are physical constants used in the program, starting with 
-// Stefan-Boltzmann's constant sigma in W⋅1 m^−2⋅K^−4,  minimumwattperm2 for life,  maximumwatperm2 for life, optimumwattperm2
 
-{ 1989000000000000000000000000000, 675000, 5778, 382800000000000000000000000}
-{ 0.00000005670374419, 600, 2700, 1400 }
+StefanBoltzmannConstant=0.00000005670374419
+WattperM2LowerBoundaryforHabitablezone=600
+WattperM2UpperBoundaryforHabitablezone=2700
+WattperM2OptimalforHabitablezone=1400
+EarthMass=5972000000000000000000000
+SolarMass=1989000000000000000000000000000
+SolarRadius=675000
+SolarSurfaceTemperature=5778
+SolarLuminosity=382800000000000000000000000
+
+
+

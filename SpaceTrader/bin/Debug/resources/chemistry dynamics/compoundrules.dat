@@ -1,0 +1,52 @@
+// in this file, rules are defined for element groups that can combine to form new compounds from the elements beloning to the groups
+//in time it will grow in complexity ( needs 1 other file to expand upon the nomenclature. )
+
+// the first number indicates the total number of elementgroups, functional groups or elements in the compound-rule. 
+// the 2nd number indicates whether the rule is a functional group
+// the 3rd number is the charge of the rule
+// the 4th number indicates if different entries of the compound are allowed to be the same element
+//the 5th nubmer indicates if more electronegative elements are allowed on the left side of the compound
+// the numbers following are divided in groups of 3 with the same recurring structure: 1/2/3 (Elementgroup/Functional Group/Element), index of the collection it belongs to, Amount present 
+
+//  So the 3rd 4th and 5th might indicate 1, 17, 2 which means:  elementgroup, Halogens ( 17th entry in the .dat file), 2 Halogen atoms present at this position of the compound
+// the 6th, 7th and 8th will repeat the pattern.
+// the9th, 0th and 11th will repeat the pattern if the first entry is bigger than 2. 
+
+{ 2, 0, 0, 0, 1, 1, 1, 2, 1, 16, 1}
+{ 2, 0, 0, 0, 1, 1, 2, 1, 1, 16, 1}
+{ 2, 0, 0, 0, 1, 1, 4, 1, 1, 16 ,2}
+{ 2, 0, 0, 0, 1, 1 ,6 ,1, 1, 16, 2}
+{ 2, 0, 0, 0, 1, 1, 8, 1, 1, 16, 1}
+{ 2, 0, 0, 0, 1, 1, 8, 2, 1, 16, 3}
+{ 2, 0, 0, 0, 1, 1, 11, 2, 1, 16, 1}
+{ 2, 0, 0, 0, 1, 1, 11, 1, 1, 16, 1}
+{ 2, 0, 0, 0, 1, 1, 12, 1, 1, 16, 1}
+{ 2, 0, 0, 0, 1, 1, 14, 1, 1, 16, 2}
+{ 2, 1, -1, 0, 1, 1, 15, 1, 3, 8, 3}
+{ 2, 0, 0, 0, 0, 1, 16, 1, 1, 16, 2}
+{ 2, 0, 0, 0, 0, 1, 16, 1, 1, 16, 3}
+{ 2, 1, -2, 0, 0, 1, 16, 1, 1, 16, 3}
+{ 2, 0, 0, 0, 1, 1, 12, 3, 1, 15, 2}
+{ 2, 0, 0, 0, 1, 1, 13, 1, 1, 15, 1}
+{ 2, 0, 0, 0, 1, 1, 2, 3, 1, 15, 2}
+{ 2, 0, 0, 0, 1, 1, 1, 1, 1, 17, 1}
+{ 2, 0, 0, 0, 1, 1, 2, 1, 1, 17, 2}
+{ 2, 0, 0, 0, 1, 1, 8, 1, 1, 17, 3}
+{ 2, 0, 0, 0, 1, 1, 13, 1, 1, 17, 3}
+{ 2, 0, 0, 0, 1, 1, 14, 1, 1, 17, 4}
+{ 2, 0, 0, 0, 1, 1, 15, 1, 1, 17, 3}
+{ 2, 0, 0, 0, 0, 1, 17, 1, 1, 17, 1}
+{ 2, 1, -1, 0, 1, 1, 15, 1, 3, 8, 3}
+{ 2, 1, -2, 0, 1, 1, 16, 1, 3, 8, 4}
+{ 2, 1, -2, 0, 1, 1, 14, 1, 3, 8, 3}
+
+// the charge of the following rules is not checked. 
+//{ 2, 0, 0, 1, 11, 1, 2, 3, 1}
+//{ 2, 0, 0, 1, 17, 1, 2, 3, 1}
+//{ 2, 0, 0, 1, 1, 1, 2, 4, 1}
+
+
+
+
+
+

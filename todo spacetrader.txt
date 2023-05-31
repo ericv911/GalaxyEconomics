@@ -1,0 +1,125 @@
+wien's displacement law
+
+study electron orbitals
+electronegativity
+oxidation states.
+
+Time
+- 1 universal year, month and day.
+- each stellar system has it's own year, month and day cycle
+
+Ships
+- ships → finish destination-setting (for AI-ships  set multistep trajectory
+- cargoships → add cargohold
+- ships can follow other ships
+- ships. add hullpoints
+- ships add laser  object
+- weapons class
+- laser class
+- create warship class
+- own ship, remember entire path. 
+- for all ships.  Do not go back to previous destination.
+
+Importing .dat
+- clear imported datafiles from non-valid symbols, before writing that data to ingame basetypes
+
+Trade   (see also paper sketch) 
+= Trade fleets: for AI planets, setup automatic trading to reach equilibrium
+- Trade:
+Infrastructure , for interstellar travel and internal in star systems . Internally, amongst others it determines the speed of loading and unloading of ships. 
+Storage of resources. 
+
+Energy production
+Energy production and storage.
+
+Mining
+Technology levels for Mining, Refining, Processing, Electrolysing etc. 
+each type of building will have associated tech level.  higher level of building requires higher tech-level  
+
+TechLevel
+- Fill  techlevel-type collection from External .dat file. 
+
+Starlanes 
+- make selectable on screen
+- Specifically for starlanes, Some way to include relative occurence of techlevel-distribution to starlanes
+
+Stellarobject
+- redo abs. magnitude from Black Hole and neutron stars)
+- Calc abs Magnitude from Radius and temperature.
+-  standard mass generation of stars. (for main sequence)  Add type after mass generation. Only works for the main sequence stars. 
+- has AI tradefleet to trade orbital body goods with neighboring systems
+- can autodistribute resources and goods amongst its own orbital bodies over time
+-  Add metallicity to Stellar-Objects  from .dat file. Increased metallicitiy will increase extraction modifiers. 
+- Change name of planets and stars. Standard a bit more eleborate stellar name generation
+
+Orbitalbody 
+- orbital body can have 3 farms of tech level 3, 1 spaceport of techlevel 4, 6 housing of tech level 2 etc.  
+- grow food per season or something like that
+- food used on screen
+- graph total food and population statistics over time
+- add farm-techlevel
+- Immigration and Emigration system
+- if people immigrate to planet without buildings, generate farm + housing level 1;
+- farm needs people to operate. variable output depending on people available to work in it.  (affected by happiness)
+- add happiness and all things related to sustaining a population (including androids and cyborgs.)  types of races. 
+- resourcesinstorage,  add modifier (*rand) from resourcegroup .dat file)   
+-  Smaller orbital bodies can be created from larger ones after destruction of het larger orbital body.  A dwarf planet of mass X could be  converted to 3 asteroid and a dwarf planet with combined mass < X. These can then have additional resource groups exposed for extraction.
+
+Resources
+- spontaneously combine to form new molecules. 
+this new molecule becomes a valuable trade asset, generate happiness and it's production will become a new technology. 
+neighboring systems will start buying the new molecule. after enough trade. tech will spread slowly
+after enough tech spreading. tech will be available globally.
+- for diatomic molecules. level 1 factory
+- for triatomic molecules level 2 factory etc.
+
+Optimize
+- stellar and orb body generation.  first bare stellar objects and orbital bodies.  after that set properties. That way. all things can be set up in the appropriate class itself   -->
+i.e Orbital bodies set up as much as possible in orbital bodies class.  etc.
+- starlane creation.  do in intertwined batches. recombine batches with some starlanes between them. Should save up lots of calculation
+- always recheck all calculations.
+- unit-testing
+
+Screen-layout
+-  On screen string areas. -> make general Converter from int to string :  methods return int. Converter converts int to standard strings. Other methods can still pass -  strings of their own to overview.text
+- create region of color from the economic entity that controls it around stellarobject
+- Draw Lines to Border of the screen
+-  3d Animation ships
+- Highlight groups of objects that have the same owner (ships and stellar objects).
+- select between star color and economic entity color for stellar objects
+
+CodeBehind
+- Models  -> own namespace
+
+List of building types still to do
+
+Electrolyser
+Chemical Plant
+Metal refinery
+Metal Smelter 
+Hydroponics 
+Genetics institute
+Government buildings.
+Bio-Industry
+Happiness buildings
+Food refineries. 
+Farm Lands, Cattle Lands, 
+Other categories : military, civil, gov't, trade, resource prod.
+
+Combine several .dat files to create new buildings – >   
+1. .dat building types.
+2. .dat other property types (properties of orbital bodies, ships, starlanes etc)
+3. Combine 1 and 2 to form new buildings in another .dat file
+building will have name, building type, and properties from multiple .dat files.
+Important to keep track what kind of properties it has. Needed for proper calculation. 
+
+
+Known Bugs
+
+after stellar generation. If number of ships is decreased, program will crash during another stellar generation.
+scrollbar of the scrollviewer to the left does not work for some reason
+
+
+
+
+

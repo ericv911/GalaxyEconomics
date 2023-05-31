@@ -1,0 +1,102 @@
+Carbonyls
+COS	Carbonyl Sulfide
+COSe	Carobnyl Selenide
+COTe	Carbonyl Telluride
+
+Cyanides
+HCN	Hydrogen Cyanide
+LiCN
+NaCN	Sodium Cyanide
+KCN 	Potassium Cyanide
+RbCN 	Rubidium Cyanide
+CsCN	Cesium Cyanide
+
+FCN Cyanogen FLuoride
+ClCN
+BrCN
+ICN
+
+CuCN Copper (I) Cyanide
+AgCN
+AuCN
+
+HCP  Methylidynephosphane   ( hydrogen cyaphide )
+
+
+Hydroxides
+CsOH	Cesium Hydroxide
+NAOH
+KOH
+RbOH
+LiOH
+
+LiHS
+NaHS Sodium HydroSulfide
+KHS
+RbHS
+CsHS
+
+NaSeH  Sodium HydroSelenide  other Alkali-Metals with SeH
+KSeH
+
+NaTeH Sodium HydroTelluride  other Alkali-Metals with TeH
+
+Anions
+NCSe- SelenoCyanate
+NCO- Cyanate  (Fulminate)
+NCS- ThioCyanate  (isothioCyanates)
+
+PCO- phosphaethynolate
+PCS- 
+PCSe- 
+
+AsCO-
+AsCS-
+AsCSe-
+
+HArF  Argon HydroFluoride
+
+HBrO  HypoBromous acid
+HClO
+HFO
+HIO
+
+HNO Nitroxyl
+
+LiClO
+NaOCl
+
+10 neon
+20 calcium
+30 zinc
+40 zirconium
+50 tin
+60 cerium
+70 ytterbium
+80 cadmium
+90 thorium
+100 fermium
+110 darmstadtium
+5 boron
+15 phosphorus
+25 manganese
+35 bromium
+45 rhodium
+55 cesium
+65 terbium
+75 rhenium
+85 astatine
+95 americium
+105 dubnium
+115 moscovium
+1 hydrogen	
+2 helium	
+4 beryllium
+8 oxygen
+16 sulfur
+32 germanium
+64 gadolinium
+
+
+
+
